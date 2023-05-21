@@ -27,9 +27,10 @@ void ABreakableFoliage::BeginPlay()
 // Called every frame
 bool ABreakableFoliage::GetHitted()
 {
+	static constexpr auto SIZE_TO_REDUZE_PER_HIT = 0.9f;
+
 	m_CurrentHealth -= 1;
-	PrintDebugWithVar("Health after getting hitted: %d", m_CurrentHealth);
-	FVector NewScale = m_StaticMesh->GetRelativeScale3D() * 0.75f;
+	FVector NewScale = m_StaticMesh->GetRelativeScale3D() * SIZE_TO_REDUZE_PER_HIT;
 	m_StaticMesh->SetRelativeScale3D(NewScale);
 
 	return m_CurrentHealth == 0;

@@ -37,9 +37,33 @@ void UWeaponComponent::BeginPlay()
 //	// ...
 //}
 
+bool UWeaponComponent::CanHit()
+{
+	if (!m_CanHit)
+		return false;
+
+	static constexpr auto UNUSED_LOOP_TIME = 0.1f;
+
+	m_CanHit = false;
+	FTimerHandle UnusedTimer;
+	m_CharacterRef->GetWorldTimerManager().SetTimer(UnusedTimer, this, 
+		&UWeaponComponent::SetCanHit, UNUSED_LOOP_TIME, false,
+		CurrentHitInterval - UNUSED_LOOP_TIME);
+	return true;
+}
+
+void UWeaponComponent::SetCanHit()
+{
+	m_CanHit = true;
+}
+
 
 void UWeaponComponent::OnHit()
 {
+	if (!CanHit())
+		return;
+		
+
 	if (m_CurrentWeapon == -1)
 		Punch();
 }
@@ -47,6 +71,7 @@ void UWeaponComponent::OnHit()
 
 void UWeaponComponent::Punch()
 {
+	static constexpr auto SIZE_TO_REDUZE_PER_HIT = 0.9f;
 	static constexpr auto TRACE_DIST_FROM_CHARACTER = 50.f;
 	static constexpr auto TRACE_RADIUS = 50.f;
 	static constexpr auto TRACE_HALF_HEIGHT= 90.f;
@@ -63,17 +88,26 @@ void UWeaponComponent::Punch()
 		EDrawDebugTrace::ForDuration, OutHit, true);
 
 	// Check if the collided object was a foliage
-	if (Cast<UInstancedStaticMeshComponent>(OutHit.GetComponent()))
+	if (UInstancedStaticMeshComponent* InstancedCompRef = Cast<UInstancedStaticMeshComponent>(OutHit.GetComponent()))
 	{
 		FString ComponentName = UKismetSystemLibrary::GetDisplayName(OutHit.GetComponent());
-		if (ComponentName.Contains("BreakableRock"))
+		if (ComponentName.Contains("Breakable")) // If marked (named) as breakable
 		{
-			UStaticMesh* MeshRef = Cast<UStaticMeshComponent>(OutHit.GetComponent())->GetStaticMesh();
-			FTransform MeshTransform = OutHit.GetComponent()->GetComponentTransform();
+			// Getting the hitted foliage mesh and transform to copy it
+			UStaticMesh* MeshRef = Cast<UStaticMeshComponent>(InstancedCompRef)->GetStaticMesh();
+			FTransform MeshTransform;
+			InstancedCompRef->GetInstanceTransform(OutHit.Item, MeshTransform, true);
+
+			// Spawning actor with the foliage properties
 			ABreakableFoliage* SpawnedBreakableRef = GetWorld()->SpawnActor<ABreakableFoliage>(ABreakableFoliage::StaticClass(), MeshTransform);
 			SpawnedBreakableRef->m_StaticMesh->SetStaticMesh(MeshRef);
+			// Reducing its size
+			FVector NewScale3D = SpawnedBreakableRef->m_StaticMesh->GetRelativeScale3D() * SIZE_TO_REDUZE_PER_HIT;
+			SpawnedBreakableRef->m_StaticMesh->SetRelativeScale3D(NewScale3D);
 
-			Cast<UInstancedStaticMeshComponent>(OutHit.GetComponent())->RemoveInstance(OutHit.ElementIndex);
+			// Removing instance to not duplicate it
+			InstancedCompRef->RemoveInstance(OutHit.Item);
+
 		}
 	}
 	else if (ABreakableFoliage* BreakableFoliage = Cast<ABreakableFoliage>(OutHit.GetActor()))
