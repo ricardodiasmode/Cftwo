@@ -6,23 +6,31 @@
 #include "Components/ActorComponent.h"
 #include "WeaponComponent.generated.h"
 
+class AGameplayCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CFTWO_API UWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
-public:	
-	// Sets default values for this component's properties
-	UWeaponComponent();
+private:
+	// -1 Means no weapon equipped, so character will punch
+	int m_CurrentWeapon = -1;
+	AGameplayCharacter* m_CharacterRef = nullptr;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	// Only called by server to handle collision
+	void OnHit();
+	void Punch();
 
-		
+	// Sets default values for this component's properties
+	UWeaponComponent();
+
+	// Called every frame
+	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	friend class AGameplayCharacter;
 };

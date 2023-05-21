@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UWeaponComponent;
 
 UCLASS()
 class CFTWO_API AGameplayCharacter : public ACftwoCharacter
@@ -20,11 +21,14 @@ private:
 	static constexpr auto TIME_TO_STOP_HITTING = 0.44f;
 
 	// Handle OnStopHitting function
-	FTimerHandle HitTimerHandle;
+	FTimerHandle m_HitTimerHandle;
 
 	/** Hit Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* HitAction;
+		class UInputAction* m_HitAction;
+
+	UPROPERTY(VisibleDefaultsOnly)
+		UWeaponComponent* m_WeaponComponent = nullptr;
 
 public:
 	// Controlls whether or not player is hitting
@@ -37,6 +41,9 @@ private:
 	void Server_OnHit();
 	// Handle for server
 	void OnHit();
+	// Actually check hit collision
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void Server_TriggerHitDamage();
 	// Set flag telling that character needs to stop hitting
 	void OnStopHitting();
 

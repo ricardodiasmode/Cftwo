@@ -1,0 +1,4 @@
+- Combat:
+//1. Character hitting anim;
+2. Create something to hit;
+3. Character hitting triger;
