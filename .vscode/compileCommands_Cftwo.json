@@ -1,169 +1,169 @@
 [
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\Cftwo.Build.cs",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\Cftwo.Build.cs",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\Cftwo.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\Cftwo.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\Cftwo.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\Cftwo.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\CftwoCharacter.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\CftwoCharacter.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\CftwoCharacter.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\CftwoCharacter.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\CftwoGameMode.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\CftwoGameMode.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\CftwoGameMode.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\CftwoGameMode.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\AI\\BaseNeutralCharacter.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\AI\\BaseNeutralCharacter.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\AI\\BaseNeutralCharacter.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\AI\\BaseNeutralCharacter.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\Characters\\GameplayCharacter.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\Characters\\GameplayCharacter.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\Characters\\GameplayCharacter.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\Characters\\GameplayCharacter.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\Components\\InventoryComponent.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\Components\\InventoryComponent.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\Components\\InventoryComponent.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\Components\\InventoryComponent.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\Components\\StatusComponent.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\Components\\StatusComponent.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\Components\\StatusComponent.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\Components\\StatusComponent.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\Components\\WeaponComponent.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\Components\\WeaponComponent.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\Components\\WeaponComponent.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\Components\\WeaponComponent.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\GameplayGameMode.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\GameplayGameMode.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\GameplayGameMode.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\GameplayGameMode.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\GameplayPlayerController.cpp",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\GameplayPlayerController.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	},
 	{
-		"file": "E:\\Unreal Projects\\Cftwo 5.2\\Source\\Cftwo\\GameplayFramework\\GameplayPlayerController.h",
+		"file": "E:\\Unreal Projects\\Cftwo\\Source\\Cftwo\\GameplayFramework\\GameplayPlayerController.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\bin\\Hostx64\\x64\\cl.exe",
-			"@E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
+			"@E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo\\Cftwo.261.rsp"
 		],
 		"directory": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Source"
 	}

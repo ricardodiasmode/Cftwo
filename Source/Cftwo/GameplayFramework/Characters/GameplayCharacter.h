@@ -57,4 +57,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Called by server to fire a punch effect
+	UFUNCTION(BlueprintCallable)
+	void OnPunch();
+
 };

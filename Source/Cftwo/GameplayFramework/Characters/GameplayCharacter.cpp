@@ -83,3 +83,7 @@ void AGameplayCharacter::Move(const FInputActionValue& Value)
 
 	Super::Move(Value);
 }
+
+void AGameplayCharacter::OnPunch()
+{
+}

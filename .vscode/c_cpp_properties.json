@@ -7,7 +7,7 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "msvc-x64",
             "configurationProvider": "epic.ue",
-            "compileCommands": "E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Cftwo.json"
+            "compileCommands": "E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Cftwo.json"
         },
         {
             "name": "Win32",
@@ -16,7 +16,7 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "msvc-x64",
             "configurationProvider": "epic.ue",
-            "compileCommands": "E:\\Unreal Projects\\Cftwo 5.2\\.vscode\\compileCommands_Default.json"
+            "compileCommands": "E:\\Unreal Projects\\Cftwo\\.vscode\\compileCommands_Default.json"
         }
     ],
     "version": 4

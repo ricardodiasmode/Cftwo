@@ -4,7 +4,7 @@
 		{
 			"name": "Launch Cftwo (Debug)",
 			"request": "launch",
-			"program": "E:\\Unreal Projects\\Cftwo 5.2\\Binaries\\Win64\\UnrealGame-Win64-Debug.exe",
+			"program": "E:\\Unreal Projects\\Cftwo\\Binaries\\Win64\\UnrealGame-Win64-Debug.exe",
 			"preLaunchTask": "Cftwo Win64 Debug Build",
 			"args": [
 			],
@@ -20,7 +20,7 @@
 		{
 			"name": "Launch Cftwo (DebugGame)",
 			"request": "launch",
-			"program": "E:\\Unreal Projects\\Cftwo 5.2\\Binaries\\Win64\\UnrealGame-Win64-DebugGame.exe",
+			"program": "E:\\Unreal Projects\\Cftwo\\Binaries\\Win64\\UnrealGame-Win64-DebugGame.exe",
 			"preLaunchTask": "Cftwo Win64 DebugGame Build",
 			"args": [
 			],
@@ -36,7 +36,7 @@
 		{
 			"name": "Launch Cftwo (Development)",
 			"request": "launch",
-			"program": "E:\\Unreal Projects\\Cftwo 5.2\\Binaries\\Win64\\UnrealGame.exe",
+			"program": "E:\\Unreal Projects\\Cftwo\\Binaries\\Win64\\UnrealGame.exe",
 			"preLaunchTask": "Cftwo Win64 Development Build",
 			"args": [
 			],
@@ -52,7 +52,7 @@
 		{
 			"name": "Launch Cftwo (Test)",
 			"request": "launch",
-			"program": "E:\\Unreal Projects\\Cftwo 5.2\\Binaries\\Win64\\UnrealGame-Win64-Test.exe",
+			"program": "E:\\Unreal Projects\\Cftwo\\Binaries\\Win64\\UnrealGame-Win64-Test.exe",
 			"preLaunchTask": "Cftwo Win64 Test Build",
 			"args": [
 			],
@@ -68,7 +68,7 @@
 		{
 			"name": "Launch Cftwo (Shipping)",
 			"request": "launch",
-			"program": "E:\\Unreal Projects\\Cftwo 5.2\\Binaries\\Win64\\UnrealGame-Win64-Shipping.exe",
+			"program": "E:\\Unreal Projects\\Cftwo\\Binaries\\Win64\\UnrealGame-Win64-Shipping.exe",
 			"preLaunchTask": "Cftwo Win64 Shipping Build",
 			"args": [
 			],
@@ -87,7 +87,7 @@
 			"program": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor-Win64-Debug.exe",
 			"preLaunchTask": "CftwoEditor Win64 Debug Build",
 			"args": [
-				"E:\\Unreal Projects\\Cftwo 5.2\\Cftwo.uproject"
+				"E:\\Unreal Projects\\Cftwo\\Cftwo.uproject"
 			],
 			"cwd": "E:\\Program Files\\Epic Games\\UE_5.2",
 			"stopAtEntry": false,
@@ -104,7 +104,7 @@
 			"program": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor-Win64-DebugGame.exe",
 			"preLaunchTask": "CftwoEditor Win64 DebugGame Build",
 			"args": [
-				"E:\\Unreal Projects\\Cftwo 5.2\\Cftwo.uproject"
+				"E:\\Unreal Projects\\Cftwo\\Cftwo.uproject"
 			],
 			"cwd": "E:\\Program Files\\Epic Games\\UE_5.2",
 			"stopAtEntry": false,
@@ -121,7 +121,7 @@
 			"program": "E:\\Program Files\\Epic Games\\UE_5.2\\Engine\\Binaries\\Win64\\UnrealEditor.exe",
 			"preLaunchTask": "CftwoEditor Win64 Development Build",
 			"args": [
-				"E:\\Unreal Projects\\Cftwo 5.2\\Cftwo.uproject"
+				"E:\\Unreal Projects\\Cftwo\\Cftwo.uproject"
 			],
 			"cwd": "E:\\Program Files\\Epic Games\\UE_5.2",
 			"stopAtEntry": false,
@@ -140,7 +140,7 @@
 			"args": [
 				"-projectfiles",
 				"-vscode",
-				"-project=E:\\Unreal Projects\\Cftwo 5.2\\Cftwo.uproject",
+				"-project=E:\\Unreal Projects\\Cftwo\\Cftwo.uproject",
 				"-game",
 				"-engine"
 			],
