@@ -6,11 +6,15 @@
 #include "Components/ActorComponent.h"
 #include "WeaponComponent.generated.h"
 
+class AGameplayCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CFTWO_API UWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+public:
+	AGameplayCharacter* CharacterRef = nullptr;
 
 public:	
 	// Sets default values for this component's properties
@@ -24,5 +28,6 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	void OnPunch();
 		
 };

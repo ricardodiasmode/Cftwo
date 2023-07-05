@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
+#include "../Components/WeaponComponent.h"
 
 // Sets default values
 AGameplayCharacter::AGameplayCharacter()
@@ -12,8 +13,8 @@ AGameplayCharacter::AGameplayCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	
-
+	m_WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
+	m_WeaponComponent->CharacterRef = this;
 }
 
 void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
@@ -63,9 +64,9 @@ void AGameplayCharacter::Server_OnHit_Implementation()
 	static constexpr auto BLEND_OFFSET = 0.1f;
 	// Needed in order to timer work
 	static constexpr auto LOOP_RATE_TIME = 0.01f;
-	if (GetWorldTimerManager().IsTimerActive(HitTimerHandle))
-		GetWorldTimerManager().ClearTimer(HitTimerHandle);
-	GetWorldTimerManager().SetTimer(HitTimerHandle, this,
+	if (GetWorldTimerManager().IsTimerActive(m_HitTimerHandle))
+		GetWorldTimerManager().ClearTimer(m_HitTimerHandle);
+	GetWorldTimerManager().SetTimer(m_HitTimerHandle, this,
 		&AGameplayCharacter::OnStopHitting, LOOP_RATE_TIME, false,
 		TIME_TO_STOP_HITTING - LOOP_RATE_TIME - BLEND_OFFSET);
 }
@@ -86,4 +87,5 @@ void AGameplayCharacter::Move(const FInputActionValue& Value)
 
 void AGameplayCharacter::OnPunch()
 {
+	m_WeaponComponent->OnPunch();
 }

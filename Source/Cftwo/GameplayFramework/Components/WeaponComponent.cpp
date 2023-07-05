@@ -2,6 +2,8 @@
 
 
 #include "WeaponComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "../Characters/GameplayCharacter.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -30,5 +32,25 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UWeaponComponent::OnPunch()
+{
+	FVector START_LOCATION = CharacterRef->GetActorLocation() + 
+		CharacterRef->GetActorForwardVector() * 50.f;
+	FVector END_LOCATION = START_LOCATION;
+	float RADIUS = 120.f;
+	float HALF_HEIGHT = 90.f;
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjTypes;
+	ObjTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	UKismetSystemLibrary::CapsuleTraceMultiForObjects(
+		GetWorld(),
+		START_LOCATION,
+		END_LOCATION,
+		RADIUS,
+		HALF_HEIGHT,
+
+
+	)
 }
 
