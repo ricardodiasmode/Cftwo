@@ -4,6 +4,9 @@
 #include "WeaponComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "../Characters/GameplayCharacter.h"
+#include "../../Actors/BreakableObject.h"
+#include "../../Utils/GeneralFunctionLibrary.h"
+#include "InstancedFoliageActor.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -37,20 +40,53 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 void UWeaponComponent::OnPunch()
 {
 	FVector START_LOCATION = CharacterRef->GetActorLocation() + 
-		CharacterRef->GetActorForwardVector() * 50.f;
+		CharacterRef->GetActorForwardVector() * 75.f;
 	FVector END_LOCATION = START_LOCATION;
-	float RADIUS = 120.f;
+	float RADIUS = 60.f;
 	float HALF_HEIGHT = 90.f;
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjTypes;
 	ObjTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
-	UKismetSystemLibrary::CapsuleTraceMultiForObjects(
+	ObjTypes.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(CharacterRef);
+	TArray<FHitResult> OutHits;
+	if(UKismetSystemLibrary::CapsuleTraceMultiForObjects(
 		GetWorld(),
 		START_LOCATION,
 		END_LOCATION,
 		RADIUS,
 		HALF_HEIGHT,
-
-
-	)
+		ObjTypes,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::ForDuration,
+		OutHits,
+		true
+	)) {
+		for(FHitResult CurrentHit : OutHits) {
+			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
+			{
+				// TODO: Damage CurrentCharacter	
+			} else {
+				// Get object display name to know if is a breakable obj
+				FString ObjectName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetActor());
+				
+				// Check if was already converted
+				if (Cast<ABreakableObject>(CurrentHit.GetActor())) {
+					// TODO: Reduce foliage HP			
+				} else if(UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) &&
+						UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent()).Contains("Breakable")) {
+					int InstanceIndex = CurrentHit.ElementIndex;
+					// Convert foliage to breakable object
+					UStaticMesh* FoliageInstanceMesh = InstancedComp->GetStaticMesh();
+					FTransform FoliageInstanceTransform;
+					InstancedComp->GetInstanceTransform(InstanceIndex,
+						FoliageInstanceTransform, true);
+					InstancedComp->RemoveInstance(InstanceIndex);
+					// TODO: Spawn breakable obj
+				}
+			}
+		}
+	}
 }
 
