@@ -73,17 +73,24 @@ void UWeaponComponent::OnPunch()
 				
 				// Check if was already converted
 				if (Cast<ABreakableObject>(CurrentHit.GetActor())) {
-					// TODO: Reduce foliage HP			
-				} else if(UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) &&
-						UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent()).Contains("Breakable")) {
+					ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor());
+					BreakableObject->RemoveHP();
+				} else if(Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
+					if (!UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent()).Contains("Breakable"))
+					return;
+					UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent());
 					int InstanceIndex = CurrentHit.ElementIndex;
-					// Convert foliage to breakable object
+
+					// Removing foliage
 					UStaticMesh* FoliageInstanceMesh = InstancedComp->GetStaticMesh();
 					FTransform FoliageInstanceTransform;
 					InstancedComp->GetInstanceTransform(InstanceIndex,
 						FoliageInstanceTransform, true);
 					InstancedComp->RemoveInstance(InstanceIndex);
-					// TODO: Spawn breakable obj
+
+					// Spawning breakable obj
+					ABreakableObject* BreakableSpawned = GetWorld()->SpawnActor<ABreakableObject>(ABreakableObject::StaticClass(), FoliageInstanceTransform);
+					BreakableSpawned->StaticMeshComponent->SetStaticMesh(FoliageInstanceMesh);
 				}
 			}
 		}
