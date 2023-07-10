@@ -9,6 +9,7 @@
 class UCameraComponent;
 class USpringArmComponent;
 class UWeaponComponent;
+class UInventoryComponent;
 
 UCLASS()
 class CFTWO_API AGameplayCharacter : public ACftwoCharacter
@@ -29,6 +30,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UWeaponComponent* m_WeaponComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInventoryComponent* m_InventoryComponent = nullptr;
 
 public:
 	// Controlls whether or not player is hitting

@@ -6,6 +6,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
 #include "../Components/WeaponComponent.h"
+#include "../Components/Inventory/InventoryComponent.h"
+#include "../GameplayHUD.h"
 
 // Sets default values
 AGameplayCharacter::AGameplayCharacter()
@@ -14,7 +16,15 @@ AGameplayCharacter::AGameplayCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	m_WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
-	m_WeaponComponent->CharacterRef = this;
+	if(m_WeaponComponent != nullptr)
+		m_WeaponComponent->CharacterRef = this;
+
+	m_InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	if (m_InventoryComponent)
+	{
+		if (APlayerController* ControllerRef = Cast<APlayerController>(GetController()))
+			m_InventoryComponent->CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
+	}
 }
 
 void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 

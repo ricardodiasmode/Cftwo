@@ -28,6 +28,7 @@ void ABreakableObject::RemoveHP()
 	{
 		Break();	
 	} else {
+		// Remove HP effect
 		StaticMeshComponent->SetWorldScale3D(StaticMeshComponent->GetComponentScale()*0.9f);
 	}
 }	

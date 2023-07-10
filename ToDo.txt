@@ -1,0 +1,5 @@
+- Inventario:
+bool GiveItem(int ItemIndex);
+
+
+- Pegar pedra;
