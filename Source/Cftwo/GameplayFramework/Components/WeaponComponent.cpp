@@ -6,6 +6,7 @@
 #include "../Characters/GameplayCharacter.h"
 #include "../../Actors/BreakableObject.h"
 #include "../../Utils/GeneralFunctionLibrary.h"
+#include "Inventory/InventoryComponent.h"
 #include "InstancedFoliageActor.h"
 
 // Sets default values for this component's properties
@@ -75,8 +76,10 @@ void UWeaponComponent::OnPunch()
 				if (Cast<ABreakableObject>(CurrentHit.GetActor())) {
 					ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor());
 					BreakableObject->RemoveHP();
+					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
 				} else if(Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
-					if (!UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent()).Contains("Breakable"))
+					FString ComponentName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent());
+					if (!ComponentName.Contains("Breakable"))
 					return;
 					UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent());
 					int InstanceIndex = CurrentHit.ElementIndex;
@@ -91,6 +94,12 @@ void UWeaponComponent::OnPunch()
 					// Spawning breakable obj
 					ABreakableObject* BreakableSpawned = GetWorld()->SpawnActor<ABreakableObject>(ABreakableObject::StaticClass(), FoliageInstanceTransform);
 					BreakableSpawned->StaticMeshComponent->SetStaticMesh(FoliageInstanceMesh);
+				
+					if (ComponentName.Contains("Rock")) {
+						BreakableSpawned->ItemToGive = 0;
+						int RockIndex = 0;
+						CharacterRef->InventoryComponent->GiveItem(RockIndex, 1);
+					}
 				}
 			}
 		}

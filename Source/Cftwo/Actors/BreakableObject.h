@@ -17,6 +17,8 @@ private:
 
 public:
 	class UStaticMeshComponent* StaticMeshComponent = nullptr;
+
+	int ItemToGive = -1;
 	
 private:
 	void Break();	

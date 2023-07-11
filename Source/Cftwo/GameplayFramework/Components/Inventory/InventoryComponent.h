@@ -36,6 +36,9 @@ private:
 public:
 	AGameplayHUD* CharacterHUD = nullptr;
 
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* ItemsDataTable = nullptr;
+
 private:
 	/** Try to add the item in the correct slot
 	 * @return The amount of the {ItemIndex} that can be added given the amount that want add

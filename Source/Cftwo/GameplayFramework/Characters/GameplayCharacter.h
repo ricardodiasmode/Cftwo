@@ -22,22 +22,22 @@ private:
 	static constexpr auto TIME_TO_STOP_HITTING = 0.35f;
 
 	// Handle OnStopHitting function
-	FTimerHandle m_HitTimerHandle;
+	FTimerHandle HitTimerHandle;
 
 	/** Hit Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* HitAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UWeaponComponent* m_WeaponComponent = nullptr;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInventoryComponent* m_InventoryComponent = nullptr;
-
 public:
 	// Controlls whether or not player is hitting
 	UPROPERTY(BlueprintReadOnly, Replicated)
-		bool m_Hitting = false;
+		bool Hitting = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UWeaponComponent* WeaponComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInventoryComponent* InventoryComponent = nullptr;
 
 private:
 	// Trigger player hitting status and set timer for stop hitting
@@ -58,9 +58,6 @@ protected:
 public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
-
-	//// Called every frame
-	//virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

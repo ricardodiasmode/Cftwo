@@ -15,22 +15,22 @@ AGameplayCharacter::AGameplayCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	m_WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
-	if(m_WeaponComponent != nullptr)
-		m_WeaponComponent->CharacterRef = this;
+	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
+	if(WeaponComponent != nullptr)
+		WeaponComponent->CharacterRef = this;
 
-	m_InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
-	if (m_InventoryComponent)
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	if (InventoryComponent)
 	{
 		if (APlayerController* ControllerRef = Cast<APlayerController>(GetController()))
-			m_InventoryComponent->CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
+			InventoryComponent->CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
 	}
 }
 
 void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AGameplayCharacter, m_Hitting);
+	DOREPLIFETIME(AGameplayCharacter, Hitting);
 }
 
 
@@ -40,13 +40,6 @@ void AGameplayCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 }
-//
-//// Called every frame
-//void AGameplayCharacter::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
 
 // Called to bind functionality to input
 void AGameplayCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -69,27 +62,27 @@ void AGameplayCharacter::OnHit()
 
 void AGameplayCharacter::Server_OnHit_Implementation()
 {
-	m_Hitting = true;
+	Hitting = true;
 	// Offset to make sure blend will behave properly
 	static constexpr auto BLEND_OFFSET = 0.1f;
 	// Needed in order to timer work
 	static constexpr auto LOOP_RATE_TIME = 0.01f;
-	if (GetWorldTimerManager().IsTimerActive(m_HitTimerHandle))
-		GetWorldTimerManager().ClearTimer(m_HitTimerHandle);
-	GetWorldTimerManager().SetTimer(m_HitTimerHandle, this,
+	if (GetWorldTimerManager().IsTimerActive(HitTimerHandle))
+		GetWorldTimerManager().ClearTimer(HitTimerHandle);
+	GetWorldTimerManager().SetTimer(HitTimerHandle, this,
 		&AGameplayCharacter::OnStopHitting, LOOP_RATE_TIME, false,
 		TIME_TO_STOP_HITTING - LOOP_RATE_TIME - BLEND_OFFSET);
 }
 
 void AGameplayCharacter::OnStopHitting()
 {
-	m_Hitting = false;
+	Hitting = false;
 }
 
 void AGameplayCharacter::Move(const FInputActionValue& Value)
 {
 	// Do not move while hitting
-	if (m_Hitting)
+	if (Hitting)
 		return;
 
 	Super::Move(Value);
@@ -97,5 +90,5 @@ void AGameplayCharacter::Move(const FInputActionValue& Value)
 
 void AGameplayCharacter::OnPunch()
 {
-	m_WeaponComponent->OnPunch();
+	WeaponComponent->OnPunch();
 }

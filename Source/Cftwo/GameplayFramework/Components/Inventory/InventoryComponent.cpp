@@ -25,7 +25,6 @@ void UInventoryComponent::BeginPlay()
 	{
 		Slots.Add(FInventorySlot());
 	}
-	
 }
 
 int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
@@ -33,7 +32,7 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 	// We use this variable to know how much we added
 	int LocalAmount = Amount;
 		
-	FInventoryItem ItemInfo = FInventoryItem(); // TODO
+	FInventoryItem* ItemInfo = ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(ItemIndex))), "");
 
 	TArray<int> FreeSlots;
 	if (ItemMap.Contains(ItemIndex))
@@ -73,10 +72,10 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 	for (int i : FreeSlots)
 	{
 		FInventorySlot SlotToAdd;
-		SlotToAdd.ItemInfo = ItemInfo;
+		SlotToAdd.ItemInfo = *ItemInfo;
 
 		// Getting how much we can add to this slot
-		int MaxAmountToAdd = ItemInfo.MaxStack;		
+		int MaxAmountToAdd = ItemInfo->MaxStack;		
 		int AmountToAdd = FMath::Min(MaxAmountToAdd, LocalAmount);
 
 		// Adding as much as we can
