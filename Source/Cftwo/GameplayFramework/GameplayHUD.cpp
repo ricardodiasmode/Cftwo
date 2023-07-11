@@ -6,11 +6,13 @@
 
 void AGameplayHUD::BeginPlay()
 {
-    InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
+    InventoryWidget = Cast<UInventoryWidget>(CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass));
     InventoryWidget->AddToViewport();
 }
 
 void AGameplayHUD::UpdateInventory(const TArray<FInventorySlot>& SlotsRef)
 {
     PrintDebug("Estamos bem!");
+    InventoryWidget->Slots = SlotsRef;
+    InventoryWidget->UpdateSlots();
 }

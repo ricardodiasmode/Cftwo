@@ -19,7 +19,7 @@ private:
 	UInventoryWidget* InventoryWidget = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
+	TSubclassOf<UUserWidget> InventoryWidgetClass;
 
 protected:
 	virtual void BeginPlay() override;
