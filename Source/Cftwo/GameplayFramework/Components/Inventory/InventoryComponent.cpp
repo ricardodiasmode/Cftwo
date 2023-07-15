@@ -96,7 +96,7 @@ bool UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 {
 	int AddedAmount = CanReceiveItem(ItemIndex, Amount);
 	if(AddedAmount > 0) {
-		ItemMap[ItemIndex] += AddedAmount; 
+		ItemMap.Add(ItemIndex, AddedAmount); 
 		Client_UpdateInventory(Slots);
 		return true;
 	}

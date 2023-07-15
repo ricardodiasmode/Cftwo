@@ -80,7 +80,7 @@ void UWeaponComponent::OnPunch()
 				} else if(Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
 					FString ComponentName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent());
 					if (!ComponentName.Contains("Breakable"))
-					return;
+						return;
 					UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent());
 					int InstanceIndex = CurrentHit.ElementIndex;
 

@@ -13,7 +13,9 @@ struct FInventorySlot
 {
   GENERATED_BODY()
 public:
+	UPROPERTY(BlueprintReadOnly)
 	FInventoryItem ItemInfo;
+	UPROPERTY(BlueprintReadOnly)
 	int Amount = 0;
 };
 

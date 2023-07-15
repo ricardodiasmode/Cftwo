@@ -11,12 +11,12 @@ struct FInventoryItem : public FTableRowBase
 {
   GENERATED_USTRUCT_BODY()
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		int Index = -1;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		FString Name = "None";
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		UTexture2D* Icon = nullptr;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		int MaxStack = 1;
 };
