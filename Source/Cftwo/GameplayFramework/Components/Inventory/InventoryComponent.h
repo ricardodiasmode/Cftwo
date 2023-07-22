@@ -33,6 +33,7 @@ private:
 	TMap<int, int> ItemMap;
 
 	// Array of items in the slot
+	UPROPERTY(ReplicatedUsing=UpdateInventory)
 	TArray<FInventorySlot> Slots;
 
 public:
@@ -52,8 +53,6 @@ private:
 	void Client_UpdateInventory(const TArray<FInventorySlot>& SlotsRef);
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
 public:	
 	// Sets default values for this component's properties
@@ -65,5 +64,8 @@ public:
 	 * @return Whether or not could give the item 
 	*/
 	bool GiveItem(int ItemIndex, int Amount);
-		
+
+	UFUNCTION()
+	void UpdateInventory();
+
 };

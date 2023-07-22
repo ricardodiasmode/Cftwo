@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "Components/Inventory/InventoryComponent.h"
-#include "../UI/Inventory/InventoryWidget.h"
 #include "GameplayHUD.generated.h"
 
+class UInventoryWidget;
 /**
  * 
  */
@@ -16,6 +16,7 @@ class CFTWO_API AGameplayHUD : public AHUD
 {
 	GENERATED_BODY()
 private:
+	UPROPERTY()
 	UInventoryWidget* InventoryWidget = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly)
@@ -25,6 +26,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void UpdateInventory(const TArray<FInventorySlot>& SlotsRef);
+	void UpdateInventory(TArray<FInventorySlot> SlotsRef);
 	
 };

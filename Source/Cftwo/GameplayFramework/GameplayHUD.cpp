@@ -3,16 +3,24 @@
 
 #include "GameplayHUD.h"
 #include "../Utils/GeneralFunctionLibrary.h"
+#include "../UI/Inventory/InventoryWidget.h"
 
 void AGameplayHUD::BeginPlay()
 {
-    InventoryWidget = Cast<UInventoryWidget>(CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass));
+    Super::BeginPlay();
+    InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
     InventoryWidget->AddToViewport();
 }
 
-void AGameplayHUD::UpdateInventory(const TArray<FInventorySlot>& SlotsRef)
+void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
 {
-    PrintDebug("Estamos bem!");
-    InventoryWidget->Slots = SlotsRef;
+    if (!IsValid(InventoryWidget)) {
+        MyLog("InventoryWidget == nullptr");
+        return;
+    } else {
+        MyLog("Inventory updated.");
+    }
+    InventoryWidget->Slots.Empty();
+    InventoryWidget->Slots.Append(SlotsRef);
     InventoryWidget->UpdateSlots();
 }

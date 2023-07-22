@@ -7,6 +7,7 @@
 #include "Net/UnrealNetwork.h"
 #include "../Components/WeaponComponent.h"
 #include "../Components/Inventory/InventoryComponent.h"
+#include "../../Utils/GeneralFunctionLibrary.h"
 #include "../GameplayHUD.h"
 
 // Sets default values
@@ -20,11 +21,6 @@ AGameplayCharacter::AGameplayCharacter()
 		WeaponComponent->CharacterRef = this;
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
-	if (InventoryComponent)
-	{
-		if (APlayerController* ControllerRef = Cast<APlayerController>(GetController()))
-			InventoryComponent->CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
-	}
 }
 
 void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
@@ -33,12 +29,16 @@ void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AGameplayCharacter, Hitting);
 }
 
-
 // Called when the game starts or when spawned
 void AGameplayCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	APlayerController* ControllerRef = Cast<APlayerController>(GetController());
+	if (ControllerRef) {
+		InventoryComponent->CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
+		InventoryComponent->UpdateInventory();
+	}
 }
 
 // Called to bind functionality to input

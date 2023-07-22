@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../../GameplayFramework/Components/Inventory/InventoryComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidget.generated.h"
 
@@ -17,11 +16,9 @@ class CFTWO_API UInventoryWidget : public UUserWidget
 	
 public:
 	UPROPERTY(BlueprintReadOnly)
-	TArray<FInventorySlot> Slots;
-	
-public:
-	virtual void NativeConstruct() override;
+	TArray<struct FInventorySlot> Slots;
 
+public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateSlots();
 };

@@ -3,7 +3,9 @@
 
 #include "InventoryComponent.h"
 #include "Math/UnrealMathUtility.h"
+#include "Net/UnrealNetwork.h"
 #include "../../GameplayHUD.h"
+#include "../../../Utils/GeneralFunctionLibrary.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -15,16 +17,10 @@ UInventoryComponent::UInventoryComponent()
 	// ...
 }
 
-
-// Called when the game starts
-void UInventoryComponent::BeginPlay()
+void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
 {
-	Super::BeginPlay();
-
-	for (int i=0; i < MAX_INVENTORY_SIZE; i++)
-	{
-		Slots.Add(FInventorySlot());
-	}
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UInventoryComponent, Slots);
 }
 
 int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
@@ -35,8 +31,11 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 	FInventoryItem* ItemInfo = ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(ItemIndex))), "");
 
 	TArray<int> FreeSlots;
-	if (ItemMap.Contains(ItemIndex))
+	if (ItemMap.Num() == 0)
 	{
+		for (int i = 0;i < MAX_INVENTORY_SIZE; i++)
+			FreeSlots.Add(i);
+	} else {
 		// Find the maximum stack of this item
 		for (int i=0; i < Slots.Num(); i++)
 		{
@@ -65,8 +64,9 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 	}
 	
 	// Check if has free slot and the inventory size can handle an addition
-	if (FreeSlots.Num() == 0 || Slots.Num() >= MAX_INVENTORY_SIZE)
+	if (FreeSlots.Num() == 0 || Slots.Num() >= MAX_INVENTORY_SIZE) {
 		return 0;
+	}
 
 	// Trying to add into another slot
 	for (int i : FreeSlots)
@@ -84,9 +84,12 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 		// Controlling how much we already add
 		LocalAmount -= AmountToAdd;
 
+		Slots.Add(SlotToAdd);
+
 		// If could add everything, then we are good to go
-		if (LocalAmount == 0)
+		if (LocalAmount == 0) {
 			return Amount;
+		}
 	}
 	
 	return Amount - LocalAmount;
@@ -96,15 +99,23 @@ bool UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 {
 	int AddedAmount = CanReceiveItem(ItemIndex, Amount);
 	if(AddedAmount > 0) {
-		ItemMap.Add(ItemIndex, AddedAmount); 
+		PrintDebugWithVar("giving item %d", ItemIndex);
+		ItemMap.Add(ItemIndex, AddedAmount);
 		Client_UpdateInventory(Slots);
 		return true;
 	}
 	return false;
 }
 
+void UInventoryComponent::UpdateInventory()
+{
+	Client_UpdateInventory(Slots);
+}
+
 void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FInventorySlot>& SlotsRef)
 {
-	CharacterHUD->UpdateInventory(SlotsRef);
+	if (CharacterHUD != nullptr) {
+		CharacterHUD->UpdateInventory(SlotsRef);
+	}
 }
 
