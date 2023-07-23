@@ -17,9 +17,8 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
     if (!IsValid(InventoryWidget)) {
         MyLog("InventoryWidget == nullptr");
         return;
-    } else {
-        MyLog("Inventory updated.");
     }
+    
     InventoryWidget->Slots.Empty();
     InventoryWidget->Slots.Append(SlotsRef);
     InventoryWidget->UpdateSlots();
