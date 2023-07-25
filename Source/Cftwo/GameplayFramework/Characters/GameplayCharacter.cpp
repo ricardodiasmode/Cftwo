@@ -52,12 +52,30 @@ void AGameplayCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		//Jumping
 		EnhancedInputComponent->BindAction(m_HitAction, ETriggerEvent::Triggered,
 											this, &AGameplayCharacter::OnHit);
+		//Crafting
+		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered,
+											this, &AGameplayCharacter::OnCraft);
 	}
 }
 
 void AGameplayCharacter::OnHit()
 {
 	Server_OnHit();
+}
+
+void AGameplayCharacter::OnCraft()
+{
+	Client_OnCraft();
+}
+
+void AGameplayCharacter::Client_OnCraft_Implementation()
+{
+	Server_TryCraft(SelectedItem);
+}
+
+void AGameplayCharacter::Server_TryCraft_Implementation()
+{
+	InventoryComponent->TryCraft(SelectedItem);
 }
 
 void AGameplayCharacter::Server_OnHit_Implementation()

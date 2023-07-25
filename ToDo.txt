@@ -1,13 +1,1 @@
-- Combat:
-//1. Character hitting anim;
-//2. Create something to hit;
-//3. Character hitting triger;
-
-- Animals IA:
-1. Passive IA:
-	1. Idle;
-	2. Running from character;
-2. Agressive IA:
-	1. Idle;
-	2. Running towards character;
-	3. Attacking character;
+(craft wip)

@@ -31,6 +31,10 @@ private:
 	UPROPERTY(VisibleDefaultsOnly)
 		UWeaponComponent* m_WeaponComponent = nullptr;
 
+	/** Craft Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* CraftAction;
+
 public:
 	// Controlls whether or not player is hitting
 	UPROPERTY(BlueprintReadOnly, Replicated)
@@ -53,6 +57,15 @@ private:
 	void Server_TriggerHitDamage();
 	// Set flag telling that character needs to stop hitting
 	void OnStopHitting();
+	
+	// Server check whether or not player can craft the selected item
+	UFUNCTION(Server, Reliable)
+	void Server_TryCraft();
+
+	// Handle for server
+	UFUNCTION(Client, Reliable)
+	void Client_OnCraft();
+	void OnCraft();
 
 protected:
 	// Called when the game starts or when spawned

@@ -128,3 +128,9 @@ void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FIn
 	}
 }
 
+void UInventoryComponent::TryCraft(int ItemIndex)
+{
+	// Check whether or not has all necessary items
+
+	// If has necessary items, then remove them and create the new one
+}
