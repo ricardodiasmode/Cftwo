@@ -46,6 +46,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInventoryComponent* InventoryComponent = nullptr;
 
+	int SelectedItem = -1;
+
 private:
 	// Trigger player hitting status and set timer for stop hitting
 	UFUNCTION(Server, Reliable)
@@ -60,7 +62,7 @@ private:
 	
 	// Server check whether or not player can craft the selected item
 	UFUNCTION(Server, Reliable)
-	void Server_TryCraft();
+	void Server_TryCraft(const int ItemIndex);
 
 	// Handle for server
 	UFUNCTION(Client, Reliable)

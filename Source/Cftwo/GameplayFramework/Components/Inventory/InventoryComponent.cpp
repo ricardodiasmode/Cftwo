@@ -128,7 +128,7 @@ void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FIn
 	}
 }
 
-void UInventoryComponent::TryCraft(int ItemIndex)
+void UInventoryComponent::TryCraft(const int ItemToCraft)
 {
 	// Check whether or not has all necessary items
 

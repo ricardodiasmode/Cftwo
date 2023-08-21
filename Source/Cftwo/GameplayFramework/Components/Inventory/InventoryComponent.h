@@ -68,4 +68,6 @@ public:
 	UFUNCTION()
 	void UpdateInventory();
 
+	void TryCraft(const int ItemToCraft);
+
 };

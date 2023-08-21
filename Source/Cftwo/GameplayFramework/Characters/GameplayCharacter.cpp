@@ -73,9 +73,9 @@ void AGameplayCharacter::Client_OnCraft_Implementation()
 	Server_TryCraft(SelectedItem);
 }
 
-void AGameplayCharacter::Server_TryCraft_Implementation()
+void AGameplayCharacter::Server_TryCraft_Implementation(const int ItemIndex)
 {
-	InventoryComponent->TryCraft(SelectedItem);
+	InventoryComponent->TryCraft(ItemIndex);
 }
 
 void AGameplayCharacter::Server_OnHit_Implementation()
