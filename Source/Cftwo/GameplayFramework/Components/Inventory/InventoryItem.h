@@ -4,6 +4,7 @@
 
 #include "Engine/DataTable.h"
 #include "CoreMinimal.h"
+#include "ItemRecipe.h"
 #include "InventoryItem.generated.h"
 
 USTRUCT(BlueprintType)
@@ -19,4 +20,6 @@ public:
 		UTexture2D* Icon = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		int MaxStack = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		FItemRecipe Recipe;
 };

@@ -5,19 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "InventoryItem.h"
+#include "InventorySlot.h"
 #include "InventoryComponent.generated.h"
-
-
-USTRUCT(BlueprintType)
-struct FInventorySlot
-{
-  GENERATED_BODY()
-public:
-	UPROPERTY(BlueprintReadOnly)
-	FInventoryItem ItemInfo;
-	UPROPERTY(BlueprintReadOnly)
-	int Amount = 0;
-};
 
 class AGameplayHUD;
 
@@ -69,5 +58,9 @@ public:
 	void UpdateInventory();
 
 	void TryCraft(const int ItemToCraft);
+
+	TArray<TTuple<int, int>> HasItemsToCraft(const int ItemToCraft);
+
+	TArray<TTuple<int, int>> HasRecipe(FItemRecipe Recipe, bool& Found);
 
 };
