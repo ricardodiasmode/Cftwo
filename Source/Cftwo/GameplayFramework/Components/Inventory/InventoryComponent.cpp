@@ -127,7 +127,7 @@ void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FIn
 		CharacterHUD->UpdateInventory(SlotsRef);
 	}
 }
-
+/*
 TArray<TTuple<int, int>> UInventoryComponent::HasItemsToCraft(const int ItemToCraft)
 {
 	TArray<TTuple<int, int>> ReturnItems;
@@ -168,11 +168,11 @@ TArray<TTuple<int, int>> UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool
 	Found = false;
 	return IndexesAndAmount;
 }
-
+*/
 void UInventoryComponent::TryCraft(const int ItemToCraft)
 {
 	// Check whether or not has all necessary items
-	TArray<TTuple<int, int>> ItemsLocation = HasItemsToCraft(ItemToCraft);
+	TArray<TTuple<int, int>> ItemsLocation;// = HasItemsToCraft(ItemToCraft);
 
 	if (ItemsLocation.Num() <= 0)
 		return;

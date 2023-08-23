@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ItemRecipe.generated.h"
 
 USTRUCT(BlueprintType)
 struct FItemRecipe

@@ -59,8 +59,9 @@ public:
 
 	void TryCraft(const int ItemToCraft);
 
+	/*
 	TArray<TTuple<int, int>> HasItemsToCraft(const int ItemToCraft);
 
 	TArray<TTuple<int, int>> HasRecipe(FItemRecipe Recipe, bool& Found);
-
+	*/
 };

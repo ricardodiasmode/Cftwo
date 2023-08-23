@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InventoryItem.h"
+#include "InventorySlot.generated.h"
 
 USTRUCT(BlueprintType)
 struct FInventorySlot
