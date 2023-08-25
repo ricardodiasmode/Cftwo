@@ -54,14 +54,15 @@ public:
 	*/
 	bool GiveItem(int ItemIndex, int Amount);
 
+	void RemoveItem(const int SlotIndex, const int Amount);
+
 	UFUNCTION()
 	void UpdateInventory();
 
 	void TryCraft(const int ItemToCraft);
 
-	/*
-	TArray<TTuple<int, int>> HasItemsToCraft(const int ItemToCraft);
+	
+	bool HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount);
 
-	TArray<TTuple<int, int>> HasRecipe(FItemRecipe Recipe, bool& Found);
-	*/
+	void HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>* Indexes, TArray<int>* Amount);
 };

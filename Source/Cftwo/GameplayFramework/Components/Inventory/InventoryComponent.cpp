@@ -127,27 +127,25 @@ void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FIn
 		CharacterHUD->UpdateInventory(SlotsRef);
 	}
 }
-/*
-TArray<TTuple<int, int>> UInventoryComponent::HasItemsToCraft(const int ItemToCraft)
+
+bool UInventoryComponent::HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount)
 {
-	TArray<TTuple<int, int>> ReturnItems;
-	FInventoryItem* ItemInfo = ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(ItemToCraft))), "");
-	for (FItemRecipe CurrentRecipe : (*ItemInfo).Recipe)
+	FInventoryItem ItemInfo = *(ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(ItemToCraft))), ""));
+	for (FItemRecipe CurrentRecipe : ItemInfo.Recipe)
 	{
 		bool Found = false;
-		ReturnItems.Add(HasRecipe(CurrentRecipe, &Found));
+		HasRecipe(CurrentRecipe, &Found, Indexes, Amount);
 		if (!Found)
-			return TArray<TTuple<int, int>>{};
+			return false;
 	}
-	return ReturnItems;
+	return true;
 }
 
-TArray<TTuple<int, int>> UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool& Found)
+
+void UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>* Indexes, TArray<int>* Amount)
 {
 	// We use this variable to know how much we removed
 	int LocalAmount = Recipe.Amount;
-
-	TArray<TTuple<int, int>> IndexesAndAmount;
 
 	for (int i = 0; i < Slots.Num(); i++)
 	{
@@ -156,27 +154,46 @@ TArray<TTuple<int, int>> UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool
 			int InitialAmount = LocalAmount;
 			LocalAmount -= CurrentSlot.Amount;
 			if (InitialAmount > LocalAmount)
-				IndexesAndAmount.Add(TTuple(i, InitialAmount - LocalAmount));
+			{
+				Indexes->Add(i);
+				Amount->Add(InitialAmount - LocalAmount);
+			}
 		}
 
 		if (LocalAmount <= 0) {
-			Found = true;
-			return IndexesAndAmount;
+			*Found = true;
 		}
 	}
 
-	Found = false;
-	return IndexesAndAmount;
+	*Found = false;
 }
-*/
+
+void UInventoryComponent::RemoveItem(const int SlotIndex, const int Amount)
+{
+	if (Slots[SlotIndex].Amount == Amount)
+	{
+		Slots[SlotIndex] = FInventorySlot();
+	}
+	else {
+		Slots[SlotIndex].Amount -= Amount;
+	}
+
+	Client_UpdateInventory(Slots);
+}
+
 void UInventoryComponent::TryCraft(const int ItemToCraft)
 {
 	// Check whether or not has all necessary items
-	TArray<TTuple<int, int>> ItemsLocation;// = HasItemsToCraft(ItemToCraft);
+	TArray<int> Indexes;
+	TArray<int> Amount;
+	bool CanCraft = HasItemsToCraft(ItemToCraft, &Indexes, &Amount);
 
-	if (ItemsLocation.Num() <= 0)
+	if (!CanCraft)
 		return;
 
 	// If has necessary items, then remove them and create the new one
+	for (int i = 0; i < Indexes.Num(); i++)
+		RemoveItem(Indexes[i], Amount[i]);
 
+	GiveItem(ItemToCraft, 1);
 }

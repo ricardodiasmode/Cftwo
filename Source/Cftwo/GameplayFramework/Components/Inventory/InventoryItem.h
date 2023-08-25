@@ -21,5 +21,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 		int MaxStack = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		FItemRecipe Recipe;
+		TArray<FItemRecipe> Recipe;
 };
