@@ -49,11 +49,11 @@ void AGameplayCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 
-		//Jumping
-		EnhancedInputComponent->BindAction(m_HitAction, ETriggerEvent::Triggered,
+		//Hitting
+		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Completed,
 											this, &AGameplayCharacter::OnHit);
 		//Crafting
-		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Triggered,
+		EnhancedInputComponent->BindAction(CraftAction, ETriggerEvent::Completed,
 											this, &AGameplayCharacter::OnCraft);
 	}
 }
@@ -65,16 +65,19 @@ void AGameplayCharacter::OnHit()
 
 void AGameplayCharacter::OnCraft()
 {
+	PrintDebug("a");
 	Client_OnCraft();
 }
 
 void AGameplayCharacter::Client_OnCraft_Implementation()
 {
+	PrintDebug("b");
 	Server_TryCraft(SelectedItem);
 }
 
 void AGameplayCharacter::Server_TryCraft_Implementation(const int ItemIndex)
 {
+	PrintDebug("c");
 	InventoryComponent->TryCraft(ItemIndex);
 }
 

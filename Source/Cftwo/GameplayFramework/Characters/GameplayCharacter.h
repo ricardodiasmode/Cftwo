@@ -46,7 +46,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInventoryComponent* InventoryComponent = nullptr;
 
-	int SelectedItem = -1;
+	int SelectedItem = 2;
 
 private:
 	// Trigger player hitting status and set timer for stop hitting

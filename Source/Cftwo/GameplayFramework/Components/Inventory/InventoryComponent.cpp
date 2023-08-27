@@ -134,7 +134,17 @@ bool UInventoryComponent::HasItemsToCraft(const int ItemToCraft, TArray<int>* In
 	for (FItemRecipe CurrentRecipe : ItemInfo.Recipe)
 	{
 		bool Found = false;
+		PrintDebugWithVar("Tryinna find %d", CurrentRecipe.Index);
 		HasRecipe(CurrentRecipe, &Found, Indexes, Amount);
+		if (Found)
+		{
+			PrintDebugWithVar("Found");
+
+		}
+		else {
+			PrintDebugWithVar("NOT Found");
+		}
+
 		if (!Found)
 			return false;
 	}
@@ -162,6 +172,7 @@ void UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>
 
 		if (LocalAmount <= 0) {
 			*Found = true;
+			return;
 		}
 	}
 
@@ -188,12 +199,15 @@ void UInventoryComponent::TryCraft(const int ItemToCraft)
 	TArray<int> Amount;
 	bool CanCraft = HasItemsToCraft(ItemToCraft, &Indexes, &Amount);
 
+	PrintDebug("d");
 	if (!CanCraft)
 		return;
+	PrintDebug("e");
 
 	// If has necessary items, then remove them and create the new one
 	for (int i = 0; i < Indexes.Num(); i++)
 		RemoveItem(Indexes[i], Amount[i]);
 
+	PrintDebug("f");
 	GiveItem(ItemToCraft, 1);
 }
