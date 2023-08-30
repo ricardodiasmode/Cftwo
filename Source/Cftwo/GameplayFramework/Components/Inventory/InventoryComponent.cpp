@@ -134,16 +134,7 @@ bool UInventoryComponent::HasItemsToCraft(const int ItemToCraft, TArray<int>* In
 	for (FItemRecipe CurrentRecipe : ItemInfo.Recipe)
 	{
 		bool Found = false;
-		PrintDebugWithVar("Tryinna find %d", CurrentRecipe.Index);
 		HasRecipe(CurrentRecipe, &Found, Indexes, Amount);
-		if (Found)
-		{
-			PrintDebugWithVar("Found");
-
-		}
-		else {
-			PrintDebugWithVar("NOT Found");
-		}
 
 		if (!Found)
 			return false;
@@ -156,13 +147,14 @@ void UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>
 {
 	// We use this variable to know how much we removed
 	int LocalAmount = Recipe.Amount;
+	PrintDebugWithVar("We wanna find: %d", LocalAmount);
 
 	for (int i = 0; i < Slots.Num(); i++)
 	{
 		FInventorySlot CurrentSlot = Slots[i];
 		if (CurrentSlot.ItemInfo.Index == Recipe.Index) {
-			int InitialAmount = LocalAmount;
-			LocalAmount -= CurrentSlot.Amount;
+			const int InitialAmount = LocalAmount;
+			LocalAmount = FMath::Max(LocalAmount - CurrentSlot.Amount, 0);
 			if (InitialAmount > LocalAmount)
 			{
 				Indexes->Add(i);
@@ -199,15 +191,14 @@ void UInventoryComponent::TryCraft(const int ItemToCraft)
 	TArray<int> Amount;
 	bool CanCraft = HasItemsToCraft(ItemToCraft, &Indexes, &Amount);
 
-	PrintDebug("d");
 	if (!CanCraft)
 		return;
-	PrintDebug("e");
 
 	// If has necessary items, then remove them and create the new one
-	for (int i = 0; i < Indexes.Num(); i++)
+	for (int i = 0; i < Indexes.Num(); i++) {
 		RemoveItem(Indexes[i], Amount[i]);
+		PrintDebugWithVar("Removing %d from %d", Amount[i], Indexes[i]);
+	}
 
-	PrintDebug("f");
 	GiveItem(ItemToCraft, 1);
 }

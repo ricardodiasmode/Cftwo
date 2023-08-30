@@ -65,19 +65,16 @@ void AGameplayCharacter::OnHit()
 
 void AGameplayCharacter::OnCraft()
 {
-	PrintDebug("a");
 	Client_OnCraft();
 }
 
 void AGameplayCharacter::Client_OnCraft_Implementation()
 {
-	PrintDebug("b");
 	Server_TryCraft(SelectedItem);
 }
 
 void AGameplayCharacter::Server_TryCraft_Implementation(const int ItemIndex)
 {
-	PrintDebug("c");
 	InventoryComponent->TryCraft(ItemIndex);
 }
 
