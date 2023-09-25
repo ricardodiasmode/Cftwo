@@ -96,9 +96,15 @@ void UWeaponComponent::OnPunch()
 					BreakableSpawned->StaticMeshComponent->SetStaticMesh(FoliageInstanceMesh);
 				
 					if (ComponentName.Contains("Rock")) {
-						BreakableSpawned->ItemToGive = 0;
+						PrintDebug("a");
 						int RockIndex = 0;
+						BreakableSpawned->ItemToGive = RockIndex;
 						CharacterRef->InventoryComponent->GiveItem(RockIndex, 1);
+					} else if (ComponentName.Contains("Tree")) {
+						PrintDebug("b");
+						int TreeIndex = 1;
+						BreakableSpawned->ItemToGive = TreeIndex;
+						CharacterRef->InventoryComponent->GiveItem(TreeIndex, 1);
 					}
 				}
 			}

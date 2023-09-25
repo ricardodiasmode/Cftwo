@@ -58,14 +58,21 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 					return Amount;
 			}
 
-			if (CurrentSlot.ItemInfo.Index == -1)
+			if (CurrentSlot.ItemInfo.Index == -1) {
 				FreeSlots.Add(i);
+			}
 		}
 	}
 	
 	// Check if has free slot and the inventory size can handle an addition
-	if (FreeSlots.Num() == 0 || Slots.Num() >= MAX_INVENTORY_SIZE) {
+	if (Slots.Num() >= MAX_INVENTORY_SIZE) {
 		return 0;
+	}
+
+	// If free slots == 0 but we are here, then we can add a new slot
+	if (FreeSlots.Num() == 0) {
+		for (int i=Slots.Num(); i<MAX_INVENTORY_SIZE-Slots.Num();i++)
+			FreeSlots.Add(i);
 	}
 
 	// Trying to add into another slot
@@ -103,6 +110,8 @@ bool UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 		ItemMap.Add(ItemIndex, AddedAmount);
 		Client_UpdateInventory(Slots);
 		return true;
+	} else {
+		PrintDebugWithVar("could not receive item %d", ItemIndex);
 	}
 	return false;
 }
