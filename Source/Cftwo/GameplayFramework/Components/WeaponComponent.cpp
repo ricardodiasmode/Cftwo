@@ -2,7 +2,10 @@
 
 
 #include "WeaponComponent.h"
+#include "../Characters/GameplayCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/InstancedStaticMeshComponent.h"
+#include "../Actors/BreakableFoliage.h"
 #include "../Characters/GameplayCharacter.h"
 #include "../../Actors/BreakableObject.h"
 #include "../../Utils/GeneralFunctionLibrary.h"
@@ -26,17 +29,8 @@ void UWeaponComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
-
-
-// Called every frame
-//void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-//{
-//	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-//
-//	// ...
-//}
 
 bool UWeaponComponent::CanHit()
 {
@@ -47,7 +41,7 @@ bool UWeaponComponent::CanHit()
 
 	m_CanHit = false;
 	FTimerHandle UnusedTimer;
-	m_CharacterRef->GetWorldTimerManager().SetTimer(UnusedTimer, this, 
+	CharacterRef->GetWorldTimerManager().SetTimer(UnusedTimer, this,
 		&UWeaponComponent::SetCanHit, UNUSED_LOOP_TIME, false,
 		CurrentHitInterval - UNUSED_LOOP_TIME);
 	return true;
@@ -63,7 +57,7 @@ void UWeaponComponent::OnHit()
 {
 	if (!CanHit())
 		return;
-		
+
 
 	if (m_CurrentWeapon == -1)
 		Punch();
@@ -75,10 +69,10 @@ void UWeaponComponent::Punch()
 	static constexpr auto SIZE_TO_REDUZE_PER_HIT = 0.9f;
 	static constexpr auto TRACE_DIST_FROM_CHARACTER = 50.f;
 	static constexpr auto TRACE_RADIUS = 50.f;
-	static constexpr auto TRACE_HALF_HEIGHT= 90.f;
+	static constexpr auto TRACE_HALF_HEIGHT = 90.f;
 
-	FVector ForwardVector = m_CharacterRef->GetActorForwardVector();
-	FVector InitialLocation = m_CharacterRef->GetActorLocation();
+	FVector ForwardVector = CharacterRef->GetActorForwardVector();
+	FVector InitialLocation = CharacterRef->GetActorLocation();
 	FVector TraceStartLocation = InitialLocation + ForwardVector * TRACE_DIST_FROM_CHARACTER;
 	TArray<AActor*> ActorsToIgnore;
 	FHitResult OutHit;
@@ -123,7 +117,7 @@ void UWeaponComponent::Punch()
 
 void UWeaponComponent::OnPunch()
 {
-	FVector START_LOCATION = CharacterRef->GetActorLocation() + 
+	FVector START_LOCATION = CharacterRef->GetActorLocation() +
 		CharacterRef->GetActorForwardVector() * 75.f;
 	FVector END_LOCATION = START_LOCATION;
 	float RADIUS = 60.f;
@@ -134,7 +128,7 @@ void UWeaponComponent::OnPunch()
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(CharacterRef);
 	TArray<FHitResult> OutHits;
-	if(UKismetSystemLibrary::CapsuleTraceMultiForObjects(
+	if (UKismetSystemLibrary::CapsuleTraceMultiForObjects(
 		GetWorld(),
 		START_LOCATION,
 		END_LOCATION,
@@ -147,20 +141,22 @@ void UWeaponComponent::OnPunch()
 		OutHits,
 		true
 	)) {
-		for(FHitResult CurrentHit : OutHits) {
+		for (FHitResult CurrentHit : OutHits) {
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
 				// TODO: Damage CurrentCharacter	
-			} else {
+			}
+			else {
 				// Get object display name to know if is a breakable obj
 				FString ObjectName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetActor());
-				
+
 				// Check if was already converted
 				if (Cast<ABreakableObject>(CurrentHit.GetActor())) {
 					ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor());
 					BreakableObject->RemoveHP();
 					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
-				} else if(Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
+				}
+				else if (Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
 					FString ComponentName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent());
 					if (!ComponentName.Contains("Breakable"))
 						return;
@@ -177,13 +173,14 @@ void UWeaponComponent::OnPunch()
 					// Spawning breakable obj
 					ABreakableObject* BreakableSpawned = GetWorld()->SpawnActor<ABreakableObject>(ABreakableObject::StaticClass(), FoliageInstanceTransform);
 					BreakableSpawned->StaticMeshComponent->SetStaticMesh(FoliageInstanceMesh);
-				
+
 					if (ComponentName.Contains("Rock")) {
 						PrintDebug("a");
 						int RockIndex = 0;
 						BreakableSpawned->ItemToGive = RockIndex;
 						CharacterRef->InventoryComponent->GiveItem(RockIndex, 1);
-					} else if (ComponentName.Contains("Tree")) {
+					}
+					else if (ComponentName.Contains("Tree")) {
 						PrintDebug("b");
 						int TreeIndex = 1;
 						BreakableSpawned->ItemToGive = TreeIndex;
@@ -194,4 +191,3 @@ void UWeaponComponent::OnPunch()
 		}
 	}
 }
-

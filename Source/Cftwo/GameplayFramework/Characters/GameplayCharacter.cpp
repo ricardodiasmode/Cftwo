@@ -85,9 +85,9 @@ void AGameplayCharacter::Server_OnHit_Implementation()
 	static constexpr auto BLEND_OFFSET = 0.1f;
 	// Needed in order to timer work
 	static constexpr auto LOOP_RATE_TIME = 0.01f;
-	if (GetWorldTimerManager().IsTimerActive(m_HitTimerHandle))
-		GetWorldTimerManager().ClearTimer(m_HitTimerHandle);
-	GetWorldTimerManager().SetTimer(m_HitTimerHandle, this,
+	if (GetWorldTimerManager().IsTimerActive(HitTimerHandle))
+		GetWorldTimerManager().ClearTimer(HitTimerHandle);
+	GetWorldTimerManager().SetTimer(HitTimerHandle, this,
 		&AGameplayCharacter::OnStopHitting, LOOP_RATE_TIME, false,
 		TIME_TO_STOP_HITTING - LOOP_RATE_TIME - BLEND_OFFSET);
 }
@@ -99,7 +99,7 @@ void AGameplayCharacter::OnStopHitting()
 
 void AGameplayCharacter::Server_TriggerHitDamage_Implementation()
 {
-	m_WeaponComponent->OnHit();
+	WeaponComponent->OnHit();
 }
 
 void AGameplayCharacter::Move(const FInputActionValue& Value)

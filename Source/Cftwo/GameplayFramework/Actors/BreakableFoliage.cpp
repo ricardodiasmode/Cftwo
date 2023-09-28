@@ -3,7 +3,7 @@
 
 #include "BreakableFoliage.h"
 #include "Components/StaticMeshComponent.h"
-#include "../../GeneralFunctionLibrary.h"
+#include "../../Utils/GeneralFunctionLibrary.h"
 
 // Sets default values
 ABreakableFoliage::ABreakableFoliage()

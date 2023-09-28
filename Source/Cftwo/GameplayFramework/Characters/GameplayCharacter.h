@@ -22,14 +22,11 @@ private:
 	static constexpr auto TIME_TO_STOP_HITTING = 0.35f;
 
 	// Handle OnStopHitting function
-	FTimerHandle m_HitTimerHandle;
+	FTimerHandle HitTimerHandle;
 
 	/** Hit Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* m_HitAction;
-
-	UPROPERTY(VisibleDefaultsOnly)
-		UWeaponComponent* m_WeaponComponent = nullptr;
+		class UInputAction* HitAction;
 
 	/** Craft Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
