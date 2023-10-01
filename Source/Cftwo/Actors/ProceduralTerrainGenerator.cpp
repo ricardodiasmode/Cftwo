@@ -146,7 +146,10 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 		UInstancedStaticMeshComponent* InstancedComponentRef = NewObject<UInstancedStaticMeshComponent>(this);
 		InstancedComponentRef->RegisterComponent();
 		InstancedComponentRef->SetStaticMesh(CurrentFoliage.Mesh);
-		InstancedComponentRef->SetFlags(RF_Transactional);
+		InstancedComponentRef->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		InstancedComponentRef->SetGenerateOverlapEvents(true);
+		InstancedComponentRef->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+		InstancedComponentRef->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
 		AddInstanceComponent(InstancedComponentRef);
 
 		for (int i = 0; i < CurrentFoliage.Amount; i++)
