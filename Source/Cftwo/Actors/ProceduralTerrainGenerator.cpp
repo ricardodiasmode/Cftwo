@@ -26,6 +26,7 @@ void AProceduralTerrainGenerator::GenerateTerrain()
 
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
 
+	ProceduralMesh->ClearMeshSection(0);
 	ProceduralMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UV0, TArray<FColor>(), Tangents, true);
 	ProceduralMesh->SetMaterial(0, MaterialRef);
 }
@@ -35,14 +36,14 @@ void AProceduralTerrainGenerator::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 
 	GenerateTerrain();
-
-	SpawnFoliage();
 }
 
 // Called when the game starts or when spawned
 void AProceduralTerrainGenerator::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SpawnFoliage();
 }
 
 void AProceduralTerrainGenerator::CreateVertices()
@@ -170,7 +171,8 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 			DrawDebugLine(GetWorld(), StartWorldSpawnPoint, EndWorldSpawnPoint, FColor::Red, true);
 			if (GetWorld()->LineTraceSingleByChannel(OutHit,
 				StartWorldSpawnPoint, EndWorldSpawnPoint,
-				ECollisionChannel::ECC_Visibility))
+				ECollisionChannel::ECC_Visibility) &&
+				OutHit.GetComponent() == ProceduralMesh)
 			{
 				static constexpr auto VerticalOffset = 1.f;
 				static constexpr auto ScaleMin = 0.8f;
