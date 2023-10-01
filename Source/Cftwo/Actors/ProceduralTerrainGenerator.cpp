@@ -6,6 +6,8 @@
 #include "stdlib.h"
 #include "time.h"
 #include "math.h"
+#include "Components/InstancedStaticMeshComponent.h"
+#include "../Utils/GeneralFunctionLibrary.h"
 
 // Sets default values
 AProceduralTerrainGenerator::AProceduralTerrainGenerator()
@@ -33,6 +35,8 @@ void AProceduralTerrainGenerator::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 
 	GenerateTerrain();
+
+	SpawnFoliage();
 }
 
 // Called when the game starts or when spawned
@@ -132,5 +136,63 @@ float AProceduralTerrainGenerator::dotGradient(int X, float x, int Y, float y, i
 	float dz = z - Z;
 	float dw = w - W;
 	return dx * random_vector.X + dy * random_vector.Y + dz * random_vector.Z + dw * random_vector.W;
+}
+
+void AProceduralTerrainGenerator::SpawnFoliage()
+{
+	const FVector CenterLocation = GetActorLocation() + FVector(XSize * Scale/2, YSize * Scale/2, 0.f);
+	for (FFoliageToSpawn CurrentFoliage : Foliages)
+	{
+		UInstancedStaticMeshComponent* InstancedComponentRef = NewObject<UInstancedStaticMeshComponent>(this);
+		InstancedComponentRef->RegisterComponent();
+		InstancedComponentRef->SetStaticMesh(CurrentFoliage.Mesh);
+		InstancedComponentRef->SetFlags(RF_Transactional);
+		AddInstanceComponent(InstancedComponentRef);
+
+		for (int i = 0; i < CurrentFoliage.Amount; i++)
+		{
+			const auto Radius = FMath::Min(XSize/2 * Scale, YSize / 2 * Scale);
+			const float CollisionTraceRange = ZMultiplier * 4;
+
+			float X = FMath::FRandRange(-Radius, Radius);
+			float Y = FMath::FRandRange(-Radius, Radius);
+			float Z = FMath::FRandRange(-5.f, 0.f);
+
+			FVector LocalSpawnPoint = FVector(X, Y, Z);
+
+			FVector StartWorldSpawnPoint = CenterLocation + LocalSpawnPoint + FVector(0, 0, CollisionTraceRange);
+			FVector EndWorldSpawnPoint = StartWorldSpawnPoint - FVector(0, 0, CollisionTraceRange * 2);
+
+			FHitResult OutHit;
+			DrawDebugLine(GetWorld(), StartWorldSpawnPoint, EndWorldSpawnPoint, FColor::Red, true);
+			if (GetWorld()->LineTraceSingleByChannel(OutHit,
+				StartWorldSpawnPoint, EndWorldSpawnPoint,
+				ECollisionChannel::ECC_Visibility))
+			{
+				static constexpr auto VerticalOffset = 1.f;
+				static constexpr auto ScaleMin = 0.8f;
+				static constexpr auto ScaleMax = 1.25f;
+
+				float RandFloat = FMath::FRandRange(VerticalOffset * -2, VerticalOffset);
+
+				FVector LocationToSpawn = OutHit.Location + OutHit.Normal * RandFloat;
+				DrawDebugLine(GetWorld(), LocationToSpawn, LocationToSpawn + FVector(0.f, 0.f, 300.f), FColor::Green, true);
+
+				FRandomStream RandStream;
+				FRotator RotatorToSpawn = FRotationMatrix::MakeFromZX(OutHit.Normal,
+					RandStream.GetUnitVector()).Rotator();
+
+				float XScale = FMath::FRandRange(ScaleMin, ScaleMax);
+				float YScale = FMath::FRandRange(ScaleMin, ScaleMax);
+				float ZScale = FMath::FRandRange(ScaleMin, ScaleMax);
+				FVector ScaleToSpawn = FVector(XScale, YScale, ZScale);
+				ScaleToSpawn *= CurrentFoliage.ScaleMultiplier;
+
+				FTransform TransformToSpawn(RotatorToSpawn, LocationToSpawn, ScaleToSpawn);
+
+				InstancedComponentRef->AddInstance(TransformToSpawn);
+			}
+		}
+	}
 }
 

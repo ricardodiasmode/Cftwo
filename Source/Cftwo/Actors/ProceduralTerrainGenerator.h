@@ -9,6 +9,22 @@
 
 class UProceduralMeshComponent;
 
+USTRUCT(BlueprintType)
+struct FFoliageToSpawn
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* Mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Amount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ScaleMultiplier;
+
+};
+
 UCLASS()
 class CFTWO_API AProceduralTerrainGenerator : public AActor
 {
@@ -44,6 +60,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float ZSmoothness = 10.f;
 
+	UPROPERTY(EditAnywhere)
+	TArray<FFoliageToSpawn> Foliages;
+
 private:
 	void GenerateTerrain();
 
@@ -57,6 +76,8 @@ private:
 	float Fade(float t);
 	float dotGradient(int X, float x, int Y = 0, float y = 0, int Z = 0, float z = 0, int W = 0, float w = 0);
 	FVector4 Random(int X, int Y, int Z, int W);
+
+	void SpawnFoliage();
 	
 protected:
 	// Called when the game starts or when spawned
