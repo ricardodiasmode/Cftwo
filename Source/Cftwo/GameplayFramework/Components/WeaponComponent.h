@@ -35,12 +35,11 @@ protected:
 public:
 	// Only called by server to handle collision
 	void OnHit();
-	void Punch();
+	void OnPunch();
 
 	// Validate whether or not we can hit and set m_CanHit.
 	bool CanHit();
 	void SetCanHit();
 
-	void OnPunch();
 
 };
