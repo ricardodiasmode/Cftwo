@@ -110,7 +110,7 @@ void UWeaponComponent::OnPunch()
 					if (!ComponentName.Contains("Breakable"))
 						return;
 					UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent());
-					int InstanceIndex = CurrentHit.ElementIndex;
+					int InstanceIndex = CurrentHit.ElementIndex; // o index ta errado por algum motivo!!!!!!
 
 					PrintDebug("c");
 					// Removing foliage
@@ -118,7 +118,14 @@ void UWeaponComponent::OnPunch()
 					FTransform FoliageInstanceTransform;
 					InstancedComp->GetInstanceTransform(InstanceIndex,
 						FoliageInstanceTransform, true);
-					InstancedComp->RemoveInstance(InstanceIndex);
+					if (!InstancedComp->RemoveInstance(InstanceIndex))
+					{
+						PrintDebug("wtf could not remove instance");
+						return;
+					}
+					else {
+						PrintDebug("instance removed");
+					}
 
 					// Spawning breakable obj
 					ABreakableObject* BreakableSpawned = GetWorld()->SpawnActor<ABreakableObject>(ABreakableObject::StaticClass(), FoliageInstanceTransform);
@@ -129,6 +136,7 @@ void UWeaponComponent::OnPunch()
 						BreakableSpawned->ItemToGive = 0;
 						int RockIndex = 0;
 						BreakableSpawned->ItemToGive = RockIndex;
+						BreakableSpawned->RemoveHP();
 						CharacterRef->InventoryComponent->GiveItem(RockIndex, 1);
 					}
 					else if (ComponentName.Contains("Tree")) {
