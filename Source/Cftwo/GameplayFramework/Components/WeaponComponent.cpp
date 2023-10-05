@@ -98,21 +98,20 @@ void UWeaponComponent::OnPunch()
 				FString ObjectName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetActor());
 
 				// Check if was already converted
-				PrintDebug("a");
 				if (Cast<ABreakableObject>(CurrentHit.GetActor())) {
 					ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor());
 					BreakableObject->RemoveHP();
 					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
-					PrintDebug("b");
 				}
 				else if (Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
 					FString ComponentName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent());
 					if (!ComponentName.Contains("Breakable"))
 						return;
 					UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent());
-					int InstanceIndex = CurrentHit.ElementIndex; // o index ta errado por algum motivo!!!!!!
+					
+					TArray<int> InstancesOverlapped = InstancedComp->GetInstancesOverlappingSphere(CurrentHit.Location, RADIUS, true);
+					const int InstanceIndex = InstancesOverlapped.IsEmpty() ? 0 : InstancesOverlapped[0];
 
-					PrintDebug("c");
 					// Removing foliage
 					UStaticMesh* FoliageInstanceMesh = InstancedComp->GetStaticMesh();
 					FTransform FoliageInstanceTransform;
@@ -132,7 +131,6 @@ void UWeaponComponent::OnPunch()
 					BreakableSpawned->StaticMeshComponent->SetStaticMesh(FoliageInstanceMesh);
 
 					if (ComponentName.Contains("Rock")) {
-						PrintDebug("d");
 						BreakableSpawned->ItemToGive = 0;
 						int RockIndex = 0;
 						BreakableSpawned->ItemToGive = RockIndex;
@@ -140,7 +138,6 @@ void UWeaponComponent::OnPunch()
 						CharacterRef->InventoryComponent->GiveItem(RockIndex, 1);
 					}
 					else if (ComponentName.Contains("Tree")) {
-						PrintDebug("e");
 						int TreeIndex = 1;
 						BreakableSpawned->ItemToGive = TreeIndex;
 						CharacterRef->InventoryComponent->GiveItem(TreeIndex, 1);
