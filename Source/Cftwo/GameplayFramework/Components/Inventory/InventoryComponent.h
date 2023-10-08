@@ -15,7 +15,7 @@ class CFTWO_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:
-	static constexpr auto MAX_INVENTORY_SIZE = 10;
+	static constexpr auto MAX_INVENTORY_SIZE = 5;
 
 	// Map of <Index, Amount> where {Index} is the identifier of the item in DT and
 	// {Amount} is the amount in the inventory
@@ -42,6 +42,7 @@ private:
 	void Client_UpdateInventory(const TArray<FInventorySlot>& SlotsRef);
 
 protected:
+	virtual void BeginPlay() override;
 
 public:	
 	// Sets default values for this component's properties
@@ -60,7 +61,6 @@ public:
 	void UpdateInventory();
 
 	void TryCraft(const int ItemToCraft);
-
 	
 	bool HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount);
 

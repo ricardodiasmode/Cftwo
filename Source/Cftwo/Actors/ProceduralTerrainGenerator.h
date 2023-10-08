@@ -18,10 +18,10 @@ struct FFoliageToSpawn
 	UStaticMesh* Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Amount;
+	int Amount = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ScaleMultiplier;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 1))
+	float ScaleMultiplier = 1;
 
 };
 

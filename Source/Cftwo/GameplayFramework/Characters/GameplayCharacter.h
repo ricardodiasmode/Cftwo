@@ -28,9 +28,13 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* HitAction;
 
-	/** Craft Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		/** Craft Input Action */
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* CraftAction;
+
+		/** Change Item Input Action */
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* ChangeItemAction;
 
 public:
 	// Controlls whether or not player is hitting
@@ -43,7 +47,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInventoryComponent* InventoryComponent = nullptr;
 
-	int SelectedItem = 2;
+	int SelectedItemToCraft = 2;
+
+	int EquippedItem = 0;
 
 private:
 	// Trigger player hitting status and set timer for stop hitting
@@ -65,6 +71,8 @@ private:
 	UFUNCTION(Client, Reliable)
 	void Client_OnCraft();
 	void OnCraft();
+
+	void OnChangeItem(const FInputActionValue& Value);
 
 protected:
 	// Called when the game starts or when spawned

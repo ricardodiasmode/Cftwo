@@ -117,14 +117,6 @@ void UWeaponComponent::OnPunch()
 					FTransform FoliageInstanceTransform;
 					InstancedComp->GetInstanceTransform(InstanceIndex,
 						FoliageInstanceTransform, true);
-					if (!InstancedComp->RemoveInstance(InstanceIndex))
-					{
-						PrintDebug("wtf could not remove instance");
-						return;
-					}
-					else {
-						PrintDebug("instance removed");
-					}
 
 					// Spawning breakable obj
 					ABreakableObject* BreakableSpawned = GetWorld()->SpawnActor<ABreakableObject>(ABreakableObject::StaticClass(), FoliageInstanceTransform);
@@ -142,9 +134,6 @@ void UWeaponComponent::OnPunch()
 						BreakableSpawned->ItemToGive = TreeIndex;
 						CharacterRef->InventoryComponent->GiveItem(TreeIndex, 1);
 					}
-				}
-				else {
-					PrintDebugWithVar("%s", *UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent()));
 				}
 			}
 		}

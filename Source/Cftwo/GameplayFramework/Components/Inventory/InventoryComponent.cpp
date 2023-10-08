@@ -23,6 +23,14 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(UInventoryComponent, Slots);
 }
 
+void UInventoryComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	for (int i=0;i<MAX_INVENTORY_SIZE;i++)
+		Slots.Add(FInventorySlot());
+}
+
 int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 {
 	// We use this variable to know how much we added
@@ -63,17 +71,6 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 			}
 		}
 	}
-	
-	// Check if has free slot and the inventory size can handle an addition
-	if (Slots.Num() >= MAX_INVENTORY_SIZE) {
-		return 0;
-	}
-
-	// If free slots == 0 but we are here, then we can add a new slot
-	if (FreeSlots.Num() == 0) {
-		for (int i=Slots.Num(); i<MAX_INVENTORY_SIZE-Slots.Num();i++)
-			FreeSlots.Add(i);
-	}
 
 	// Trying to add into another slot
 	for (int i : FreeSlots)
@@ -91,7 +88,7 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 		// Controlling how much we already add
 		LocalAmount -= AmountToAdd;
 
-		Slots.Add(SlotToAdd);
+		Slots[i] = SlotToAdd;
 
 		// If could add everything, then we are good to go
 		if (LocalAmount == 0) {
@@ -106,12 +103,9 @@ bool UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 {
 	int AddedAmount = CanReceiveItem(ItemIndex, Amount);
 	if(AddedAmount > 0) {
-		PrintDebugWithVar("giving item %d", ItemIndex);
 		ItemMap.Add(ItemIndex, AddedAmount);
 		Client_UpdateInventory(Slots);
 		return true;
-	} else {
-		PrintDebugWithVar("could not receive item %d", ItemIndex);
 	}
 	return false;
 }
@@ -147,7 +141,6 @@ void UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>
 {
 	// We use this variable to know how much we removed
 	int LocalAmount = Recipe.Amount;
-	PrintDebugWithVar("We wanna find: %d", LocalAmount);
 
 	for (int i = 0; i < Slots.Num(); i++)
 	{
@@ -174,12 +167,9 @@ void UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>
 void UInventoryComponent::RemoveItem(const int SlotIndex, const int Amount)
 {
 	if (Slots[SlotIndex].Amount == Amount)
-	{
 		Slots[SlotIndex] = FInventorySlot();
-	}
-	else {
+	else
 		Slots[SlotIndex].Amount -= Amount;
-	}
 
 	Client_UpdateInventory(Slots);
 }
@@ -197,7 +187,6 @@ void UInventoryComponent::TryCraft(const int ItemToCraft)
 	// If has necessary items, then remove them and create the new one
 	for (int i = 0; i < Indexes.Num(); i++) {
 		RemoveItem(Indexes[i], Amount[i]);
-		PrintDebugWithVar("Removing %d from %d", Amount[i], Indexes[i]);
 	}
 
 	GiveItem(ItemToCraft, 1);

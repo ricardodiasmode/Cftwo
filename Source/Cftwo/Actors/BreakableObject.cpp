@@ -23,7 +23,6 @@ void ABreakableObject::BeginPlay()
 void ABreakableObject::RemoveHP()
 {
 	CurrentHP--;
-	PrintDebug("Removing breakable object HP");
 	if (CurrentHP < 1)
 	{
 		Break();	

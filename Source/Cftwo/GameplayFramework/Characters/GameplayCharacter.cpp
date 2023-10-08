@@ -54,13 +54,28 @@ void AGameplayCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 											this, &AGameplayCharacter::OnHit);
 		//Crafting
 		EnhancedInputComponent->BindAction(CraftAction, ETriggerEvent::Completed,
-											this, &AGameplayCharacter::OnCraft);
+			this, &AGameplayCharacter::OnCraft);
+
+		//ChangingItem
+		EnhancedInputComponent->BindAction(ChangeItemAction, ETriggerEvent::Completed,
+			this, &AGameplayCharacter::OnChangeItem);
 	}
 }
 
 void AGameplayCharacter::OnHit()
 {
 	Server_OnHit();
+}
+
+void AGameplayCharacter::OnChangeItem(const FInputActionValue& Value)
+{
+	float ValueAsFloat = Value.Get<float>();
+	Server_ChangeItem(ValueAsFloat > 0.f);
+}
+
+void AGameplayCharacter::Server_ChangeItem_Implementation(const int ItemIndex)
+{
+
 }
 
 void AGameplayCharacter::OnCraft()
@@ -70,7 +85,7 @@ void AGameplayCharacter::OnCraft()
 
 void AGameplayCharacter::Client_OnCraft_Implementation()
 {
-	Server_TryCraft(SelectedItem);
+	Server_TryCraft(SelectedItemToCraft);
 }
 
 void AGameplayCharacter::Server_TryCraft_Implementation(const int ItemIndex)

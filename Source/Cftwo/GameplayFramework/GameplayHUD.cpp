@@ -15,7 +15,6 @@ void AGameplayHUD::BeginPlay()
 void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
 {
     if (!IsValid(InventoryWidget)) {
-        MyLog("InventoryWidget == nullptr");
         return;
     }
     
