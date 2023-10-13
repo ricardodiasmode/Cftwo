@@ -57,7 +57,7 @@ void AGameplayCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 			this, &AGameplayCharacter::OnCraft);
 
 		//ChangingItem
-		EnhancedInputComponent->BindAction(ChangeItemAction, ETriggerEvent::Completed,
+		EnhancedInputComponent->BindAction(ChangeItemAction, ETriggerEvent::Started,
 			this, &AGameplayCharacter::OnChangeItem);
 	}
 }
@@ -73,9 +73,9 @@ void AGameplayCharacter::OnChangeItem(const FInputActionValue& Value)
 	Server_ChangeItem(ValueAsFloat > 0.f);
 }
 
-void AGameplayCharacter::Server_ChangeItem_Implementation(const int ItemIndex)
+void AGameplayCharacter::Server_ChangeItem_Implementation(const bool Forward)
 {
-
+	WeaponComponent->ChangeEquippedWeapon(Forward);
 }
 
 void AGameplayCharacter::OnCraft()

@@ -6,6 +6,27 @@
 #include "Components/ActorComponent.h"
 #include "WeaponComponent.generated.h"
 
+class AProjectile;
+
+USTRUCT(BlueprintType)
+struct FFireWeaponItem : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int Index = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name = "None";
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UStaticMesh* Mesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Socket = "";
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FTransform RelativeTransform;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	AProjectile* Projectile = nullptr;
+};
+
 class AGameplayCharacter;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -40,6 +61,11 @@ public:
 	// Validate whether or not we can hit and set m_CanHit.
 	bool CanHit();
 	void SetCanHit();
+
+	void ChangeEquippedWeapon(const bool Forward);
+
+	UFUNCTION(BlueprintPure)
+	int GetCurrentWeapon() const { return m_CurrentWeapon; }
 
 
 };

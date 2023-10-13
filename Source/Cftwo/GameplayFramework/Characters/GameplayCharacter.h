@@ -49,8 +49,6 @@ public:
 
 	int SelectedItemToCraft = 2;
 
-	int EquippedItem = 0;
-
 private:
 	// Trigger player hitting status and set timer for stop hitting
 	UFUNCTION(Server, Reliable)
@@ -73,6 +71,9 @@ private:
 	void OnCraft();
 
 	void OnChangeItem(const FInputActionValue& Value);
+
+	UFUNCTION(Server, Reliable)
+	void Server_ChangeItem(const bool Forward);
 
 protected:
 	// Called when the game starts or when spawned
