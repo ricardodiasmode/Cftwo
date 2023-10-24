@@ -25,11 +25,16 @@ private:
 	UPROPERTY(ReplicatedUsing=UpdateInventory)
 	TArray<FInventorySlot> Slots;
 
+	int EquippedWeaponId = -1;
+
 public:
 	AGameplayHUD* CharacterHUD = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ItemsDataTable = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* WeaponsDataTable = nullptr;
 
 private:
 	/** Try to add the item in the correct slot
@@ -40,6 +45,9 @@ private:
 	/** Tells client to update his inventory HUD */
 	UFUNCTION(Client, reliable)
 	void Client_UpdateInventory(const TArray<FInventorySlot>& SlotsRef);
+
+	FInventoryItem GetItemInfo(const int Index);
+	FInventoryItem GetWeaponInfo(const int Index);
 
 protected:
 	virtual void BeginPlay() override;
@@ -65,4 +73,8 @@ public:
 	bool HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount);
 
 	void HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>* Indexes, TArray<int>* Amount);
+
+	int GetEquippedWeaponId() const { return EquippedWeaponId; }
+
+	bool IsEquippedWeaponFireWeapon() { return GetWeaponInfo(EquippedWeaponId).FireWeapon; }
 };

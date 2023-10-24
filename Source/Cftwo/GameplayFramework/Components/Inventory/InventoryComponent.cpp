@@ -122,9 +122,19 @@ void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FIn
 	}
 }
 
+FInventoryItem GetItemInfo(const int Index)
+{
+	return *(ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(Index))), ""));
+}
+
+FWeaponItem GetWeaponInfo(const int Index)
+{
+	return *(WeaponsDataTable->FindRow<FWeaponItem>(FName(*(FString::FromInt(Index))), ""));
+}
+
 bool UInventoryComponent::HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount)
 {
-	FInventoryItem ItemInfo = *(ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(ItemToCraft))), ""));
+	FInventoryItem ItemInfo = GetItemInfo(ItemToCraft);
 	for (FItemRecipe CurrentRecipe : ItemInfo.Recipe)
 	{
 		bool Found = false;

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Actors/BaseProjectile.h"
+#include "BaseProjectile.h"
 
 // Sets default values
 ABaseProjectile::ABaseProjectile()

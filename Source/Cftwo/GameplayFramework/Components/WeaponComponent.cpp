@@ -52,7 +52,6 @@ void UWeaponComponent::SetCanHit()
 	m_CanHit = true;
 }
 
-
 void UWeaponComponent::OnHit()
 {
 	if (!CanHit())
@@ -154,17 +153,19 @@ void UWeaponComponent::ChangeEquippedWeapon(const bool Forward)
 
 void UWeaponComponent::TryFireWeapon()
 {
-	int EquippedWeaponId = GetEquippedWeaponId(); // Get from inventory
-	if (EquippedWeaponId == -1)
-		return;
+	int EquippedWeaponId = CharacterRef->GetEquippedWeaponId(); // Get from inventory
 
-	if (EquippedWeaponIsFireWeapon)
+	FWeaponItem WeaponInfo = GetWeaponInfo(EquippedWeaponId);
+	if (CharacterRef->IsEquippedWeaponFireWeapon())
 	{
-		FFireWeaponItem WeaponInfo = GetFireWeaponInfo(EquippedWeaponId);
 		SpawnProjectile(WeaponInfo.Projectile);
 	}
 	else {
-		FMeleeWeaponItem WeaponInfo = GetMeleeWeaponInfo(EquippedWeaponId);
-		AttackWithMeleeWeapon();
+		// AttackWithMeleeWeapon();
 	}
+}
+
+void UWeaponComponent::SpawnProjectile(TSubclassOf<ABaseProjectile> ProjectileToSpawnClass)
+{
+	// todo
 }

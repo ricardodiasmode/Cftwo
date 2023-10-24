@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/DataTable.h"
 #include "WeaponComponent.generated.h"
 
-class AProjectile;
+class ABaseProjectile;
 
 USTRUCT(BlueprintType)
 struct FFireWeaponItem : public FTableRowBase
@@ -24,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform RelativeTransform;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	AProjectile* Projectile = nullptr;
+	TSubclassOf<ABaseProjectile> Projectile;
 };
 
 class AGameplayCharacter;
@@ -45,15 +46,21 @@ private:
 public:
 	AGameplayCharacter* CharacterRef = nullptr;
 
-public:
-	// Sets default values for this component's properties
-	UWeaponComponent();
+private:
+	void TryFireWeapon();
+
+	void FireBow();
+
+	void SpawnProjectile(TSubclassOf<ABaseProjectile> ProjectileToSpawnClass);
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:
+	// Sets default values for this component's properties
+	UWeaponComponent();
+
 	// Only called by server to handle collision
 	void OnHit();
 	void OnPunch();

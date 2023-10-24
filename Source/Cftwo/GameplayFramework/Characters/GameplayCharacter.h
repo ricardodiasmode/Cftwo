@@ -93,4 +93,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnPunch();
 
+	int GetEquippedWeaponId() const { return InventoryComponent->GetEquippedWeaponId(); }
+
+	bool IsEquippedWeaponFireWeapon() { return InventoryComponent->IsEquippedWeaponFireWeapon(); }
+
 };
