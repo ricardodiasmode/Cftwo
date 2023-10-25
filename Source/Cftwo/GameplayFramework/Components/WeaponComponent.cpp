@@ -155,10 +155,10 @@ void UWeaponComponent::TryFireWeapon()
 {
 	int EquippedWeaponId = CharacterRef->GetEquippedWeaponId(); // Get from inventory
 
-	FWeaponItem WeaponInfo = GetWeaponInfo(EquippedWeaponId);
+	FWeaponItem WeaponInfo = CharacterRef->GetWeaponInfo(EquippedWeaponId);
 	if (CharacterRef->IsEquippedWeaponFireWeapon())
 	{
-		SpawnProjectile(WeaponInfo.Projectile);
+		SpawnProjectile(WeaponInfo.ProjectileClassToSpawn);
 	}
 	else {
 		// AttackWithMeleeWeapon();
@@ -167,5 +167,8 @@ void UWeaponComponent::TryFireWeapon()
 
 void UWeaponComponent::SpawnProjectile(TSubclassOf<ABaseProjectile> ProjectileToSpawnClass)
 {
-	// todo
+	FActorSpawnParameters SpawnInfo;
+	FVector SpawnLoc = CharacterRef->GetActorLocation() + CharacterRef->GetActorForwardVector() * 60.f;
+	FRotator SpawnRot = CharacterRef->GetActorRotation();
+	GetWorld()->SpawnActor<ABaseProjectile>(ProjectileToSpawnClass, SpawnLoc, SpawnRot, SpawnInfo);
 }

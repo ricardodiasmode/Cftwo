@@ -47,7 +47,6 @@ private:
 	void Client_UpdateInventory(const TArray<FInventorySlot>& SlotsRef);
 
 	FInventoryItem GetItemInfo(const int Index);
-	FInventoryItem GetWeaponInfo(const int Index);
 
 protected:
 	virtual void BeginPlay() override;
@@ -77,4 +76,6 @@ public:
 	int GetEquippedWeaponId() const { return EquippedWeaponId; }
 
 	bool IsEquippedWeaponFireWeapon() { return GetWeaponInfo(EquippedWeaponId).FireWeapon; }
+
+	FWeaponItem GetWeaponInfo(const int Index);
 };

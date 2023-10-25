@@ -5,6 +5,7 @@
 #include "Engine/DataTable.h"
 #include "CoreMinimal.h"
 #include "ItemRecipe.h"
+#include "../../../Actors/BaseProjectile.h"
 #include "InventoryItem.generated.h"
 
 USTRUCT(BlueprintType)
@@ -33,4 +34,6 @@ public:
 	int Index = -1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool FireWeapon = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<ABaseProjectile> ProjectileClassToSpawn;
 };

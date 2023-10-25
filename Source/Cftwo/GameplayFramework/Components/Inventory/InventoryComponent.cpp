@@ -122,12 +122,12 @@ void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FIn
 	}
 }
 
-FInventoryItem GetItemInfo(const int Index)
+FInventoryItem UInventoryComponent::GetItemInfo(const int Index)
 {
 	return *(ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(Index))), ""));
 }
 
-FWeaponItem GetWeaponInfo(const int Index)
+FWeaponItem UInventoryComponent::GetWeaponInfo(const int Index)
 {
 	return *(WeaponsDataTable->FindRow<FWeaponItem>(FName(*(FString::FromInt(Index))), ""));
 }

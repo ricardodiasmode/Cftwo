@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "../../CftwoCharacter.h"
+#include "../Components/Inventory/InventoryComponent.h"
 #include "GameplayCharacter.generated.h"
 
 class UCameraComponent;
 class USpringArmComponent;
 class UWeaponComponent;
-class UInventoryComponent;
 
 UCLASS()
 class CFTWO_API AGameplayCharacter : public ACftwoCharacter
@@ -97,4 +97,5 @@ public:
 
 	bool IsEquippedWeaponFireWeapon() { return InventoryComponent->IsEquippedWeaponFireWeapon(); }
 
+	FWeaponItem GetWeaponInfo(const int WeaponId) { return InventoryComponent->GetWeaponInfo(WeaponId); }
 };
