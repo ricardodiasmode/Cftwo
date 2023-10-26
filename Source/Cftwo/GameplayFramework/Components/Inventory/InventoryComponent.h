@@ -25,8 +25,6 @@ private:
 	UPROPERTY(ReplicatedUsing=UpdateInventory)
 	TArray<FInventorySlot> Slots;
 
-	int EquippedWeaponId = -1;
-
 public:
 	AGameplayHUD* CharacterHUD = nullptr;
 
@@ -73,9 +71,9 @@ public:
 
 	void HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>* Indexes, TArray<int>* Amount);
 
-	int GetEquippedWeaponId() const { return EquippedWeaponId; }
-
-	bool IsEquippedWeaponFireWeapon() { return GetWeaponInfo(EquippedWeaponId).FireWeapon; }
+	bool IsFireWeapon(const int ItemId) { return GetWeaponInfo(ItemId).FireWeapon; }
 
 	FWeaponItem GetWeaponInfo(const int Index);
+
+	FInventorySlot GetItemSlot(const int Index) { return Slots[Index]; }
 };

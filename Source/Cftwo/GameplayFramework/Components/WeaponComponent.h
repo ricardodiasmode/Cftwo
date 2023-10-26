@@ -35,7 +35,7 @@ class CFTWO_API UWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:
-	// -1 Means no weapon equipped, so character will punch
+	// The slot of current equipped item. -1 Means no weapon equipped, so character will punch
 	int m_CurrentWeapon = -1;
 
 	bool m_CanHit = true;
@@ -74,5 +74,5 @@ public:
 	UFUNCTION(BlueprintPure)
 	int GetCurrentWeapon() const { return m_CurrentWeapon; }
 
-
+	int GetEquippedWeaponByIndex(const int Id);
 };

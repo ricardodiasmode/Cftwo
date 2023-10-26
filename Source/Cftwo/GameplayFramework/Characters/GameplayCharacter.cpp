@@ -130,3 +130,10 @@ void AGameplayCharacter::OnPunch()
 {
 	WeaponComponent->OnPunch();
 }
+
+int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
+{
+	FInventorySlot Slot = InventoryComponent->GetItemSlot(Id);
+	FInventoryItem ItemInfo = Slot.ItemInfo;
+	return ItemInfo.WeaponId;
+}

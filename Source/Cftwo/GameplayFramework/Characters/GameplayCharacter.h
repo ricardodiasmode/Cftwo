@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "../../CftwoCharacter.h"
 #include "../Components/Inventory/InventoryComponent.h"
+#include "../Components/WeaponComponent.h"
 #include "GameplayCharacter.generated.h"
 
 class UCameraComponent;
 class USpringArmComponent;
-class UWeaponComponent;
 
 UCLASS()
 class CFTWO_API AGameplayCharacter : public ACftwoCharacter
@@ -93,9 +93,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnPunch();
 
-	int GetEquippedWeaponId() const { return InventoryComponent->GetEquippedWeaponId(); }
+	int GetEquippedWeaponId() const { return WeaponComponent->GetCurrentWeapon(); }
 
-	bool IsEquippedWeaponFireWeapon() { return InventoryComponent->IsEquippedWeaponFireWeapon(); }
+	bool IsEquippedWeaponFireWeapon() { return InventoryComponent->IsFireWeapon(GetEquippedWeaponId()); }
 
 	FWeaponItem GetWeaponInfo(const int WeaponId) { return InventoryComponent->GetWeaponInfo(WeaponId); }
+
+	int GetWeaponIdOnSlot(const int Id);
 };

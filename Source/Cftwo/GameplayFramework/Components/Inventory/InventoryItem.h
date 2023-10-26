@@ -23,6 +23,8 @@ public:
 	int MaxStack = 1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FItemRecipe> Recipe;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int WeaponId = -1;
 };
 
 USTRUCT(BlueprintType)

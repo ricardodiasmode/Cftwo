@@ -1,1 +1,1 @@
-- setar equipped weapon id;
+- verificar pq nao ta atirando flecha quando bate com o arco equipado

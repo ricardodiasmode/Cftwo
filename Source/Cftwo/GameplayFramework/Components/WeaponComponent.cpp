@@ -57,7 +57,7 @@ void UWeaponComponent::OnHit()
 	if (!CanHit())
 		return;
 
-	if (m_CurrentWeapon == -1)
+	if (GetEquippedWeaponByIndex(m_CurrentWeapon) == -1)
 		OnPunch();
 	else
 		TryFireWeapon();
@@ -65,6 +65,7 @@ void UWeaponComponent::OnHit()
 
 void UWeaponComponent::OnPunch()
 {
+	GMyLog("onpunch");
 	FVector START_LOCATION = CharacterRef->GetActorLocation() +
 		CharacterRef->GetActorForwardVector() * 75.f;
 	FVector END_LOCATION = START_LOCATION;
@@ -148,11 +149,12 @@ void UWeaponComponent::ChangeEquippedWeapon(const bool Forward)
 	else
 		m_CurrentWeapon = FMath::Clamp(m_CurrentWeapon - 1, -1, 5);
 
-	GPrintDebugWithVar("Current weapon: %d", m_CurrentWeapon);
+	GPrintDebugWithVar("Current weapon slot: %d", m_CurrentWeapon);
 }
 
 void UWeaponComponent::TryFireWeapon()
 {
+	GMyLog("tryfireweapon");
 	int EquippedWeaponId = CharacterRef->GetEquippedWeaponId(); // Get from inventory
 
 	FWeaponItem WeaponInfo = CharacterRef->GetWeaponInfo(EquippedWeaponId);
@@ -171,4 +173,9 @@ void UWeaponComponent::SpawnProjectile(TSubclassOf<ABaseProjectile> ProjectileTo
 	FVector SpawnLoc = CharacterRef->GetActorLocation() + CharacterRef->GetActorForwardVector() * 60.f;
 	FRotator SpawnRot = CharacterRef->GetActorRotation();
 	GetWorld()->SpawnActor<ABaseProjectile>(ProjectileToSpawnClass, SpawnLoc, SpawnRot, SpawnInfo);
+}
+
+int UWeaponComponent::GetEquippedWeaponByIndex(const int Id)
+{
+	return CharacterRef->GetWeaponIdOnSlot(Id);
 }
