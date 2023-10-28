@@ -23,6 +23,14 @@ struct FFoliageToSpawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 1))
 	float ScaleMultiplier = 1;
 
+	bool operator==(const FFoliageToSpawn& x)
+	{
+		if (this->Mesh == x.Mesh && this->Amount == x.Amount && x.ScaleMultiplier == this->ScaleMultiplier)
+			return true;
+		else
+			return false;
+	}
+
 };
 
 UCLASS()
@@ -66,9 +74,7 @@ public:
 private:
 	void GenerateTerrain();
 
-	void CreateVertices();
-
-	void CreateTriangles();
+	void CreateVerticesAndTriangles();
 
 	float Perlin_Noise(float x, float y, float scale = 1.f, float amplitude = 1.f);
 

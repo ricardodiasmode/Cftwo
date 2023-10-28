@@ -21,8 +21,7 @@ AProceduralTerrainGenerator::AProceduralTerrainGenerator()
 
 void AProceduralTerrainGenerator::GenerateTerrain()
 {
-	CreateVertices();
-	CreateTriangles();
+	CreateVerticesAndTriangles();
 
 	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
 
@@ -35,6 +34,13 @@ void AProceduralTerrainGenerator::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
+	static auto LastSetFoliage = Foliages;
+	for (int i = 0; i < Foliages.Num(); i++)
+	{
+		if (!(LastSetFoliage[i] == Foliages[i]))
+			return;
+	}
+
 	GenerateTerrain();
 }
 
@@ -46,45 +52,40 @@ void AProceduralTerrainGenerator::BeginPlay()
 	SpawnFoliage();
 }
 
-void AProceduralTerrainGenerator::CreateVertices()
+void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 {
 	Vertices.Reset();
 	UV0.Reset();
+
+	Triangles.Reset();
+
+	int CurrentVertex = 0;
 
 	for (int i = 0; i <= XSize; i++)
 	{
 		for (int j = 0; j <= YSize; j++)
 		{
+			// Creating vertices
 			float XAsFloat = static_cast<float>(i);
 			float YAsFloat = static_cast<float>(j);
-			Vertices.Add(FVector(i * Scale, j * Scale, Perlin_Noise(XAsFloat, YAsFloat, ZSmoothness)*ZMultiplier));
+			Vertices.Add(FVector(i * Scale, j * Scale, Perlin_Noise(XAsFloat, YAsFloat, ZSmoothness) * ZMultiplier));
 			UV0.Add(FVector2D(i * UVScale, j * UVScale));
+
+			// Creating triangles
+			if (i < XSize && j < YSize)
+			{
+				Triangles.Add(CurrentVertex);
+				Triangles.Add(CurrentVertex + 1);
+				Triangles.Add(CurrentVertex + YSize + 1);
+				Triangles.Add(CurrentVertex + 1);
+				Triangles.Add(CurrentVertex + YSize + 2);
+				Triangles.Add(CurrentVertex + YSize + 1);
+				CurrentVertex++;
+			}
 		}
-	}
-}
-
-void AProceduralTerrainGenerator::CreateTriangles()
-{
-	Triangles.Reset();
-
-	int CurrentVertex = 0;
-
-	for (int i = 0; i < XSize; i++)
-	{
-		for (int j = 0; j < YSize; j++)
-		{
-			Triangles.Add(CurrentVertex);
-			Triangles.Add(CurrentVertex + 1);
-			Triangles.Add(CurrentVertex + YSize + 1);
-			Triangles.Add(CurrentVertex + 1);
-			Triangles.Add(CurrentVertex + YSize + 2);
-			Triangles.Add(CurrentVertex + YSize + 1);
-
+		if (i < XSize)
 			CurrentVertex++;
-		}
-		CurrentVertex++;
 	}
-		
 }
 
 float AProceduralTerrainGenerator::Perlin_Noise(float x, float y, float scale, float amplitude) 
@@ -168,7 +169,6 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 			FVector EndWorldSpawnPoint = StartWorldSpawnPoint - FVector(0, 0, CollisionTraceRange * 2);
 
 			FHitResult OutHit;
-			DrawDebugLine(GetWorld(), StartWorldSpawnPoint, EndWorldSpawnPoint, FColor::Red, true);
 			if (GetWorld()->LineTraceSingleByChannel(OutHit,
 				StartWorldSpawnPoint, EndWorldSpawnPoint,
 				ECollisionChannel::ECC_Visibility) &&
@@ -181,11 +181,11 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 				float RandFloat = FMath::FRandRange(VerticalOffset * -2, VerticalOffset);
 
 				FVector LocationToSpawn = OutHit.Location + OutHit.Normal * RandFloat;
-				DrawDebugLine(GetWorld(), LocationToSpawn, LocationToSpawn + FVector(0.f, 0.f, 300.f), FColor::Green, true);
 
-				FRandomStream RandStream;
-				FRotator RotatorToSpawn = FRotationMatrix::MakeFromZX(OutHit.Normal,
-					RandStream.GetUnitVector()).Rotator();
+				const float RandPitch = FMath::FRandRange(0.f, 2.5f);
+				const float RandYaw = FMath::FRandRange(0.f, 359.f);
+				const float RandRoll = FMath::FRandRange(0.f, 2.5f);
+				FRotator RotatorToSpawn = FRotator(RandPitch, RandYaw, RandRoll);
 
 				float XScale = FMath::FRandRange(ScaleMin, ScaleMax);
 				float YScale = FMath::FRandRange(ScaleMin, ScaleMax);
