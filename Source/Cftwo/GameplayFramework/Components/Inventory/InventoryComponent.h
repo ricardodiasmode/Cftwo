@@ -21,10 +21,6 @@ private:
 	// {Amount} is the amount in the inventory
 	TMap<int, int> ItemMap;
 
-	// Array of items in the slot
-	UPROPERTY(ReplicatedUsing=UpdateInventory)
-	TArray<FInventorySlot> Slots;
-
 public:
 	AGameplayHUD* CharacterHUD = nullptr;
 
@@ -33,6 +29,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* WeaponsDataTable = nullptr;
+
+	// Array of items in the slot
+	UPROPERTY(ReplicatedUsing = UpdateInventory)
+	TArray<FInventorySlot> Slots;
 
 private:
 	/** Try to add the item in the correct slot
@@ -75,5 +75,4 @@ public:
 
 	FWeaponItem GetWeaponInfo(const int Index);
 
-	FInventorySlot GetItemSlot(const int Index) { return Slots[Index]; }
 };

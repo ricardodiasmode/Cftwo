@@ -57,6 +57,8 @@ void UWeaponComponent::OnHit()
 	if (!CanHit())
 		return;
 
+	GPrintDebugWithVar("weapon index: %d", GetEquippedWeaponByIndex(m_CurrentWeapon));
+	GPrintDebugWithVar("m_CurrentWeapon: %d", m_CurrentWeapon);
 	if (GetEquippedWeaponByIndex(m_CurrentWeapon) == -1)
 		OnPunch();
 	else

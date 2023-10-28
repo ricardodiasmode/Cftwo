@@ -133,7 +133,19 @@ void AGameplayCharacter::OnPunch()
 
 int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 {
-	FInventorySlot Slot = InventoryComponent->GetItemSlot(Id);
+	if (InventoryComponent->Slots.Num() <= Id)
+	{
+		GPrintDebug("InventoryComponent->Slots.Num() <= Id");
+		return -1;
+
+	}
+	if (Id == -1)
+	{
+		GPrintDebug("id == -1");
+		return -1;
+	}
+	GPrintDebug("got weapon id!");
+	FInventorySlot Slot = InventoryComponent->Slots[Id];
 	FInventoryItem ItemInfo = Slot.ItemInfo;
 	return ItemInfo.WeaponId;
 }
