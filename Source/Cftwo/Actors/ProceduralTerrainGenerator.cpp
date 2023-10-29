@@ -34,13 +34,6 @@ void AProceduralTerrainGenerator::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	static auto LastSetFoliage = Foliages;
-	for (int i = 0; i < Foliages.Num(); i++)
-	{
-		if (!(LastSetFoliage[i] == Foliages[i]))
-			return;
-	}
-
 	GenerateTerrain();
 }
 
@@ -152,6 +145,7 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 		InstancedComponentRef->SetGenerateOverlapEvents(true);
 		InstancedComponentRef->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 		InstancedComponentRef->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
+		InstancedComponentRef->SetCullDistances(0, 10000);
 		AddInstanceComponent(InstancedComponentRef);
 
 		for (int i = 0; i < CurrentFoliage.Amount; i++)

@@ -23,14 +23,6 @@ struct FFoliageToSpawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 1))
 	float ScaleMultiplier = 1;
 
-	bool operator==(const FFoliageToSpawn& x)
-	{
-		if (this->Mesh == x.Mesh && this->Amount == x.Amount && x.ScaleMultiplier == this->ScaleMultiplier)
-			return true;
-		else
-			return false;
-	}
-
 };
 
 UCLASS()
