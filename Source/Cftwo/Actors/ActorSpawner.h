@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "../Utils/GeneralFunctionLibrary.h"
 #include "ActorSpawner.generated.h"
 
 class UBoxComponent;
@@ -19,8 +20,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<struct FActorToSpawn> ActorsToSpawn;
 
+	TArray<FActorMatrix> ActorsSpawned;
+
 private:
-	void StartSpawnTimer();
+	UFUNCTION(Server, Reliable)
+	void Server_StartSpawnTimer();
 
 	void CheckShouldSpawn();
 	

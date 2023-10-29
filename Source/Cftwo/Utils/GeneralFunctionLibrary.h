@@ -11,6 +11,16 @@
 #define GMyLog(x) UE_LOG(LogTemp, Warning, TEXT(x));
 #define GMyLogWithVar(x, ...) UE_LOG(LogTemp, Warning, TEXT(x), __VA_ARGS__);
 
+USTRUCT()
+struct FActorMatrix
+{
+	GENERATED_BODY()
+public:
+	TArray<AActor*> ActorArray;
+
+	FActorMatrix() = default;
+};
+
 /**
  * 
  */

@@ -4,6 +4,7 @@
 #include "ActorSpawner.h"
 #include "Components/BoxComponent.h"
 #include "../Utils/ActorToSpawn.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AActorSpawner::AActorSpawner()
@@ -20,7 +21,7 @@ void AActorSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	StartSpawnTimer();
+	Server_StartSpawnTimer();
 }
 
 // Called every frame
@@ -30,7 +31,7 @@ void AActorSpawner::Tick(float DeltaTime)
 
 }
 
-void AActorSpawner::StartSpawnTimer()
+void AActorSpawner::Server_StartSpawnTimer_Implementation()
 {
 	FTimerHandle UnusedHandle;
 	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AActorSpawner::CheckShouldSpawn, 1.f, true, 0.1f);
@@ -38,16 +39,33 @@ void AActorSpawner::StartSpawnTimer()
 
 void AActorSpawner::CheckShouldSpawn()
 {
-
-	// Check if thee minimum of spawned actors are there
-	for (ActorsToSpawn)
+	for (int i=0;i < ActorsToSpawn.Num();i++)
 	{
-		// if not, spawn it
-		FVector StartLocation = UKismetMathLibrary::RandomPointInBoundingBox(SpawnerBounds->GetComponentLocation(),
-			SpawnerBounds->GetLocalBounds());
-		StartLocation.Z = GetActorLocation.Z + 10000.f;
-		FVector EndLocation = StartLocation - FVector(0.f, 0.f, -20000.f);
+		// Check if we have actors enough
+		if (ActorsSpawned.Num() - 1 < i)
+		{
+			ActorsSpawned.Add(FActorMatrix());
+		}
+		else {
+			if (ActorsSpawned[i].ActorArray.Num() - 1 > ActorsToSpawn[i].MinimumSpawned)
+				continue;
+		}
 
-		// do trace to hit ground
+		FVector StartLocation = UKismetMathLibrary::RandomPointInBoundingBox(SpawnerBounds->GetComponentLocation(),
+			SpawnerBounds->GetLocalBounds().BoxExtent);
+		StartLocation.Z = GetActorLocation().Z + 10000.f;
+		FVector EndLocation = StartLocation + FVector(0.f, 0.f, -20000.f);
+
+		FHitResult OutHit;
+		if (GetWorld()->LineTraceSingleByChannel(OutHit,
+			StartLocation, EndLocation,
+			ECollisionChannel::ECC_Visibility))
+		{
+			TSubclassOf<AActor> ClassToSpawn = ActorsToSpawn[i].ActorClass;
+			FTransform SpawnTransform(FRotator(), OutHit.ImpactPoint + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
+			ActorsSpawned[i].ActorArray.Add(
+				GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform)
+			);
+		}
 	}
 }
