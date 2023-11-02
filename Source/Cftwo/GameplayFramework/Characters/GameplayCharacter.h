@@ -36,6 +36,8 @@ private:
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* ChangeItemAction;
 
+		int CurrentHealth = 100.f;
+
 public:
 	// Controlls whether or not player is hitting
 	UPROPERTY(BlueprintReadOnly, Replicated)
@@ -51,7 +53,7 @@ public:
 
 private:
 	// Trigger player hitting status and set timer for stop hitting
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_OnHit();
 	// Handle for server
 	void OnHit();
@@ -74,6 +76,8 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void Server_ChangeItem(const bool Forward);
+
+	void Die();
 
 protected:
 	// Called when the game starts or when spawned
@@ -100,4 +104,6 @@ public:
 	FWeaponItem GetWeaponInfo(const int WeaponId) { return InventoryComponent->GetWeaponInfo(WeaponId); }
 
 	int GetWeaponIdOnSlot(const int Id);
+
+	void OnGetHitted(const float Damage);
 };

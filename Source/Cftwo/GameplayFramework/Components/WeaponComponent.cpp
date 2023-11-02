@@ -67,7 +67,6 @@ void UWeaponComponent::OnHit()
 
 void UWeaponComponent::OnPunch()
 {
-	GMyLog("onpunch");
 	FVector START_LOCATION = CharacterRef->GetActorLocation() +
 		CharacterRef->GetActorForwardVector() * 75.f;
 	FVector END_LOCATION = START_LOCATION;
@@ -95,7 +94,8 @@ void UWeaponComponent::OnPunch()
 		for (FHitResult CurrentHit : OutHits) {
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
-				// TODO: Damage CurrentCharacter	
+				CurrentCharacter->OnGetHitted(PUNCH_DAMAGE);
+				return;
 			}
 			else {
 				// Get object display name to know if is a breakable obj
@@ -106,6 +106,7 @@ void UWeaponComponent::OnPunch()
 					ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor());
 					BreakableObject->RemoveHP();
 					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
+					return;
 				}
 				else if (Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
 					FString ComponentName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent());
@@ -132,11 +133,13 @@ void UWeaponComponent::OnPunch()
 						BreakableSpawned->ItemToGive = RockIndex;
 						BreakableSpawned->RemoveHP();
 						CharacterRef->InventoryComponent->GiveItem(RockIndex, 1);
+						return;
 					}
 					else if (ComponentName.Contains("Tree")) {
 						int TreeIndex = 1;
 						BreakableSpawned->ItemToGive = TreeIndex;
 						CharacterRef->InventoryComponent->GiveItem(TreeIndex, 1);
+						return;
 					}
 				}
 			}
@@ -150,13 +153,10 @@ void UWeaponComponent::ChangeEquippedWeapon(const bool Forward)
 		m_CurrentWeapon = FMath::Clamp(m_CurrentWeapon + 1, -1, 5);
 	else
 		m_CurrentWeapon = FMath::Clamp(m_CurrentWeapon - 1, -1, 5);
-
-	GPrintDebugWithVar("Current weapon slot: %d", m_CurrentWeapon);
 }
 
 void UWeaponComponent::TryFireWeapon()
 {
-	GMyLog("tryfireweapon");
 	int EquippedWeaponId = CharacterRef->GetEquippedWeaponId(); // Get from inventory
 
 	FWeaponItem WeaponInfo = CharacterRef->GetWeaponInfo(EquippedWeaponId);

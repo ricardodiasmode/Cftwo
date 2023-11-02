@@ -35,6 +35,8 @@ class CFTWO_API UWeaponComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:
+	static constexpr int PUNCH_DAMAGE = 30.f;
+
 	// The slot of current equipped item. -1 Means no weapon equipped, so character will punch
 	int m_CurrentWeapon = -1;
 

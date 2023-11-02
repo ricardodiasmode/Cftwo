@@ -140,12 +140,23 @@ int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 
 	}
 	if (Id == -1)
-	{
-		GPrintDebug("id == -1");
 		return -1;
-	}
-	GPrintDebug("got weapon id!");
+
 	FInventorySlot Slot = InventoryComponent->Slots[Id];
 	FInventoryItem ItemInfo = Slot.ItemInfo;
 	return ItemInfo.WeaponId;
+}
+
+void AGameplayCharacter::OnGetHitted(const float Damage)
+{
+	CurrentHealth -= Damage;
+	GPrintDebugWithVar("current health: %d", CurrentHealth);
+
+	if (CurrentHealth <= 0.f)
+		Die();
+}
+
+void AGameplayCharacter::Die()
+{
+	Destroy();
 }
