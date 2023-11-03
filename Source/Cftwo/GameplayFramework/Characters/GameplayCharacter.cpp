@@ -29,11 +29,8 @@ void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AGameplayCharacter, Hitting);
 }
 
-// Called when the game starts or when spawned
-void AGameplayCharacter::BeginPlay()
+void AGameplayCharacter::Client_InitializeInventory_Implementation()
 {
-	Super::BeginPlay();
-
 	APlayerController* ControllerRef = Cast<APlayerController>(GetController());
 	if (ControllerRef) {
 		InventoryComponent->CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
@@ -158,5 +155,15 @@ void AGameplayCharacter::OnGetHitted(const float Damage)
 
 void AGameplayCharacter::Die()
 {
+	Client_OnDie();
 	Destroy();
+}
+
+void AGameplayCharacter::Client_OnDie_Implementation()
+{
+	APlayerController* ControllerRef = Cast<APlayerController>(GetController());
+	if (ControllerRef) {
+		AGameplayHUD* CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
+		CharacterHUD->OnDie();
+	}
 }

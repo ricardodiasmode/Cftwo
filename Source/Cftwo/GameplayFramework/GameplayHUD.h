@@ -27,5 +27,7 @@ protected:
 
 public:
 	void UpdateInventory(TArray<FInventorySlot> SlotsRef);
+
+	void OnDie();
 	
 };

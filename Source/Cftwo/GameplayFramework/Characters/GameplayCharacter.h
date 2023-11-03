@@ -79,9 +79,10 @@ private:
 
 	void Die();
 
+	UFUNCTION(Client, reliable)
+	void Client_OnDie();
+
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value) override;
@@ -92,6 +93,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(Client, reliable)
+	void Client_InitializeInventory();
 
 	// Called by server to fire a punch effect
 	UFUNCTION(BlueprintCallable)

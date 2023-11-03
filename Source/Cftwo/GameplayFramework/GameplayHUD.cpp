@@ -17,8 +17,13 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
     if (!IsValid(InventoryWidget)) {
         return;
     }
-    
+
     InventoryWidget->Slots.Empty();
     InventoryWidget->Slots.Append(SlotsRef);
     InventoryWidget->UpdateSlots();
+}
+
+void AGameplayHUD::OnDie()
+{
+    // create respawn widget
 }
