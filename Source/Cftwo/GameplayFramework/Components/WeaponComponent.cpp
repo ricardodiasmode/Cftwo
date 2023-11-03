@@ -57,8 +57,6 @@ void UWeaponComponent::OnHit()
 	if (!CanHit())
 		return;
 
-	GPrintDebugWithVar("weapon index: %d", GetEquippedWeaponByIndex(m_CurrentWeapon));
-	GPrintDebugWithVar("m_CurrentWeapon: %d", m_CurrentWeapon);
 	if (GetEquippedWeaponByIndex(m_CurrentWeapon) == -1)
 		OnPunch();
 	else
@@ -103,25 +101,31 @@ void UWeaponComponent::OnPunch()
 
 				// Check if was already converted
 				if (Cast<ABreakableObject>(CurrentHit.GetActor())) {
+					GPrintDebug("a");
 					ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor());
 					BreakableObject->RemoveHP();
 					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
 					return;
 				}
 				else if (Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
+					GPrintDebug("b");
+
 					FString ComponentName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent());
 					if (!ComponentName.Contains("Breakable"))
 						return;
+
 					UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent());
 					
 					TArray<int> InstancesOverlapped = InstancedComp->GetInstancesOverlappingSphere(CurrentHit.Location, RADIUS, true);
 					const int InstanceIndex = InstancesOverlapped.IsEmpty() ? 0 : InstancesOverlapped[0];
+					GPrintDebugWithVar("Removing index: %d", InstanceIndex);
 
 					// Removing foliage
 					UStaticMesh* FoliageInstanceMesh = InstancedComp->GetStaticMesh();
 					FTransform FoliageInstanceTransform;
 					InstancedComp->GetInstanceTransform(InstanceIndex,
 						FoliageInstanceTransform, true);
+					InstancedComp->RemoveInstance(InstanceIndex);
 
 					// Spawning breakable obj
 					ABreakableObject* BreakableSpawned = GetWorld()->SpawnActor<ABreakableObject>(ABreakableObject::StaticClass(), FoliageInstanceTransform);
