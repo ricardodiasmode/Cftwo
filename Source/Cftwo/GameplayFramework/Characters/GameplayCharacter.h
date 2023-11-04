@@ -49,6 +49,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInventoryComponent* InventoryComponent = nullptr;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* WeaponMesh = nullptr;
+
 	int SelectedItemToCraft = 2;
 
 private:
@@ -101,13 +104,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnPunch();
 
-	int GetEquippedWeaponId() const { return WeaponComponent->GetCurrentWeapon(); }
+	int GetEquippedWeaponItemId();
+	int GetEquippedWeaponId();
 
-	bool IsEquippedWeaponFireWeapon() { return InventoryComponent->IsFireWeapon(GetEquippedWeaponId()); }
+	bool IsEquippedWeaponFireWeapon();
+
+	UFUNCTION(BlueprintPure)
+	bool FireWeaponEquipped() { return WeaponComponent->FireWeaponEquipped; }
 
 	FWeaponItem GetWeaponInfo(const int WeaponId) { return InventoryComponent->GetWeaponInfo(WeaponId); }
 
 	int GetWeaponIdOnSlot(const int Id);
 
 	void OnGetHitted(const float Damage);
+
+	void OnWeaponChange(UStaticMesh* WeaponMeshRef);
 };

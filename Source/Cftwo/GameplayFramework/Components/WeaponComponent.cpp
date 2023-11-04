@@ -101,14 +101,12 @@ void UWeaponComponent::OnPunch()
 
 				// Check if was already converted
 				if (Cast<ABreakableObject>(CurrentHit.GetActor())) {
-					GPrintDebug("a");
 					ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor());
 					BreakableObject->RemoveHP();
 					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
 					return;
 				}
 				else if (Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
-					GPrintDebug("b");
 
 					FString ComponentName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent());
 					if (!ComponentName.Contains("Breakable"))
@@ -118,7 +116,6 @@ void UWeaponComponent::OnPunch()
 					
 					TArray<int> InstancesOverlapped = InstancedComp->GetInstancesOverlappingSphere(CurrentHit.Location, RADIUS, true);
 					const int InstanceIndex = InstancesOverlapped.IsEmpty() ? 0 : InstancesOverlapped[0];
-					GPrintDebugWithVar("Removing index: %d", InstanceIndex);
 
 					// Removing foliage
 					UStaticMesh* FoliageInstanceMesh = InstancedComp->GetStaticMesh();
@@ -157,11 +154,20 @@ void UWeaponComponent::ChangeEquippedWeapon(const bool Forward)
 		m_CurrentWeapon = FMath::Clamp(m_CurrentWeapon + 1, -1, 5);
 	else
 		m_CurrentWeapon = FMath::Clamp(m_CurrentWeapon - 1, -1, 5);
+
+	FireWeaponEquipped = CharacterRef->IsEquippedWeaponFireWeapon();
+	if (FireWeaponEquipped) {
+		int EquippedWeaponId = CharacterRef->GetEquippedWeaponId();
+		CharacterRef->OnWeaponChange(CharacterRef->GetWeaponInfo(EquippedWeaponId).Mesh);
+	}
+	else {
+		CharacterRef->OnWeaponChange(nullptr);
+	}
 }
 
 void UWeaponComponent::TryFireWeapon()
 {
-	int EquippedWeaponId = CharacterRef->GetEquippedWeaponId(); // Get from inventory
+	int EquippedWeaponId = CharacterRef->GetEquippedWeaponId();
 
 	FWeaponItem WeaponInfo = CharacterRef->GetWeaponInfo(EquippedWeaponId);
 	if (CharacterRef->IsEquippedWeaponFireWeapon())

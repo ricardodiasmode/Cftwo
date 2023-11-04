@@ -71,6 +71,8 @@ public:
 
 	void HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>* Indexes, TArray<int>* Amount);
 
+	bool IsWeapon(const int ItemId) { return GetItemInfo(ItemId).WeaponId != -1; }
+
 	bool IsFireWeapon(const int ItemId) { return GetWeaponInfo(ItemId).FireWeapon; }
 
 	FWeaponItem GetWeaponInfo(const int Index);

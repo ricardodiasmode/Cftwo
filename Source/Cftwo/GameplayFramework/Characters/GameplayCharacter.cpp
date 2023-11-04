@@ -21,6 +21,9 @@ AGameplayCharacter::AGameplayCharacter()
 		WeaponComponent->CharacterRef = this;
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+
+	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh->SetupAttachment(GetMesh(), "DEF-hand_L");
 }
 
 void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
@@ -166,4 +169,39 @@ void AGameplayCharacter::Client_OnDie_Implementation()
 		AGameplayHUD* CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
 		CharacterHUD->OnDie();
 	}
+}
+
+int AGameplayCharacter::GetEquippedWeaponItemId()
+{
+	const int WeaponSlotId = WeaponComponent->GetCurrentWeapon();
+	if (WeaponSlotId == -1)
+		return -1;
+	return InventoryComponent->Slots[WeaponSlotId].ItemInfo.Index;
+}
+
+int AGameplayCharacter::GetEquippedWeaponId()
+{
+	const int WeaponSlotId = WeaponComponent->GetCurrentWeapon();
+	if (WeaponSlotId == -1)
+		return -1;
+	return InventoryComponent->Slots[WeaponSlotId].ItemInfo.WeaponId;
+}
+
+bool AGameplayCharacter::IsEquippedWeaponFireWeapon()
+{
+	const int WeaponIdOnItemsDT = GetEquippedWeaponItemId();
+	const int WeaponIdOnWeaponsDT = GetEquippedWeaponId();
+
+	if (WeaponIdOnItemsDT == -1 ||
+		WeaponIdOnWeaponsDT == -1)
+		return false;
+
+	return
+		InventoryComponent->IsWeapon(WeaponIdOnItemsDT) &&
+		InventoryComponent->IsFireWeapon(WeaponIdOnWeaponsDT);
+}
+
+void AGameplayCharacter::OnWeaponChange(UStaticMesh* WeaponMeshRef)
+{
+	WeaponMesh->SetStaticMesh(WeaponMeshRef);
 }

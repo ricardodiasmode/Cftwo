@@ -48,6 +48,8 @@ private:
 public:
 	AGameplayCharacter* CharacterRef = nullptr;
 
+	bool FireWeaponEquipped = false;
+
 private:
 	void TryFireWeapon();
 

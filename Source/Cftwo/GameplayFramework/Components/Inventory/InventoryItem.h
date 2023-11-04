@@ -38,4 +38,6 @@ public:
 	bool FireWeapon = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<ABaseProjectile> ProjectileClassToSpawn;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UStaticMesh* Mesh = nullptr;
 };
