@@ -22,12 +22,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AGameplayCharacter> GameplayCharacterClass;
 
-private:
-	void SpawnPlayerCharacter(APlayerController* NewPlayer);
-
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+public:
+	void SpawnPlayerCharacter(APlayerController* NewPlayer);
 	
 };

@@ -2,4 +2,11 @@
 
 
 #include "GameplayPlayerController.h"
+#include "GameplayGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
+void AGameplayPlayerController::Server_AskToRespawn_Implementation()
+{
+	AGameplayGameMode* GMRef = Cast<AGameplayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GMRef->SpawnPlayerCharacter(this);
+}

@@ -18,9 +18,12 @@ class CFTWO_API AGameplayHUD : public AHUD
 private:
 	UPROPERTY()
 	UInventoryWidget* InventoryWidget = nullptr;
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> InventoryWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> RespawnWidgetClass;
 
 protected:
 	virtual void BeginPlay() override;
@@ -29,5 +32,7 @@ public:
 	void UpdateInventory(TArray<FInventorySlot> SlotsRef);
 
 	void OnDie();
+
+	void OnRespawn();
 	
 };

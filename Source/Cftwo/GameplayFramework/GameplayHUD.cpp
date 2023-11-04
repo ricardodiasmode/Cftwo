@@ -4,6 +4,8 @@
 #include "GameplayHUD.h"
 #include "../Utils/GeneralFunctionLibrary.h"
 #include "../UI/Inventory/InventoryWidget.h"
+#include "../UI/RespawnWidget.h"
+#include "GameplayPlayerController.h"
 
 void AGameplayHUD::BeginPlay()
 {
@@ -23,7 +25,18 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
     InventoryWidget->UpdateSlots();
 }
 
+void AGameplayHUD::OnRespawn()
+{
+    GetOwningPlayerController()->SetShowMouseCursor(false);
+    GetOwningPlayerController()->SetInputMode(FInputModeGameOnly());
+    AGameplayPlayerController* PCRef = Cast<AGameplayPlayerController>(GetOwningPlayerController());
+    PCRef->Server_AskToRespawn();
+}
+
 void AGameplayHUD::OnDie()
 {
-    // create respawn widget
+    GetOwningPlayerController()->SetShowMouseCursor(true);
+    GetOwningPlayerController()->SetInputMode(FInputModeUIOnly());
+    URespawnWidget* RespawnWidget = CreateWidget<URespawnWidget>(GetWorld(), RespawnWidgetClass);
+    RespawnWidget->AddToViewport();
 }

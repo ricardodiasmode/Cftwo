@@ -14,4 +14,7 @@ class CFTWO_API AGameplayPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(Server, reliable)
+	void Server_AskToRespawn();
 };
