@@ -8,6 +8,7 @@
 #include "GameplayHUD.generated.h"
 
 class UInventoryWidget;
+class UCraftWidget;
 /**
  * 
  */
@@ -19,12 +20,17 @@ private:
 	UPROPERTY()
 	UInventoryWidget* InventoryWidget = nullptr;
 
+	UCraftWidget* CraftWidget = nullptr;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> InventoryWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> RespawnWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> CraftWidgetClass;
+	
 protected:
 	virtual void BeginPlay() override;
 

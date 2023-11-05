@@ -69,10 +69,6 @@ private:
 	// Server check whether or not player can craft the selected item
 	UFUNCTION(Server, Reliable)
 	void Server_TryCraft(const int ItemIndex);
-
-	// Handle for server
-	UFUNCTION(Client, Reliable)
-	void Client_OnCraft();
 	void OnCraft();
 
 	void OnChangeItem(const FInputActionValue& Value);
@@ -96,6 +92,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// Handle for server
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_OnCraft();
 
 	UFUNCTION(Client, reliable)
 	void Client_InitializeInventory();

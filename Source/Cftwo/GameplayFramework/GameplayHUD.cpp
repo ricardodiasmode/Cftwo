@@ -5,6 +5,7 @@
 #include "../Utils/GeneralFunctionLibrary.h"
 #include "../UI/Inventory/InventoryWidget.h"
 #include "../UI/RespawnWidget.h"
+#include "../UI/CraftWidget.h"
 #include "GameplayPlayerController.h"
 
 void AGameplayHUD::BeginPlay()
@@ -12,6 +13,9 @@ void AGameplayHUD::BeginPlay()
     Super::BeginPlay();
     InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
     InventoryWidget->AddToViewport();
+
+    CraftWidget = CreateWidget<UCraftWidget>(GetWorld(), CraftWidgetClass);
+    CraftWidget->AddToViewport();
 }
 
 void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
@@ -23,6 +27,8 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
     InventoryWidget->Slots.Empty();
     InventoryWidget->Slots.Append(SlotsRef);
     InventoryWidget->UpdateSlots();
+
+    CraftWidget->OnUpdateAvailableItems(SlotsRef);
 }
 
 void AGameplayHUD::OnRespawn()
