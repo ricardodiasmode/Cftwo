@@ -55,6 +55,6 @@ void AGameplayGameMode::SpawnPlayerCharacter(APlayerController* NewPlayer)
 		AGameplayCharacter* CharacterRef = GetWorld()->SpawnActor<AGameplayCharacter>(GameplayCharacterClass, RandomLoc, FRotator(0), SpawnInfo);
 		NewPlayer->Possess(CharacterRef);
 		CharacterRef->Client_InitializeInventory();
-		GPrintDebug("spawning");
+		CharacterRef->Client_InitializeStatusWidget();
 	}
 }

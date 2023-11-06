@@ -41,6 +41,14 @@ void AGameplayCharacter::Client_InitializeInventory_Implementation()
 	}
 }
 
+void AGameplayCharacter::Client_InitializeStatusWidget_Implementation()
+{
+	APlayerController* ControllerRef = Cast<APlayerController>(GetController());
+	if (ControllerRef) {
+		Cast<AGameplayHUD>(ControllerRef->GetHUD())->InitializeStatusWidget();
+	}
+}
+
 // Called to bind functionality to input
 void AGameplayCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -150,7 +158,13 @@ int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 void AGameplayCharacter::OnGetHitted(const float Damage)
 {
 	CurrentHealth -= Damage;
-	GPrintDebugWithVar("current health: %d", CurrentHealth);
+	if (CurrentHealth < 0.f)
+		CurrentHealth = 0.f;
+
+	APlayerController* ControllerRef = Cast<APlayerController>(GetController());
+	if (ControllerRef) {
+		Cast<AGameplayHUD>(ControllerRef->GetHUD())->OnUpdateHealth(CurrentHealth);
+	}
 
 	if (CurrentHealth <= 0.f)
 		Die();

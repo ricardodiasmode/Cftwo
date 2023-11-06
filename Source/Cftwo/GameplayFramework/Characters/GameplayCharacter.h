@@ -36,8 +36,6 @@ private:
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* ChangeItemAction;
 
-		int CurrentHealth = 100.f;
-
 public:
 	// Controlls whether or not player is hitting
 	UPROPERTY(BlueprintReadOnly, Replicated)
@@ -53,6 +51,14 @@ public:
 	UStaticMeshComponent* WeaponMesh = nullptr;
 
 	int SelectedItemToCraft = 2;
+
+	float CurrentHealth = 100.f;
+
+	float MaxHealth = 100.f;
+
+	float CurrentHungry = 100.f;
+
+	float MaxHungry = 100.f;
 
 private:
 	// Trigger player hitting status and set timer for stop hitting
@@ -99,6 +105,9 @@ public:
 
 	UFUNCTION(Client, reliable)
 	void Client_InitializeInventory();
+
+	UFUNCTION(Client, reliable)
+	void Client_InitializeStatusWidget();
 
 	// Called by server to fire a punch effect
 	UFUNCTION(BlueprintCallable)

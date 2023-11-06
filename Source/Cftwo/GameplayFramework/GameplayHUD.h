@@ -9,6 +9,8 @@
 
 class UInventoryWidget;
 class UCraftWidget;
+class UStatusWidget;
+
 /**
  * 
  */
@@ -22,6 +24,8 @@ private:
 
 	UCraftWidget* CraftWidget = nullptr;
 
+	UStatusWidget* StatusWidget = nullptr;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> InventoryWidgetClass;
 
@@ -30,6 +34,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> CraftWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> StatusWidgetClass;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -37,8 +44,14 @@ protected:
 public:
 	void UpdateInventory(TArray<FInventorySlot> SlotsRef);
 
+	void InitializeStatusWidget();
+
 	void OnDie();
 
 	void OnRespawn();
+
+	void OnUpdateHealth(const float CurrentHealth);
+
+	void OnUpdateHungry(const float CurrentHungry);
 	
 };
