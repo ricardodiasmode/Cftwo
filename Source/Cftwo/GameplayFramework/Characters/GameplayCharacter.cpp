@@ -172,6 +172,7 @@ void AGameplayCharacter::OnGetHitted(const float Damage)
 
 void AGameplayCharacter::Die()
 {
+	InventoryComponent->DropAllItems();
 	Client_OnDie();
 	Destroy();
 }

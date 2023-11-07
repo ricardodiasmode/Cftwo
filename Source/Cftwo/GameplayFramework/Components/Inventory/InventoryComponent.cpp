@@ -4,8 +4,10 @@
 #include "InventoryComponent.h"
 #include "Math/UnrealMathUtility.h"
 #include "Net/UnrealNetwork.h"
+#include "../../../Actors/Pickable.h"
 #include "../../GameplayHUD.h"
 #include "../../../Utils/GeneralFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -200,4 +202,24 @@ void UInventoryComponent::TryCraft(const int ItemToCraft)
 	}
 
 	GiveItem(ItemToCraft, 1);
+}
+
+void UInventoryComponent::DropAllItems()
+{
+	FActorSpawnParameters SpawnInfo;
+	FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
+
+	for (int i = 0; i < Slots.Num(); i++)
+	{
+		if (Slots[i].Amount == 0)
+			continue;
+
+		const int ItemIndex = Slots[i].ItemInfo.Index;
+		const int ItemAmount = Slots[i].Amount;
+		FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
+		APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+		CurrentPickable->ItemId = ItemIndex;
+		CurrentPickable->Amount = ItemAmount;
+		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+	}
 }

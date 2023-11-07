@@ -25,6 +25,8 @@ public:
 	TArray<FItemRecipe> Recipe;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int WeaponId = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UStaticMesh* Mesh = nullptr;
 };
 
 USTRUCT(BlueprintType)

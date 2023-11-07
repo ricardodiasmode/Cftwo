@@ -34,6 +34,9 @@ public:
 	UPROPERTY(ReplicatedUsing = UpdateInventory)
 	TArray<FInventorySlot> Slots;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class APickable> PickableClass;
+
 private:
 	/** Try to add the item in the correct slot
 	 * @return The amount of the {ItemIndex} that can be added given the amount that want add
@@ -77,4 +80,5 @@ public:
 
 	FWeaponItem GetWeaponInfo(const int Index);
 
+	void DropAllItems();
 };
