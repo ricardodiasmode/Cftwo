@@ -36,6 +36,10 @@ private:
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* ChangeItemAction;
 
+		/** Pick Item Input Action */
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* PickItemAction;
+
 public:
 	// Controlls whether or not player is hitting
 	UPROPERTY(BlueprintReadOnly, Replicated)
@@ -86,6 +90,12 @@ private:
 
 	UFUNCTION(Client, reliable)
 	void Client_OnDie();
+
+	// Redirector for input
+	void PickItem();
+
+	UFUNCTION(Server, reliable)
+	void Server_TryPickItem();
 
 protected:
 

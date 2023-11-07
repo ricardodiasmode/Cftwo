@@ -11,7 +11,7 @@ APickable::APickable()
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	RootComponent = StaticMesh;
-	StaticMesh->SetCollisionObjectType(ECC_WorldStatic);
+	StaticMesh->SetCollisionObjectType(ECC_GameTraceChannel1);
 	StaticMesh->SetSimulatePhysics(true);
 }
 
@@ -26,5 +26,10 @@ void APickable::BeginPlay()
 FInventoryItem APickable::GetItemInfo(const int Index)
 {
 	return *(ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(Index))), ""));
+}
+
+void APickable::OnPick()
+{
+	Destroy();
 }
 

@@ -9,6 +9,8 @@
 #include "../Components/Inventory/InventoryComponent.h"
 #include "../../Utils/GeneralFunctionLibrary.h"
 #include "../GameplayHUD.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "../../Actors/Pickable.h"
 
 // Sets default values
 AGameplayCharacter::AGameplayCharacter()
@@ -67,6 +69,10 @@ void AGameplayCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		//ChangingItem
 		EnhancedInputComponent->BindAction(ChangeItemAction, ETriggerEvent::Started,
 			this, &AGameplayCharacter::OnChangeItem);
+
+		//ChangingItem
+		EnhancedInputComponent->BindAction(PickItemAction, ETriggerEvent::Started,
+			this, &AGameplayCharacter::PickItem);
 	}
 }
 
@@ -219,4 +225,44 @@ bool AGameplayCharacter::IsEquippedWeaponFireWeapon()
 void AGameplayCharacter::OnWeaponChange(UStaticMesh* WeaponMeshRef)
 {
 	WeaponMesh->SetStaticMesh(WeaponMeshRef);
+}
+
+void AGameplayCharacter::PickItem()
+{
+	Server_TryPickItem();
+}
+
+void AGameplayCharacter::Server_TryPickItem_Implementation()
+{
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjTypes;
+	ObjTypes.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1));
+
+	TArray<AActor*> IgnoredActors;
+	IgnoredActors.Add(this);
+
+	TArray<FHitResult> OutHits;
+
+	FVector StartLoc = GetActorLocation() + GetActorForwardVector() * 50.f;
+	FVector FinishLoc = GetActorLocation() + GetActorForwardVector() * 50.f;
+	UKismetSystemLibrary::SphereTraceMultiForObjects(
+		GetWorld(),
+		StartLoc,
+		FinishLoc,
+		90.f,
+		ObjTypes,
+		false,
+		IgnoredActors,
+		EDrawDebugTrace::None,
+		OutHits,
+		true
+	);
+
+	for (FHitResult CurrentHit : OutHits)
+	{
+		if (APickable* CurrentPickable = Cast<APickable>(CurrentHit.GetActor()))
+		{
+			InventoryComponent->GiveItem(CurrentPickable->ItemId, CurrentPickable->Amount);
+			CurrentPickable->OnPick();
+		}
+	}
 }

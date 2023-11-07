@@ -32,4 +32,6 @@ public:
 
 	FInventoryItem GetItemInfo(const int Index);
 
+	void OnPick();
+
 };
