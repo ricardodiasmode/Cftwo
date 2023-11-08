@@ -4,6 +4,7 @@
 #include "WeaponComponent.h"
 #include "../Characters/GameplayCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "../Actors/BreakableFoliage.h"
 #include "../Characters/GameplayCharacter.h"
@@ -11,6 +12,7 @@
 #include "../../Utils/GeneralFunctionLibrary.h"
 #include "Inventory/InventoryComponent.h"
 #include "InstancedFoliageActor.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -172,19 +174,55 @@ void UWeaponComponent::TryFireWeapon()
 	FWeaponItem WeaponInfo = CharacterRef->GetWeaponInfo(EquippedWeaponId);
 	if (CharacterRef->IsEquippedWeaponFireWeapon())
 	{
-		SpawnProjectile(WeaponInfo.ProjectileClassToSpawn);
+		Client_SpawnProjectile(WeaponInfo.ProjectileClassToSpawn);
 	}
 	else {
 		// AttackWithMeleeWeapon();
 	}
 }
 
-void UWeaponComponent::SpawnProjectile(TSubclassOf<ABaseProjectile> ProjectileToSpawnClass)
+void UWeaponComponent::Client_SpawnProjectile_Implementation(TSubclassOf<ABaseProjectile> ProjectileToSpawnClass)
+{
+	Server_SpawnProjectile(CharacterRef->GetFollowCamera()->GetForwardVector(),
+		CharacterRef->GetFollowCamera()->GetComponentLocation(),
+		ProjectileToSpawnClass);
+}
+
+void UWeaponComponent::Server_SpawnProjectile_Implementation(FVector CameraForward, FVector CameraLoc, TSubclassOf<ABaseProjectile> ProjectileToSpawnClass)
 {
 	FActorSpawnParameters SpawnInfo;
 	FVector SpawnLoc = CharacterRef->GetActorLocation() + CharacterRef->GetActorForwardVector() * 60.f;
+
+	FHitResult OutHit;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(CharacterRef);
+	GetWorld()->LineTraceSingleByChannel(
+		OutHit,
+		CameraLoc,
+		CameraLoc + (CameraForward * 10000.f),
+		ECollisionChannel::ECC_Visibility,
+		QueryParams
+	);
+
 	FRotator SpawnRot = CharacterRef->GetActorRotation();
+	FVector ActorForward = CharacterRef->GetActorForwardVector();
+	FVector FinalFirstHitLoc = OutHit.bBlockingHit ? OutHit.ImpactPoint : OutHit.TraceEnd;
+	const bool HitOnFrontOfCharacter = (ActorForward.Dot(FinalFirstHitLoc - CharacterRef->GetActorLocation()) > 0);
+	if (HitOnFrontOfCharacter)
+	{
+		GetWorld()->LineTraceSingleByChannel(
+			OutHit,
+			SpawnLoc,
+			FinalFirstHitLoc,
+			ECollisionChannel::ECC_Visibility,
+			QueryParams
+		);
+		FVector FinalLoc = OutHit.bBlockingHit ? OutHit.ImpactPoint : OutHit.TraceEnd;
+		SpawnRot = UKismetMathLibrary::FindLookAtRotation(SpawnLoc, FinalLoc);
+	}
+
 	GetWorld()->SpawnActor<ABaseProjectile>(ProjectileToSpawnClass, SpawnLoc, SpawnRot, SpawnInfo);
+	CharacterRef->SetActorRotation(FRotator(0.f, SpawnRot.Yaw, 0.f));
 }
 
 int UWeaponComponent::GetEquippedWeaponByIndex(const int Id)

@@ -55,7 +55,11 @@ private:
 
 	void FireBow();
 
-	void SpawnProjectile(TSubclassOf<ABaseProjectile> ProjectileToSpawnClass);
+	UFUNCTION(Server, reliable)
+	void Server_SpawnProjectile(FVector CameraForward, FVector CameraLoc, TSubclassOf<ABaseProjectile> ProjectileToSpawnClass);
+
+	UFUNCTION(Client, reliable)
+	void Client_SpawnProjectile(TSubclassOf<ABaseProjectile> ProjectileToSpawnClass);
 
 protected:
 	// Called when the game starts

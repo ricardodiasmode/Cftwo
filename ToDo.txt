@@ -1,0 +1,2 @@
+- lod das arvores;
+- otimizar pedras;
