@@ -161,7 +161,7 @@ int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 	return ItemInfo.WeaponId;
 }
 
-void AGameplayCharacter::OnGetHitted(const float Damage)
+void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 {
 	CurrentHealth -= Damage;
 	if (CurrentHealth < 0.f)

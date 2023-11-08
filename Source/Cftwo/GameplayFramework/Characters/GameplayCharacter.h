@@ -135,7 +135,8 @@ public:
 
 	int GetWeaponIdOnSlot(const int Id);
 
-	void OnGetHitted(const float Damage);
+	UFUNCTION(Server, reliable)
+	void Server_OnGetHitted(const float Damage);
 
 	void OnWeaponChange(UStaticMesh* WeaponMeshRef);
 };

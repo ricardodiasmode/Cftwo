@@ -13,6 +13,7 @@
 #include "Inventory/InventoryComponent.h"
 #include "InstancedFoliageActor.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -94,7 +95,7 @@ void UWeaponComponent::OnPunch()
 		for (FHitResult CurrentHit : OutHits) {
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
-				CurrentCharacter->OnGetHitted(PUNCH_DAMAGE);
+				CurrentCharacter->Server_OnGetHitted(PUNCH_DAMAGE);
 				return;
 			}
 			else {
@@ -221,7 +222,10 @@ void UWeaponComponent::Server_SpawnProjectile_Implementation(FVector CameraForwa
 		SpawnRot = UKismetMathLibrary::FindLookAtRotation(SpawnLoc, FinalLoc);
 	}
 
-	GetWorld()->SpawnActor<ABaseProjectile>(ProjectileToSpawnClass, SpawnLoc, SpawnRot, SpawnInfo);
+	FTransform TransformToSpawn(FTransform(SpawnRot, SpawnLoc, FVector(1)));
+	ABaseProjectile* ProjectileRef = GetWorld()->SpawnActorDeferred<ABaseProjectile>(ProjectileToSpawnClass, TransformToSpawn, CharacterRef, CharacterRef);
+	UGameplayStatics::FinishSpawningActor(ProjectileRef, TransformToSpawn);
+
 	CharacterRef->SetActorRotation(FRotator(0.f, SpawnRot.Yaw, 0.f));
 }
 
