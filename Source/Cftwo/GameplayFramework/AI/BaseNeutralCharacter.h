@@ -12,11 +12,14 @@ class CFTWO_API ABaseNeutralCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
+	// <id, max amount>
 	UPROPERTY(EditDefaultsOnly)
 	TMap<int, int> ItemsToDrop;
 
 	UPROPERTY(BlueprintReadOnly)
 	float CurrentHealth = 100.f;
+
+	int HarvestLeft = 3;
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,4 +37,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();
+
+	bool AmIAlive() const { return CurrentHealth > 0.f; }
+
+	TPair<int, int> OnHarvest();
 };

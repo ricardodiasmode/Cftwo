@@ -32,3 +32,14 @@ void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage
 		Die();
 }
 
+TPair<int, int> ABaseNeutralCharacter::OnHarvest()
+{
+	const float RandomId = FMath::RandRange(0, ItemsToDrop.Num() - 1);
+	const float RandomAmount = FMath::RandRange(1, ItemsToDrop[RandomId]);
+
+	HarvestLeft--;
+	if (HarvestLeft == 0)
+		Destroy();
+
+	return TPair<int, int>(RandomId, RandomAmount);
+}

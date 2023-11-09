@@ -139,4 +139,6 @@ public:
 	void Server_OnGetHitted(const float Damage);
 
 	void OnWeaponChange(UStaticMesh* WeaponMeshRef);
+
+	void AddItem(TPair<int, int> ItemToAdd);
 };

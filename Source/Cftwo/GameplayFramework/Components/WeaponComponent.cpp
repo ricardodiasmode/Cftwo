@@ -101,7 +101,10 @@ void UWeaponComponent::OnPunch()
 			}
 			else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
-				CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE);
+				if (CurrentIA->AmIAlive())
+					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE);
+				else
+					CharacterRef->AddItem(CurrentIA->OnHarvest());
 				return;
 			}
 			else {

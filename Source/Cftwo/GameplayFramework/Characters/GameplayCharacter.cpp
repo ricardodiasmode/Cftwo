@@ -266,3 +266,8 @@ void AGameplayCharacter::Server_TryPickItem_Implementation()
 		}
 	}
 }
+
+void AGameplayCharacter::AddItem(TPair<int, int> ItemToAdd)
+{
+	InventoryComponent->GiveItem(ItemToAdd.Key, ItemToAdd.Value);
+}
