@@ -3,6 +3,7 @@
 
 #include "BaseProjectile.h"
 #include "../GameplayFramework/Characters/GameplayCharacter.h"
+#include "../GameplayFramework/AI/BaseNeutralCharacter.h"
 #include "Components/SphereComponent.h"
 #include "../Utils/GeneralFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -30,14 +31,16 @@ void ABaseProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 	if (OtherActor == GetOwner())
 		return;
 
-	GPrintDebugWithVar("%s", *(UKismetSystemLibrary::GetDisplayName(OtherActor)));
-
 	if (AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(OtherActor))
 	{
 		CharacterRef->Server_OnGetHitted(Damage);
-		GPrintDebug("hitted player");
 	}
-	GPrintDebug("hitted something");
+	else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(OtherActor))
+	{
+		CurrentIA->Server_OnGetHitted(Damage);
+		return;
+	}
+
 	Destroy();
 }
 

@@ -18,17 +18,17 @@ void ABaseNeutralCharacter::BeginPlay()
 	
 }
 
-// Called every frame
-void ABaseNeutralCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 // Called to bind functionality to input
 void ABaseNeutralCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage)
+{
+	CurrentHealth -= Damage;
+	if (CurrentHealth <= 0)
+		Die();
 }
 

@@ -8,6 +8,7 @@
 #include "Components/InstancedStaticMeshComponent.h"
 #include "../Actors/BreakableFoliage.h"
 #include "../Characters/GameplayCharacter.h"
+#include "../AI/BaseNeutralCharacter.h"
 #include "../../Actors/BreakableObject.h"
 #include "../../Utils/GeneralFunctionLibrary.h"
 #include "Inventory/InventoryComponent.h"
@@ -96,6 +97,11 @@ void UWeaponComponent::OnPunch()
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
 				CurrentCharacter->Server_OnGetHitted(PUNCH_DAMAGE);
+				return;
+			}
+			else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
+			{
+				CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE);
 				return;
 			}
 			else {
