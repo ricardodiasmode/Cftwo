@@ -2,6 +2,7 @@
 
 
 #include "BaseNeutralCharacter.h"
+#include "../../Utils/GeneralFunctionLibrary.h"
 
 // Sets default values
 ABaseNeutralCharacter::ABaseNeutralCharacter()
@@ -34,7 +35,18 @@ void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage
 
 TPair<int, int> ABaseNeutralCharacter::OnHarvest()
 {
-	const float RandomId = FMath::RandRange(0, ItemsToDrop.Num() - 1);
+	int RandomId = FMath::RandRange(0, ItemsToDrop.Num() - 1);
+	int i = 0;
+	for (auto& Elem : ItemsToDrop)
+	{
+		if (RandomId == i)
+		{
+			RandomId = Elem.Key; // getting the key of the random index
+			break;
+		}
+		i++;
+	}
+
 	const float RandomAmount = FMath::RandRange(1, ItemsToDrop[RandomId]);
 
 	HarvestLeft--;
