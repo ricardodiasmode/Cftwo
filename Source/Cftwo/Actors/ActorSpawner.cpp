@@ -34,7 +34,7 @@ void AActorSpawner::Tick(float DeltaTime)
 void AActorSpawner::Server_StartSpawnTimer_Implementation()
 {
 	FTimerHandle UnusedHandle;
-	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AActorSpawner::CheckShouldSpawn, 1.f, true, 0.1f);
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AActorSpawner::CheckShouldSpawn, 4.f, true, 0.1f);
 }
 
 void AActorSpawner::CheckShouldSpawn()
@@ -47,7 +47,7 @@ void AActorSpawner::CheckShouldSpawn()
 			ActorsSpawned.Add(FActorMatrix());
 		}
 		else {
-			if (ActorsSpawned[i].ActorArray.Num() - 1 > ActorsToSpawn[i].MinimumSpawned)
+			if (ActorsSpawned[i].ActorArray.Num() >= ActorsToSpawn[i].MinimumSpawned)
 				continue;
 		}
 
