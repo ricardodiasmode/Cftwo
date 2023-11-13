@@ -13,6 +13,9 @@ UCLASS()
 class CFTWO_API AGameplayPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
 	
 public:
 	UFUNCTION(Server, reliable)

@@ -10,3 +10,9 @@ void AGameplayPlayerController::Server_AskToRespawn_Implementation()
 	AGameplayGameMode* GMRef = Cast<AGameplayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	GMRef->SpawnPlayerCharacter(this);
 }
+
+void AGameplayPlayerController::BeginPlay()
+{
+	SetShowMouseCursor(true);
+	SetInputMode(FInputModeUIOnly());
+}

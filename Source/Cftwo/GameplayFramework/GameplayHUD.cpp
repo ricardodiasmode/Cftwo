@@ -14,11 +14,11 @@ void AGameplayHUD::BeginPlay()
 {
     Super::BeginPlay();
 
-    InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+    /*InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
     InventoryWidget->AddToViewport();
 
     CraftWidget = CreateWidget<UCraftWidget>(GetWorld(), CraftWidgetClass);
-    CraftWidget->AddToViewport();
+    CraftWidget->AddToViewport();*/
 }
 
 void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
