@@ -56,10 +56,12 @@ public:
 
 	int SelectedItemToCraft = 2;
 
+	UPROPERTY(Replicated)
 	float CurrentHealth = 100.f;
 
 	float MaxHealth = 100.f;
 
+	UPROPERTY(Replicated)
 	float CurrentHungry = 100.f;
 
 	float MaxHungry = 100.f;
@@ -96,6 +98,12 @@ private:
 
 	UFUNCTION(Server, reliable)
 	void Server_TryPickItem();
+
+	UFUNCTION(BlueprintCallable)
+	void UseItem(const int InventoryIndex);
+
+	UFUNCTION(Server, reliable)
+	void Server_TryUseItem(const int InventoryIndex);
 
 protected:
 

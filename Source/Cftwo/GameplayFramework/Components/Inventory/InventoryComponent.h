@@ -81,4 +81,6 @@ public:
 	FWeaponItem GetWeaponInfo(const int Index);
 
 	void DropAllItems();
+
+	void UseItem(const int InventoryIndex);
 };

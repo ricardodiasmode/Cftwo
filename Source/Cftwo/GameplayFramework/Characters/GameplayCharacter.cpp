@@ -70,7 +70,7 @@ void AGameplayCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		EnhancedInputComponent->BindAction(ChangeItemAction, ETriggerEvent::Started,
 			this, &AGameplayCharacter::OnChangeItem);
 
-		//ChangingItem
+		//PickingItem
 		EnhancedInputComponent->BindAction(PickItemAction, ETriggerEvent::Started,
 			this, &AGameplayCharacter::PickItem);
 	}
@@ -265,6 +265,16 @@ void AGameplayCharacter::Server_TryPickItem_Implementation()
 			CurrentPickable->OnPick();
 		}
 	}
+}
+
+void AGameplayCharacter::UseItem(const int InventoryIndex)
+{
+	Server_TryUseItem(InventoryIndex);
+}
+
+void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryIndex)
+{
+	InventoryComponent->UseItem(InventoryIndex);
 }
 
 void AGameplayCharacter::AddItem(TPair<int, int> ItemToAdd)

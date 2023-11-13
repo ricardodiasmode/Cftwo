@@ -8,6 +8,7 @@
 #include "../../GameplayHUD.h"
 #include "../../../Utils/GeneralFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "../../Characters/GameplayCharacter.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -221,5 +222,21 @@ void UInventoryComponent::DropAllItems()
 		CurrentPickable->ItemId = ItemIndex;
 		CurrentPickable->Amount = ItemAmount;
 		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+	}
+}
+
+void UInventoryComponent::UseItem(const int InventoryIndex)
+{
+	EItemType CurrentItemType = Slots[InventoryIndex].ItemInfo.ItemType;
+	if (CurrentItemType == EItemType::FOOD)
+	{
+		// get hungry back
+	}
+	else if (CurrentItemType == EItemType::HEAL)
+	{
+		AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
+		float AmountSet = FMath::Clamp(CharacterRef->CurrentHealth + Slots[InventoryIndex].ItemInfo.BuffOnUse,
+			0.f, CharacterRef->MaxHealth);
+		CharacterRef->CurrentHealth = AmountSet;
 	}
 }

@@ -8,6 +8,14 @@
 #include "../../../Actors/BaseProjectile.h"
 #include "InventoryItem.generated.h"
 
+UENUM(BlueprintType)
+enum class EItemType : uint8 {
+	NONE = 0 UMETA(DisplayName = "NONE"),
+	FOOD = 1  UMETA(DisplayName = "FOOD"),
+	WEAPON = 2     UMETA(DisplayName = "WEAPON"),
+	HEAL = 3     UMETA(DisplayName = "HEAL"),
+};
+
 USTRUCT(BlueprintType)
 struct FInventoryItem : public FTableRowBase
 {
@@ -27,6 +35,10 @@ public:
 	int WeaponId = -1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMesh* Mesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int BuffOnUse = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EItemType ItemType = EItemType::NONE;
 };
 
 USTRUCT(BlueprintType)
