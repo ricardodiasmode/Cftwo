@@ -1,4 +1,3 @@
-- joysticks: https://blueprintue.com/blueprint/semkwmj8/
 - testar modo celular no pc;
 - lod das arvores;
 - otimizar pedras;
