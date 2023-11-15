@@ -1,4 +1,2 @@
 - testar modo celular no pc;
-- lod das arvores;
-- otimizar pedras;
 - testar multiplayer;
