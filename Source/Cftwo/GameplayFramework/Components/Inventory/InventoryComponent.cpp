@@ -225,12 +225,13 @@ void UInventoryComponent::DropAllItems()
 	}
 }
 
-void UInventoryComponent::UseItem(const int InventoryIndex)
+bool UInventoryComponent::UseItem(const int InventoryIndex)
 {
 	EItemType CurrentItemType = Slots[InventoryIndex].ItemInfo.ItemType;
 	if (CurrentItemType == EItemType::FOOD)
 	{
 		// get hungry back
+		return true;
 	}
 	else if (CurrentItemType == EItemType::HEAL)
 	{
@@ -238,5 +239,12 @@ void UInventoryComponent::UseItem(const int InventoryIndex)
 		float AmountSet = FMath::Clamp(CharacterRef->CurrentHealth + Slots[InventoryIndex].ItemInfo.BuffOnUse,
 			0.f, CharacterRef->MaxHealth);
 		CharacterRef->CurrentHealth = AmountSet;
+		return true;
 	}
+	return false;
+}
+
+bool UInventoryComponent::ItemOnIndexIsWeapon(const int SlotIndex)
+{
+	return Slots[SlotIndex].ItemInfo.ItemType == EItemType::WEAPON;
 }

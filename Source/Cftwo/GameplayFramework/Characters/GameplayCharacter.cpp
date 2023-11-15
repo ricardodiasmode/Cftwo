@@ -94,12 +94,12 @@ void AGameplayCharacter::Server_ChangeItem_Implementation(const bool Forward)
 
 void AGameplayCharacter::OnCraft()
 {
-	Client_OnCraft();
+	Client_OnCraft(2);
 }
 
-void AGameplayCharacter::Client_OnCraft_Implementation()
+void AGameplayCharacter::Client_OnCraft_Implementation(const int ItemIndex)
 {
-	Server_TryCraft(SelectedItemToCraft);
+	Server_TryCraft(ItemIndex);
 }
 
 void AGameplayCharacter::Server_TryCraft_Implementation(const int ItemIndex)
@@ -274,7 +274,11 @@ void AGameplayCharacter::UseItem(const int InventoryIndex)
 
 void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryIndex)
 {
-	InventoryComponent->UseItem(InventoryIndex);
+	if (!InventoryComponent->ItemOnIndexIsWeapon(InventoryIndex) &&
+		InventoryComponent->UseItem(InventoryIndex))
+		return;
+
+	WeaponComponent->SetCurrentWeapon(InventoryIndex);
 }
 
 void AGameplayCharacter::AddItem(TPair<int, int> ItemToAdd)

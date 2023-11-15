@@ -54,8 +54,6 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* WeaponMesh = nullptr;
 
-	int SelectedItemToCraft = 2;
-
 	UPROPERTY(Replicated)
 	float CurrentHealth = 100.f;
 
@@ -70,8 +68,6 @@ private:
 	// Trigger player hitting status and set timer for stop hitting
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_OnHit();
-	// Handle for server
-	void OnHit();
 	// Actually check hit collision
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Server_TriggerHitDamage();
@@ -114,12 +110,15 @@ public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
 
+	// Handle for server
+	void OnHit();
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// Handle for server
 	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_OnCraft();
+	void Client_OnCraft(const int ItemIndex);
 
 	UFUNCTION(Client, reliable)
 	void Client_InitializeInventory();

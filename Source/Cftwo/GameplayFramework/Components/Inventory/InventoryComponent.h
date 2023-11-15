@@ -74,7 +74,7 @@ public:
 
 	void HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>* Indexes, TArray<int>* Amount);
 
-	bool IsWeapon(const int ItemId) { return GetItemInfo(ItemId).WeaponId != -1; }
+	bool IsWeapon(const int ItemId) { return GetItemInfo(ItemId).ItemType == EItemType::WEAPON; }
 
 	bool IsFireWeapon(const int ItemId) { return GetWeaponInfo(ItemId).FireWeapon; }
 
@@ -82,5 +82,7 @@ public:
 
 	void DropAllItems();
 
-	void UseItem(const int InventoryIndex);
+	bool UseItem(const int InventoryIndex);
+
+	bool ItemOnIndexIsWeapon(const int SlotIndex);
 };

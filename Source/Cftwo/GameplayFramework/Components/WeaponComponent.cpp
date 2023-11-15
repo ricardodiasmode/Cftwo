@@ -169,6 +169,17 @@ void UWeaponComponent::ChangeEquippedWeapon(const bool Forward)
 	else
 		m_CurrentWeapon = FMath::Clamp(m_CurrentWeapon - 1, -1, 5);
 
+	OnChangeEquippedWeapon();
+}
+
+void UWeaponComponent::SetCurrentWeapon(const int SlotIndex)
+{
+	m_CurrentWeapon = SlotIndex;
+	OnChangeEquippedWeapon();
+}
+
+void UWeaponComponent::OnChangeEquippedWeapon()
+{
 	FireWeaponEquipped = CharacterRef->IsEquippedWeaponFireWeapon();
 	if (FireWeaponEquipped) {
 		int EquippedWeaponId = CharacterRef->GetEquippedWeaponId();

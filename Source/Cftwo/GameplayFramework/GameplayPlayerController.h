@@ -20,4 +20,7 @@ protected:
 public:
 	UFUNCTION(Server, reliable)
 	void Server_AskToRespawn();
+
+	UFUNCTION(Client, reliable, BlueprintCallable)
+	void Client_AskToPunch();
 };

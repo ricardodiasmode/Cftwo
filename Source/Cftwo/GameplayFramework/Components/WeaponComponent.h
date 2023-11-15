@@ -83,4 +83,8 @@ public:
 	int GetCurrentWeapon() const { return m_CurrentWeapon; }
 
 	int GetEquippedWeaponByIndex(const int Id);
+
+	void OnChangeEquippedWeapon();
+
+	void SetCurrentWeapon(const int SlotIndex);
 };
