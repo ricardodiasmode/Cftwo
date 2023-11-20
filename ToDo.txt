@@ -1,2 +1,3 @@
-- testar modo celular no pc;
+- lagado demais;
+- joystick sempre aparecendo;
 - testar multiplayer;

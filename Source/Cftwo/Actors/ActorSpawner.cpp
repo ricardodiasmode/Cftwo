@@ -22,6 +22,8 @@ void AActorSpawner::BeginPlay()
 	Super::BeginPlay();
 	
 	Server_StartSpawnTimer();
+
+	SpawnAllFoliages();
 }
 
 // Called every frame
@@ -35,6 +37,26 @@ void AActorSpawner::Server_StartSpawnTimer_Implementation()
 {
 	FTimerHandle UnusedHandle;
 	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AActorSpawner::CheckShouldSpawn, 4.f, true, 0.1f);
+}
+
+void AActorSpawner::SpawnAllFoliages()
+{
+	for (int i = 0; i < ActorsToSpawn.Num(); i++)
+	{
+		if (!ActorsToSpawn[i].Foliage)
+			continue;
+
+		// Check if we have actors enough
+		if (ActorsSpawned.Num() - 1 < i)
+		{
+			ActorsSpawned.Add(FActorMatrix());
+		}
+
+		for (int j=0; j < ActorsToSpawn[i].MinimumSpawned; j++)
+		{
+			SpawnActor(i);
+		}
+	}
 }
 
 void AActorSpawner::CheckShouldSpawn()
@@ -51,21 +73,32 @@ void AActorSpawner::CheckShouldSpawn()
 				continue;
 		}
 
-		FVector StartLocation = UKismetMathLibrary::RandomPointInBoundingBox(SpawnerBounds->GetComponentLocation(),
-			SpawnerBounds->GetLocalBounds().BoxExtent);
-		StartLocation.Z = GetActorLocation().Z + 10000.f;
-		FVector EndLocation = StartLocation + FVector(0.f, 0.f, -20000.f);
+		SpawnActor(i);
+	}
+}
 
-		FHitResult OutHit;
-		if (GetWorld()->LineTraceSingleByChannel(OutHit,
-			StartLocation, EndLocation,
-			ECollisionChannel::ECC_Visibility))
-		{
-			TSubclassOf<AActor> ClassToSpawn = ActorsToSpawn[i].ActorClass;
-			FTransform SpawnTransform(FRotator(), OutHit.ImpactPoint + FVector(0.f, 0.f, 100.f), FVector(1.f, 1.f, 1.f));
-			ActorsSpawned[i].ActorArray.Add(
-				GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform)
-			);
-		}
+void AActorSpawner::SpawnActor(const int Index)
+{
+	FVector StartLocation = UKismetMathLibrary::RandomPointInBoundingBox(SpawnerBounds->GetComponentLocation(),
+		SpawnerBounds->GetLocalBounds().BoxExtent);
+	StartLocation.Z = GetActorLocation().Z + 10000.f;
+	FVector EndLocation = StartLocation + FVector(0.f, 0.f, -20000.f);
+
+	FHitResult OutHit;
+	if (GetWorld()->LineTraceSingleByChannel(OutHit,
+		StartLocation, EndLocation,
+		ECollisionChannel::ECC_Visibility))
+	{
+		TSubclassOf<AActor> ClassToSpawn = ActorsToSpawn[Index].ActorClass;
+		FVector SpawnLoc = OutHit.ImpactPoint;
+		if (ActorsToSpawn[Index].Foliage)
+			SpawnLoc -= FVector(0.f, 0.f, 30.f);
+		else
+			SpawnLoc += FVector(0.f, 0.f, 100.f);
+		FTransform SpawnTransform(FRotator(), SpawnLoc, FVector(1.f, 1.f, 1.f));
+
+		ActorsSpawned[Index].ActorArray.Add(
+			GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform)
+		);
 	}
 }

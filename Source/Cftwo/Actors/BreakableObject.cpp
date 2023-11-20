@@ -18,6 +18,7 @@ void ABreakableObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	StaticMeshComponent->SetStaticMesh(StaticMeshRef);
 }
 
 void ABreakableObject::RemoveHP()

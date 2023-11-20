@@ -6,7 +6,6 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/InstancedStaticMeshComponent.h"
-#include "../Actors/BreakableFoliage.h"
 #include "../Characters/GameplayCharacter.h"
 #include "../AI/BaseNeutralCharacter.h"
 #include "../../Actors/BreakableObject.h"
@@ -101,12 +100,10 @@ void UWeaponComponent::OnPunch()
 			}
 			else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
-				GMyLog("ok");
 				if (CurrentIA->AmIAlive())
 					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE);
 				else
 					CharacterRef->AddItem(CurrentIA->OnHarvest());
-				GMyLog("d");
 				return;
 			}
 			else {
@@ -143,7 +140,6 @@ void UWeaponComponent::OnPunch()
 					BreakableSpawned->StaticMeshComponent->SetStaticMesh(FoliageInstanceMesh);
 
 					if (ComponentName.Contains("Rock")) {
-						BreakableSpawned->ItemToGive = 0;
 						int RockIndex = 0;
 						BreakableSpawned->ItemToGive = RockIndex;
 						BreakableSpawned->RemoveHP();

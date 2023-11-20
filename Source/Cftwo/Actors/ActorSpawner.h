@@ -27,6 +27,10 @@ private:
 	void Server_StartSpawnTimer();
 
 	void CheckShouldSpawn();
+
+	void SpawnAllFoliages();
+
+	void SpawnActor(const int Index);
 	
 protected:
 	// Called when the game starts or when spawned

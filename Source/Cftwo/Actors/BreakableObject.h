@@ -16,9 +16,14 @@ private:
 	int CurrentHP = 3;
 
 public:
-	class UStaticMeshComponent* StaticMeshComponent = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* StaticMeshComponent = nullptr;
 
-	int ItemToGive = -1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UStaticMesh* StaticMeshRef = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		int ItemToGive = -1;
 	
 private:
 	void Break();	
