@@ -43,14 +43,12 @@ void AActorSpawner::SpawnAllFoliages()
 {
 	for (int i = 0; i < ActorsToSpawn.Num(); i++)
 	{
-		if (!ActorsToSpawn[i].Foliage)
-			continue;
+		ActorsSpawned.Add(FActorMatrix());
 
-		// Check if we have actors enough
-		if (ActorsSpawned.Num() - 1 < i)
+		if (!ActorsToSpawn[i].Foliage)
 		{
-			ActorsSpawned.Add(FActorMatrix());
-		}
+			continue;
+		}			
 
 		for (int j=0; j < ActorsToSpawn[i].MinimumSpawned; j++)
 		{
@@ -64,11 +62,8 @@ void AActorSpawner::CheckShouldSpawn()
 	for (int i=0;i < ActorsToSpawn.Num();i++)
 	{
 		// Check if we have actors enough
-		if (ActorsSpawned.Num() - 1 < i)
+		if (ActorsSpawned.Num() > i)
 		{
-			ActorsSpawned.Add(FActorMatrix());
-		}
-		else {
 			if (ActorsSpawned[i].ActorArray.Num() >= ActorsToSpawn[i].MinimumSpawned)
 				continue;
 		}
