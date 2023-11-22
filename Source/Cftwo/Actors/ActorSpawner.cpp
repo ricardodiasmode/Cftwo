@@ -2,9 +2,14 @@
 
 
 #include "ActorSpawner.h"
+
+#include "BreakableObject.h"
 #include "Components/BoxComponent.h"
 #include "../Utils/ActorToSpawn.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "SpawnableActor.h"
+#include "Cftwo/GameplayFramework/AI/BaseNeutralCharacter.h"
+#include "Cftwo/GameplayFramework/Characters/GameplayCharacter.h"
 
 // Sets default values
 AActorSpawner::AActorSpawner()
@@ -92,8 +97,25 @@ void AActorSpawner::SpawnActor(const int Index)
 			SpawnLoc += FVector(0.f, 0.f, 100.f);
 		FTransform SpawnTransform(FRotator(), SpawnLoc, FVector(1.f, 1.f, 1.f));
 
-		ActorsSpawned[Index].ActorArray.Add(
-			GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform)
-		);
+		AActor* ActorRef = GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform);
+		if (Cast<ABreakableObject>(ActorRef))
+			Cast<ABreakableObject>(ActorRef)->SpawnerRef = this;
+		else if (Cast<AGameplayCharacter>(ActorRef))
+			Cast<AGameplayCharacter>(ActorRef)->SpawnerRef = this;
+		else if (Cast<ABaseNeutralCharacter>(ActorRef))
+			Cast<ABaseNeutralCharacter>(ActorRef)->SpawnerRef = this;
+		ActorsSpawned[Index].ActorArray.Add(ActorRef);
+	}
+}
+
+void AActorSpawner::OnLoseActor(AActor* ActorRef)
+{
+	for (FActorMatrix CurrentVector : ActorsSpawned)
+	{
+		if (CurrentVector.ActorArray.Contains(ActorRef))
+		{
+			CurrentVector.ActorArray.Remove(ActorRef);
+			return;
+		}
 	}
 }

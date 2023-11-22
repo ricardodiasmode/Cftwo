@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BreakableObject.h"
-#include "../Utils/GeneralFunctionLibrary.h"
+#include "ActorSpawner.h"
 
 // Sets default values
 ABreakableObject::ABreakableObject()
@@ -36,6 +36,13 @@ void ABreakableObject::RemoveHP()
 void ABreakableObject::Break()
 {
 	// Break effects
+	OnDie();
+
 	Destroy();
 }	
+
+void ABreakableObject::OnDie()
+{
+	SpawnerRef->OnLoseActor(this);	
+}
 

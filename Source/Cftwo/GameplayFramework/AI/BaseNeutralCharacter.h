@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Cftwo/Actors/SpawnableActor.h"
 #include "GameFramework/Character.h"
 #include "BaseNeutralCharacter.generated.h"
 
 UCLASS()
-class CFTWO_API ABaseNeutralCharacter : public ACharacter
+class CFTWO_API ABaseNeutralCharacter : public ACharacter, public SpawnableActor
 {
 	GENERATED_BODY()
 
@@ -21,9 +22,14 @@ protected:
 
 	int HarvestLeft = 3;
 
+public:
+	class AActorSpawner* SpawnerRef = nullptr;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	virtual void Destroyed() override;
 
 public:
 	// Sets default values for this character's properties
@@ -41,4 +47,7 @@ public:
 	bool AmIAlive() const { return CurrentHealth > 0.f; }
 
 	TPair<int, int> OnHarvest();
+
+	void OnDie();
+	
 };

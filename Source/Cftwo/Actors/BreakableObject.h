@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SpawnableActor.h"
 #include "GameFramework/Actor.h"
 #include "BreakableObject.generated.h"
 
@@ -25,6 +26,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		int ItemToGive = -1;
 	
+	class AActorSpawner* SpawnerRef = nullptr;
+	
 private:
 	void Break();	
 
@@ -37,4 +40,6 @@ public:
 	ABreakableObject();
 
 	void RemoveHP();
+
+	void OnDie();
 };

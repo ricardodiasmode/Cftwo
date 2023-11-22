@@ -3,20 +3,45 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../../CftwoCharacter.h"
 #include "../Components/Inventory/InventoryComponent.h"
 #include "../Components/WeaponComponent.h"
+#include "Cftwo/Actors/SpawnableActor.h"
+#include "GameFramework/Character.h"
 #include "GameplayCharacter.generated.h"
 
+struct FInputActionValue;
 class UCameraComponent;
 class USpringArmComponent;
 
 UCLASS()
-class CFTWO_API AGameplayCharacter : public ACftwoCharacter
+class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 {
 	GENERATED_BODY()
+	
+	/** Camera boom positioning the camera behind the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USpringArmComponent* CameraBoom;
 
-private:
+	/** Follow camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
+	
+	/** MappingContext */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* DefaultMappingContext;
+
+	/** Jump Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* JumpAction;
+
+	/** Move Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* MoveAction;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* LookAction;
+	
 	// Controlls the time that player will stop hit after the hit starts.
 	// Note that this time may follow anim hit time
 	static constexpr auto TIME_TO_STOP_HITTING = 0.35f;
@@ -63,6 +88,8 @@ public:
 	float CurrentHungry = 100.f;
 
 	float MaxHungry = 100.f;
+	
+	class AActorSpawner* SpawnerRef = nullptr;
 
 private:
 	// Trigger player hitting status and set timer for stop hitting
@@ -104,18 +131,31 @@ private:
 protected:
 
 	/** Called for movement input */
-	void Move(const FInputActionValue& Value) override;
+	void Move(const FInputActionValue& Value);
+
+	/** Called for looking input */
+	void Look(const FInputActionValue& Value);
+
+	// APawn interface
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	// To add mapping context
+	virtual void BeginPlay();
+
+	virtual void Destroyed() override;
 
 public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
 
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
 	// Handle for server
 	void OnHit();
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 	// Handle for server
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_OnCraft(const int ItemIndex);
@@ -147,5 +187,8 @@ public:
 
 	void OnWeaponChange(UStaticMesh* WeaponMeshRef);
 
-	void AddItem(TPair<int, int> ItemToAdd);
+	void AddItem(TPair<int, int> ItemToAdd) const;
+
+	void OnDie();
+
 };

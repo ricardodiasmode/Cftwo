@@ -2,7 +2,7 @@
 
 
 #include "BaseNeutralCharacter.h"
-#include "../../Utils/GeneralFunctionLibrary.h"
+#include "../../Actors/ActorSpawner.h"
 
 // Sets default values
 ABaseNeutralCharacter::ABaseNeutralCharacter()
@@ -54,4 +54,16 @@ TPair<int, int> ABaseNeutralCharacter::OnHarvest()
 		Destroy();
 
 	return TPair<int, int>(RandomId, RandomAmount);
+}
+
+void ABaseNeutralCharacter::OnDie()
+{
+	SpawnerRef->OnLoseActor(this);	
+}
+
+void ABaseNeutralCharacter::Destroyed()
+{
+	OnDie();
+	
+	Super::Destroyed();
 }

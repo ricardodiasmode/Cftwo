@@ -1,2 +1,1 @@
-- quando o ator morrer, deve sair do ActorSpawner
 - testar multiplayer;
