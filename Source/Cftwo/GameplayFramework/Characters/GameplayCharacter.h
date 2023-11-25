@@ -94,7 +94,7 @@ public:
 private:
 	// Trigger player hitting status and set timer for stop hitting
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_OnHit();
+	void Server_OnHit(FRotator RotationToSet);
 	// Actually check hit collision
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Server_TriggerHitDamage();
@@ -140,7 +140,9 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// To add mapping context
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
+
+	virtual void Tick(const float DeltaTime) override;
 
 	virtual void Destroyed() override;
 

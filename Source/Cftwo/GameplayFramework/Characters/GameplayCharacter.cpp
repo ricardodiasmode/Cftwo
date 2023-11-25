@@ -18,6 +18,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../../Actors/ActorSpawner.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AGameplayCharacter::AGameplayCharacter()
@@ -111,6 +112,20 @@ void AGameplayCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 }
 
+void AGameplayCharacter::Tick(const float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (GetVelocity().Length() > 10.f)
+	{
+		FVector EndLoc = GetActorLocation() + GetVelocity();
+		EndLoc.Z = GetActorLocation().Z;
+		FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
+		RotationToSet.Yaw -= 90.f;
+		GetMesh()->SetWorldRotation(RotationToSet);
+	}
+}
+
 void AGameplayCharacter::Move(const FInputActionValue& Value)
 {
 	// Do not move while hitting
@@ -185,7 +200,12 @@ void AGameplayCharacter::BeginPlay()
 
 void AGameplayCharacter::OnHit()
 {
-	Server_OnHit();
+	FVector EndLoc = GetActorLocation() + GetFollowCamera()->GetForwardVector();
+	EndLoc.Z = GetActorLocation().Z;
+	FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
+	RotationToSet.Yaw -= 90.f;
+	GetMesh()->SetWorldRotation(RotationToSet);
+	Server_OnHit(RotationToSet);
 }
 
 void AGameplayCharacter::OnChangeItem(const FInputActionValue& Value)
@@ -214,8 +234,9 @@ void AGameplayCharacter::Server_TryCraft_Implementation(const int ItemIndex)
 	InventoryComponent->TryCraft(ItemIndex);
 }
 
-void AGameplayCharacter::Server_OnHit_Implementation()
+void AGameplayCharacter::Server_OnHit_Implementation(FRotator RotationToSet)
 {
+	GetMesh()->SetWorldRotation(RotationToSet);
 	Hitting = true;
 	// Offset to make sure blend will behave properly
 	static constexpr auto BLEND_OFFSET = 0.1f;
@@ -386,6 +407,11 @@ void AGameplayCharacter::AddItem(TPair<int, int> ItemToAdd) const
 
 void AGameplayCharacter::OnDie()
 {
+	if(!SpawnerRef)
+	{
+		GPrintDebug("Something is wrong, spawner not setted on gameplay character.");
+		return;
+	}
 	SpawnerRef->OnLoseActor(this);	
 }
 

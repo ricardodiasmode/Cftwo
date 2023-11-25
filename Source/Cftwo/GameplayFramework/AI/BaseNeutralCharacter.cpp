@@ -58,6 +58,11 @@ TPair<int, int> ABaseNeutralCharacter::OnHarvest()
 
 void ABaseNeutralCharacter::OnDie()
 {
+	if(!SpawnerRef)
+	{
+		GPrintDebug("Something is wrong, spawner not setted on neutral character.");
+		return;
+	}
 	SpawnerRef->OnLoseActor(this);	
 }
 
