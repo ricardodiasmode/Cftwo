@@ -97,7 +97,9 @@ void AActorSpawner::SpawnActor(const int Index)
 			SpawnLoc += FVector(0.f, 0.f, 100.f);
 		FTransform SpawnTransform(FRotator(), SpawnLoc, FVector(1.f, 1.f, 1.f));
 
-		AActor* ActorRef = GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		AActor* ActorRef = GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform, SpawnParams);
 		if (Cast<ABreakableObject>(ActorRef))
 			Cast<ABreakableObject>(ActorRef)->SpawnerRef = this;
 		else if (Cast<AGameplayCharacter>(ActorRef))

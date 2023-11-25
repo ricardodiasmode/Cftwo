@@ -88,7 +88,7 @@ void UWeaponComponent::OnPunch()
 		ObjTypes,
 		false,
 		ActorsToIgnore,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		OutHits,
 		true
 	)) {
