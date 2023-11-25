@@ -1,1 +1,4 @@
-- testar multiplayer;
+- double touch bugado?
+- tirar gravidade da flecha;
+- fazer a mira travar no alvo;
+- voltar com multiplayer;

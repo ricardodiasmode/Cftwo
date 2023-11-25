@@ -22,5 +22,4 @@ void AGameplayPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	SetShowMouseCursor(true);
-	SetInputMode(FInputModeUIOnly());
 }
