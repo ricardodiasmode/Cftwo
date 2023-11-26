@@ -18,6 +18,10 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 {
 	GENERATED_BODY()
 	
+	/** Where the lock aim will be */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* LockPoint;
+	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -48,6 +52,8 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	// Handle OnStopHitting function
 	FTimerHandle HitTimerHandle;
+
+	FTimerHandle LockAimTimerHandle;
 
 	/** Hit Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -95,6 +101,11 @@ private:
 	// Trigger player hitting status and set timer for stop hitting
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_OnHit(FRotator RotationToSet);
+
+	// Check whether or not should lock the aim
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_OnHit();
+	
 	// Actually check hit collision
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Server_TriggerHitDamage();
@@ -192,5 +203,7 @@ public:
 	void AddItem(TPair<int, int> ItemToAdd) const;
 
 	void OnDie();
+
+	FVector GetLockPoint() const { return LockPoint->GetComponentLocation(); }
 
 };

@@ -1,4 +1,4 @@
-- double touch bugado?
-- tirar gravidade da flecha;
-- fazer a mira travar no alvo;
+- implementar pistola;
+- anim do porco n ta em loop?
+- colocar lobo;
 - voltar com multiplayer;

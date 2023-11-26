@@ -14,6 +14,7 @@
 #include "InstancedFoliageActor.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Widgets/Text/ISlateEditableTextWidget.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -219,13 +220,14 @@ void UWeaponComponent::Server_SpawnProjectile_Implementation(FVector CameraForwa
 		OutHit,
 		CameraLoc,
 		CameraLoc + (CameraForward * 10000.f),
-		ECollisionChannel::ECC_Visibility,
+		ECC_Visibility,
 		QueryParams
 	);
 
 	FRotator SpawnRot = CharacterRef->GetActorRotation();
 	FVector ActorForward = CharacterRef->GetActorForwardVector();
 	FVector FinalFirstHitLoc = OutHit.bBlockingHit ? OutHit.ImpactPoint : OutHit.TraceEnd;
+	FinalFirstHitLoc += (FinalFirstHitLoc - SpawnLoc); // adding size 
 	const bool HitOnFrontOfCharacter = (ActorForward.Dot(FinalFirstHitLoc - CharacterRef->GetActorLocation()) > 0);
 	if (HitOnFrontOfCharacter)
 	{
@@ -236,6 +238,7 @@ void UWeaponComponent::Server_SpawnProjectile_Implementation(FVector CameraForwa
 			ECollisionChannel::ECC_Visibility,
 			QueryParams
 		);
+		
 		FVector FinalLoc = OutHit.bBlockingHit ? OutHit.ImpactPoint : OutHit.TraceEnd;
 		SpawnRot = UKismetMathLibrary::FindLookAtRotation(SpawnLoc, FinalLoc);
 	}
@@ -250,4 +253,47 @@ void UWeaponComponent::Server_SpawnProjectile_Implementation(FVector CameraForwa
 int UWeaponComponent::GetEquippedWeaponByIndex(const int Id)
 {
 	return CharacterRef->GetWeaponIdOnSlot(Id);
+}
+
+void UWeaponComponent::TryLockAim()
+{
+	FActorSpawnParameters SpawnInfo;
+	FVector CameraLoc = CharacterRef->GetFollowCamera()->GetComponentLocation();
+	FVector CameraForward = CharacterRef->GetFollowCamera()->GetForwardVector();
+	TArray<FHitResult> OutHits;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(CharacterRef);
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjTypes;
+	ObjTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+
+	UKismetSystemLibrary::CapsuleTraceMultiForObjects(
+		GetWorld(),
+		CameraLoc,
+		CameraLoc + (CameraForward * 10000.f),
+		30.f,
+		30.f,
+		ObjTypes,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::None,
+		OutHits,
+		true
+		);
+
+	for (FHitResult CurrentHit : OutHits)
+	{
+		if (!CurrentHit.bBlockingHit)
+			continue;
+
+		if (!Cast<AGameplayCharacter>(CurrentHit.GetActor()))
+			continue;
+
+		AGameplayCharacter* EnemyRef = Cast<AGameplayCharacter>(CurrentHit.GetActor());
+		FVector EndLoc = EnemyRef->GetLockPoint();
+		FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(CameraLoc, EndLoc);
+		FRotator CurrentRotation = CharacterRef->GetController()->GetControlRotation();
+		FRotator InterpedRot = UKismetMathLibrary::RInterpTo(CurrentRotation, RotationToSet, 0.1f, 2.f);
+		CharacterRef->GetController()->SetControlRotation(InterpedRot);
+		return;
+	}
 }

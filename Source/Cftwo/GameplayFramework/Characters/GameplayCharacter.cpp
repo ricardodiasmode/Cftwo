@@ -68,6 +68,9 @@ AGameplayCharacter::AGameplayCharacter()
 
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 	WeaponMesh->SetupAttachment(GetMesh(), "DEF-hand_L");
+
+	LockPoint = CreateDefaultSubobject<USceneComponent>(TEXT("LockPoint"));
+	LockPoint->SetupAttachment(GetMesh(), "DEF-spine_003");
 }
 
 void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
@@ -205,7 +208,30 @@ void AGameplayCharacter::OnHit()
 	FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
 	RotationToSet.Yaw -= 90.f;
 	GetMesh()->SetWorldRotation(RotationToSet);
+	Client_OnHit();
 	Server_OnHit(RotationToSet);
+}
+
+void AGameplayCharacter::Client_OnHit_Implementation()
+{
+	if (WeaponComponent->FireWeaponEquipped &&
+		!GetWorldTimerManager().IsTimerActive(LockAimTimerHandle))
+	{
+		GetWorldTimerManager().SetTimer(
+			LockAimTimerHandle,
+			FTimerDelegate::CreateLambda(
+				[this]
+				{
+					if (!Hitting)
+					{
+						GetWorldTimerManager().ClearTimer(LockAimTimerHandle);
+						return;
+					}
+					WeaponComponent->TryLockAim();
+				}),
+				0.01f,
+				true);
+	}
 }
 
 void AGameplayCharacter::OnChangeItem(const FInputActionValue& Value)

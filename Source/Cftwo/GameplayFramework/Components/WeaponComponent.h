@@ -87,4 +87,6 @@ public:
 	void OnChangeEquippedWeapon();
 
 	void SetCurrentWeapon(const int SlotIndex);
+
+	void TryLockAim();
 };
