@@ -5,19 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "InventoryItem.h"
+#include "InventorySlot.h"
 #include "InventoryComponent.generated.h"
-
-
-USTRUCT(BlueprintType)
-struct FInventorySlot
-{
-  GENERATED_BODY()
-public:
-	UPROPERTY(BlueprintReadOnly)
-	FInventoryItem ItemInfo;
-	UPROPERTY(BlueprintReadOnly)
-	int Amount = 0;
-};
 
 class AGameplayHUD;
 
@@ -26,21 +15,27 @@ class CFTWO_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:
-	static constexpr auto MAX_INVENTORY_SIZE = 10;
+	static constexpr auto MAX_INVENTORY_SIZE = 5;
 
 	// Map of <Index, Amount> where {Index} is the identifier of the item in DT and
 	// {Amount} is the amount in the inventory
 	TMap<int, int> ItemMap;
-
-	// Array of items in the slot
-	UPROPERTY(ReplicatedUsing=UpdateInventory)
-	TArray<FInventorySlot> Slots;
 
 public:
 	AGameplayHUD* CharacterHUD = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ItemsDataTable = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* WeaponsDataTable = nullptr;
+
+	// Array of items in the slot
+	UPROPERTY(ReplicatedUsing = UpdateInventory)
+	TArray<FInventorySlot> Slots;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class APickable> PickableClass;
 
 private:
 	/** Try to add the item in the correct slot
@@ -52,7 +47,10 @@ private:
 	UFUNCTION(Client, reliable)
 	void Client_UpdateInventory(const TArray<FInventorySlot>& SlotsRef);
 
+	FInventoryItem GetItemInfo(const int Index);
+
 protected:
+	virtual void BeginPlay() override;
 
 public:	
 	// Sets default values for this component's properties
@@ -65,7 +63,26 @@ public:
 	*/
 	bool GiveItem(int ItemIndex, int Amount);
 
+	void RemoveItem(const int SlotIndex, const int Amount);
+
 	UFUNCTION()
 	void UpdateInventory();
 
+	void TryCraft(const int ItemToCraft);
+	
+	bool HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount);
+
+	void HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>* Indexes, TArray<int>* Amount);
+
+	bool IsWeapon(const int ItemId) { return GetItemInfo(ItemId).ItemType == EItemType::WEAPON; }
+
+	bool IsFireWeapon(const int ItemId) { return GetWeaponInfo(ItemId).FireWeapon; }
+
+	FWeaponItem GetWeaponInfo(const int Index);
+
+	void DropAllItems();
+
+	bool UseItem(const int InventoryIndex);
+
+	bool ItemOnIndexIsWeapon(const int SlotIndex);
 };

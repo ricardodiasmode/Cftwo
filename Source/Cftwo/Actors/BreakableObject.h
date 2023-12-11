@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SpawnableActor.h"
 #include "GameFramework/Actor.h"
 #include "BreakableObject.generated.h"
 
@@ -16,9 +17,16 @@ private:
 	int CurrentHP = 3;
 
 public:
-	class UStaticMeshComponent* StaticMeshComponent = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* StaticMeshComponent = nullptr;
 
-	int ItemToGive = -1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UStaticMesh* StaticMeshRef = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		int ItemToGive = -1;
+	
+	class AActorSpawner* SpawnerRef = nullptr;
 	
 private:
 	void Break();	
@@ -32,4 +40,6 @@ public:
 	ABreakableObject();
 
 	void RemoveHP();
+
+	void OnDie();
 };

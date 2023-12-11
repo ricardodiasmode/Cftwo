@@ -8,6 +8,9 @@
 #include "GameplayHUD.generated.h"
 
 class UInventoryWidget;
+class UCraftWidget;
+class UStatusWidget;
+
 /**
  * 
  */
@@ -18,14 +21,37 @@ class CFTWO_API AGameplayHUD : public AHUD
 private:
 	UPROPERTY()
 	UInventoryWidget* InventoryWidget = nullptr;
-	
+
+	UCraftWidget* CraftWidget = nullptr;
+
+	UStatusWidget* StatusWidget = nullptr;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> InventoryWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> RespawnWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> CraftWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> StatusWidgetClass;
+	
 protected:
 	virtual void BeginPlay() override;
 
 public:
 	void UpdateInventory(TArray<FInventorySlot> SlotsRef);
+
+	void InitializeStatusWidget();
+
+	void OnDie();
+
+	void OnRespawn();
+
+	void OnUpdateHealth(const float CurrentHealth);
+
+	void OnUpdateHungry(const float CurrentHungry);
 	
 };

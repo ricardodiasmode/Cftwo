@@ -4,8 +4,11 @@
 #include "InventoryComponent.h"
 #include "Math/UnrealMathUtility.h"
 #include "Net/UnrealNetwork.h"
+#include "../../../Actors/Pickable.h"
 #include "../../GameplayHUD.h"
 #include "../../../Utils/GeneralFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "../../Characters/GameplayCharacter.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -21,6 +24,14 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UInventoryComponent, Slots);
+}
+
+void UInventoryComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	for (int i=0;i<MAX_INVENTORY_SIZE;i++)
+		Slots.Add(FInventorySlot());
 }
 
 int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
@@ -58,14 +69,10 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 					return Amount;
 			}
 
-			if (CurrentSlot.ItemInfo.Index == -1)
+			if (CurrentSlot.ItemInfo.Index == -1) {
 				FreeSlots.Add(i);
+			}
 		}
-	}
-	
-	// Check if has free slot and the inventory size can handle an addition
-	if (FreeSlots.Num() == 0 || Slots.Num() >= MAX_INVENTORY_SIZE) {
-		return 0;
 	}
 
 	// Trying to add into another slot
@@ -84,7 +91,7 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 		// Controlling how much we already add
 		LocalAmount -= AmountToAdd;
 
-		Slots.Add(SlotToAdd);
+		Slots[i] = SlotToAdd;
 
 		// If could add everything, then we are good to go
 		if (LocalAmount == 0) {
@@ -99,7 +106,6 @@ bool UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 {
 	int AddedAmount = CanReceiveItem(ItemIndex, Amount);
 	if(AddedAmount > 0) {
-		PrintDebugWithVar("giving item %d", ItemIndex);
 		ItemMap.Add(ItemIndex, AddedAmount);
 		Client_UpdateInventory(Slots);
 		return true;
@@ -119,3 +125,126 @@ void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FIn
 	}
 }
 
+FInventoryItem UInventoryComponent::GetItemInfo(const int Index)
+{
+	return *(ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(Index))), ""));
+}
+
+FWeaponItem UInventoryComponent::GetWeaponInfo(const int Index)
+{
+	return *(WeaponsDataTable->FindRow<FWeaponItem>(FName(*(FString::FromInt(Index))), ""));
+}
+
+bool UInventoryComponent::HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount)
+{
+	FInventoryItem ItemInfo = GetItemInfo(ItemToCraft);
+	for (FItemRecipe CurrentRecipe : ItemInfo.Recipe)
+	{
+		bool Found = false;
+		HasRecipe(CurrentRecipe, &Found, Indexes, Amount);
+
+		if (!Found)
+			return false;
+	}
+	return true;
+}
+
+
+void UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>* Indexes, TArray<int>* Amount)
+{
+	// We use this variable to know how much we removed
+	int LocalAmount = Recipe.Amount;
+
+	for (int i = 0; i < Slots.Num(); i++)
+	{
+		FInventorySlot CurrentSlot = Slots[i];
+		if (CurrentSlot.ItemInfo.Index == Recipe.Index) {
+			const int InitialAmount = LocalAmount;
+			LocalAmount = FMath::Max(LocalAmount - CurrentSlot.Amount, 0);
+			if (InitialAmount > LocalAmount)
+			{
+				Indexes->Add(i);
+				Amount->Add(InitialAmount - LocalAmount);
+			}
+		}
+
+		if (LocalAmount <= 0) {
+			*Found = true;
+			return;
+		}
+	}
+
+	*Found = false;
+}
+
+void UInventoryComponent::RemoveItem(const int SlotIndex, const int Amount)
+{
+	if (Slots[SlotIndex].Amount == Amount)
+		Slots[SlotIndex] = FInventorySlot();
+	else
+		Slots[SlotIndex].Amount -= Amount;
+
+	Client_UpdateInventory(Slots);
+}
+
+void UInventoryComponent::TryCraft(const int ItemToCraft)
+{
+	// Check whether or not has all necessary items
+	TArray<int> Indexes;
+	TArray<int> Amount;
+	bool CanCraft = HasItemsToCraft(ItemToCraft, &Indexes, &Amount);
+
+	if (!CanCraft)
+		return;
+
+	// If has necessary items, then remove them and create the new one
+	for (int i = 0; i < Indexes.Num(); i++) {
+		RemoveItem(Indexes[i], Amount[i]);
+	}
+
+	GiveItem(ItemToCraft, 1);
+}
+
+void UInventoryComponent::DropAllItems()
+{
+	FActorSpawnParameters SpawnInfo;
+	FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
+
+	for (int i = 0; i < Slots.Num(); i++)
+	{
+		if (Slots[i].Amount == 0)
+			continue;
+
+		const int ItemIndex = Slots[i].ItemInfo.Index;
+		const int ItemAmount = Slots[i].Amount;
+		FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
+		APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+		CurrentPickable->ItemId = ItemIndex;
+		CurrentPickable->Amount = ItemAmount;
+		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+	}
+}
+
+bool UInventoryComponent::UseItem(const int InventoryIndex)
+{
+	EItemType CurrentItemType = Slots[InventoryIndex].ItemInfo.ItemType;
+	if (CurrentItemType == EItemType::FOOD)
+	{
+		// get hungry back
+		return true;
+	}
+	else if (CurrentItemType == EItemType::HEAL)
+	{
+		AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
+		float AmountSet = FMath::Clamp(CharacterRef->CurrentHealth + Slots[InventoryIndex].ItemInfo.BuffOnUse,
+			0.f, CharacterRef->MaxHealth);
+		CharacterRef->CurrentHealth = AmountSet;
+		return true;
+	}
+	return false;
+}
+
+bool UInventoryComponent::ItemOnIndexIsWeapon(const int SlotIndex)
+{
+	return Slots[SlotIndex].ItemInfo.ItemType == EItemType::WEAPON;
+}
