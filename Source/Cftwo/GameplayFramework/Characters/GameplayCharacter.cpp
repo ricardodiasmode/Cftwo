@@ -123,9 +123,10 @@ void AGameplayCharacter::Tick(const float DeltaTime)
 	{
 		FVector EndLoc = GetActorLocation() + GetVelocity();
 		EndLoc.Z = GetActorLocation().Z;
-		FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
-		RotationToSet.Yaw -= 90.f;
-		GetMesh()->SetWorldRotation(RotationToSet);
+		FRotator DesiredRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
+		DesiredRotation.Yaw -= 90.f;
+		FRotator InterpedRotation = UKismetMathLibrary::RInterpTo(GetMesh()->GetComponentRotation(), DesiredRotation, DeltaTime, MeshRotationSpeed);
+		GetMesh()->SetWorldRotation(InterpedRotation);
 	}
 }
 

@@ -1,2 +1,1 @@
-- melhorar IA do inimigo;
 - voltar com multiplayer;

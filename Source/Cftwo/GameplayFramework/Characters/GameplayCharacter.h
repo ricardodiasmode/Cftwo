@@ -45,6 +45,9 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	float MeshRotationSpeed = 8.f;
 	
 	// Controlls the time that player will stop hit after the hit starts.
 	// Note that this time may follow anim hit time
@@ -73,7 +76,7 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 public:
 	// Controlls whether or not player is hitting
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool Hitting = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
