@@ -3,6 +3,7 @@
 
 #include "BaseNeutralCharacter.h"
 #include "../../Actors/ActorSpawner.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ABaseNeutralCharacter::ABaseNeutralCharacter()
@@ -14,11 +15,10 @@ ABaseNeutralCharacter::ABaseNeutralCharacter()
 	LockPoint->SetupAttachment(GetMesh());
 }
 
-// Called when the game starts or when spawned
-void ABaseNeutralCharacter::BeginPlay()
+void ABaseNeutralCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
 {
-	Super::BeginPlay();
-	
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABaseNeutralCharacter, CurrentHealth);
 }
 
 // Called to bind functionality to input

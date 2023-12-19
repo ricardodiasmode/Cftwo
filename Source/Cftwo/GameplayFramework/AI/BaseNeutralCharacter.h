@@ -17,7 +17,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<int, int> ItemsToDrop;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	float CurrentHealth = 100.f;
 
 	int HarvestLeft = 3;
@@ -30,8 +30,6 @@ public:
 	class AActorSpawner* SpawnerRef = nullptr;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 	
 	virtual void Destroyed() override;
 
