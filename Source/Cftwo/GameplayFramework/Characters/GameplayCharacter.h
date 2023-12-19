@@ -101,13 +101,14 @@ public:
 	class AActorSpawner* SpawnerRef = nullptr;
 
 private:
+	
 	// Trigger player hitting status and set timer for stop hitting
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_OnHit(FRotator RotationToSet);
+	void Server_OnHit(const FRotator& RotationToSet);
 
 	// Check whether or not should lock the aim
 	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_OnHit();
+	void Client_OnHit(const FRotator& RotationToSet);
 	
 	// Actually check hit collision
 	UFUNCTION(BlueprintCallable, Server, Reliable)

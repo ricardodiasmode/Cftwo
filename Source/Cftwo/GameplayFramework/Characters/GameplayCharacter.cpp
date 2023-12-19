@@ -119,14 +119,13 @@ void AGameplayCharacter::Tick(const float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (GetVelocity().Length() > 10.f)
+	if (GetVelocity().Length() > 10.f && !Hitting)
 	{
 		FVector EndLoc = GetActorLocation() + GetVelocity();
 		EndLoc.Z = GetActorLocation().Z;
 		FRotator DesiredRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
 		DesiredRotation.Yaw -= 90.f;
-		FRotator InterpedRotation = UKismetMathLibrary::RInterpTo(GetMesh()->GetComponentRotation(), DesiredRotation, DeltaTime, MeshRotationSpeed);
-		GetMesh()->SetWorldRotation(InterpedRotation);
+		GetMesh()->SetWorldRotation(DesiredRotation);
 	}
 }
 
@@ -137,7 +136,7 @@ void AGameplayCharacter::Move(const FInputActionValue& Value)
 		return;
 	
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -208,13 +207,14 @@ void AGameplayCharacter::OnHit()
 	EndLoc.Z = GetActorLocation().Z;
 	FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
 	RotationToSet.Yaw -= 90.f;
-	GetMesh()->SetWorldRotation(RotationToSet);
-	Client_OnHit();
+	Client_OnHit(RotationToSet);
 	Server_OnHit(RotationToSet);
 }
 
-void AGameplayCharacter::Client_OnHit_Implementation()
+void AGameplayCharacter::Client_OnHit_Implementation(const FRotator& RotationToSet)
 {
+	GetMesh()->SetWorldRotation(RotationToSet);
+	
 	if (WeaponComponent->FireWeaponEquipped &&
 		!GetWorldTimerManager().IsTimerActive(LockAimTimerHandle))
 	{
@@ -261,9 +261,10 @@ void AGameplayCharacter::Server_TryCraft_Implementation(const int ItemIndex)
 	InventoryComponent->TryCraft(ItemIndex);
 }
 
-void AGameplayCharacter::Server_OnHit_Implementation(FRotator RotationToSet)
+void AGameplayCharacter::Server_OnHit_Implementation(const FRotator& RotationToSet)
 {
 	GetMesh()->SetWorldRotation(RotationToSet);
+	
 	Hitting = true;
 	// Offset to make sure blend will behave properly
 	static constexpr auto BLEND_OFFSET = 0.1f;
