@@ -1,1 +1,4 @@
-- melhorar IA do porco;
+- fazer craft buttons rolar;
+- roupa de pano
+- comida e sistema de comida;
+- testar

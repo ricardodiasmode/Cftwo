@@ -14,6 +14,15 @@ enum class EItemType : uint8 {
 	FOOD = 1  UMETA(DisplayName = "FOOD"),
 	WEAPON = 2     UMETA(DisplayName = "WEAPON"),
 	HEAL = 3     UMETA(DisplayName = "HEAL"),
+	EQUIP = 4     UMETA(DisplayName = "EQUIP"),
+};
+
+UENUM(BlueprintType)
+enum class EEquipmentType : uint8 {
+	HELMET = 0 UMETA(DisplayName = "HELMET"),
+	CHEST = 1  UMETA(DisplayName = "CHEST"),
+	PANTS = 2     UMETA(DisplayName = "PANTS"),
+	SHOES = 3     UMETA(DisplayName = "SHOES")
 };
 
 USTRUCT(BlueprintType)
@@ -32,7 +41,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<FItemRecipe> Recipe;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int WeaponId = -1;
+	int OtherDataTableId = -1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMesh* Mesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -56,4 +65,19 @@ public:
 	UStaticMesh* Mesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform AttachTransform;
+};
+
+USTRUCT(BlueprintType)
+struct FEquipmentItem : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int Index = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EEquipmentType Type;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USkeletalMesh* MeshRef = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int DefensePoints = 0;
 };

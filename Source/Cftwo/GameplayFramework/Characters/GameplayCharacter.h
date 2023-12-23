@@ -18,6 +18,18 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 {
 	GENERATED_BODY()
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* Helmet = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* Chest = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* Pants = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* Shoes = nullptr;
+	
 	/** Where the lock aim will be */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* LockPoint;
@@ -73,6 +85,8 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 		/** Pick Item Input Action */
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* PickItemAction;
+
+	int CurrentDefensePoints = 0;
 
 public:
 	// Controlls whether or not player is hitting
@@ -210,4 +224,5 @@ public:
 
 	FVector GetLockPoint() const { return LockPoint->GetComponentLocation(); }
 
+	void EquipItemOnIndex(const int InventoryIndex);
 };

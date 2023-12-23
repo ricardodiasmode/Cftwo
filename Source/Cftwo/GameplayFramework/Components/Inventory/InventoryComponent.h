@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* WeaponsDataTable = nullptr;
 
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* EquipmentDataTable = nullptr;
+
 	// Array of items in the slot
 	UPROPERTY(ReplicatedUsing = UpdateInventory)
 	TArray<FInventorySlot> Slots;
@@ -79,10 +82,14 @@ public:
 	bool IsFireWeapon(const int ItemId) { return GetWeaponInfo(ItemId).FireWeapon; }
 
 	FWeaponItem GetWeaponInfo(const int Index);
+	
+	FEquipmentItem GetEquipmentInfo(const int Index);
 
 	void DropAllItems();
 
 	bool UseItem(const int InventoryIndex);
 
-	bool ItemOnIndexIsWeapon(const int SlotIndex);
+	bool ItemOnIndexIsOfType(const int SlotIndex, const EItemType TypeToCheck);
+
+	FEquipmentItem GetEquipmentInfoFromSlotIndex(const int InventoryIndex);
 };

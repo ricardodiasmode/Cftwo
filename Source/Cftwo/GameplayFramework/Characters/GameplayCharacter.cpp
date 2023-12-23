@@ -60,6 +60,26 @@ AGameplayCharacter::AGameplayCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Helmet = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Helmet"));
+	Helmet->SetupAttachment(GetMesh());
+	Helmet->SetLeaderPoseComponent(GetMesh());
+	Helmet->SetRenderCustomDepth(true);
+
+	Chest = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Chest"));
+	Chest->SetupAttachment(GetMesh());
+	Chest->SetLeaderPoseComponent(GetMesh());
+	Chest->SetRenderCustomDepth(true);
+
+	Pants = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Pants"));
+	Pants->SetupAttachment(GetMesh());
+	Pants->SetLeaderPoseComponent(GetMesh());
+	Pants->SetRenderCustomDepth(true);
+
+	Shoes = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Shoes"));
+	Shoes->SetupAttachment(GetMesh());
+	Shoes->SetLeaderPoseComponent(GetMesh());
+	Shoes->SetRenderCustomDepth(true);
+
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 	if(WeaponComponent != nullptr)
 		WeaponComponent->CharacterRef = this;
@@ -305,12 +325,13 @@ int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 
 	FInventorySlot Slot = InventoryComponent->Slots[Id];
 	FInventoryItem ItemInfo = Slot.ItemInfo;
-	return ItemInfo.WeaponId;
+	return ItemInfo.OtherDataTableId;
 }
 
 void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 {
-	CurrentHealth -= Damage;
+	const float DamageMultiplierReduction = (100 - CurrentDefensePoints)/100;
+	CurrentHealth -= Damage * DamageMultiplierReduction;
 	if (CurrentHealth < 0.f)
 		CurrentHealth = 0.f;
 
@@ -352,7 +373,7 @@ int AGameplayCharacter::GetEquippedWeaponId()
 	const int WeaponSlotId = WeaponComponent->GetCurrentWeapon();
 	if (WeaponSlotId == -1)
 		return -1;
-	return InventoryComponent->Slots[WeaponSlotId].ItemInfo.WeaponId;
+	return InventoryComponent->Slots[WeaponSlotId].ItemInfo.OtherDataTableId;
 }
 
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon()
@@ -422,11 +443,55 @@ void AGameplayCharacter::UseItem(const int InventoryIndex)
 
 void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryIndex)
 {
-	if (!InventoryComponent->ItemOnIndexIsWeapon(InventoryIndex) &&
-		InventoryComponent->UseItem(InventoryIndex))
+	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::WEAPON))
+	{
+		WeaponComponent->SetCurrentWeapon(InventoryIndex);
 		return;
+	}
 
-	WeaponComponent->SetCurrentWeapon(InventoryIndex);
+	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::EQUIP))
+	{
+		EquipItemOnIndex(InventoryIndex);
+		return;
+	}
+
+	InventoryComponent->UseItem(InventoryIndex);
+
+}
+
+void AGameplayCharacter::EquipItemOnIndex(const int InventoryIndex)
+{
+	const FEquipmentItem EquipmentInfo = InventoryComponent->GetEquipmentInfoFromSlotIndex(InventoryIndex);
+
+	switch (EquipmentInfo.Type)
+	{
+	case EEquipmentType::HELMET:
+		if (Helmet != nullptr)
+			return; // has already a helmet equipped
+		Helmet->SetSkeletalMesh(EquipmentInfo.MeshRef);
+		break;
+	case EEquipmentType::CHEST:
+		if (Chest != nullptr)
+			return; // has already a chest equipped
+		Chest->SetSkeletalMesh(EquipmentInfo.MeshRef);
+		break;
+	case EEquipmentType::PANTS:
+		if (Pants != nullptr)
+			return; // has already a pants equipped
+		Pants->SetSkeletalMesh(EquipmentInfo.MeshRef);
+		break;
+	case EEquipmentType::SHOES:
+		if (Shoes != nullptr)
+			return; // has already a shoes equipped
+		Shoes->SetSkeletalMesh(EquipmentInfo.MeshRef);
+		break;
+	default:
+		break;
+	}
+
+	CurrentDefensePoints += EquipmentInfo.DefensePoints;
+	
+	InventoryComponent->RemoveItem(InventoryIndex, 1);
 }
 
 void AGameplayCharacter::AddItem(TPair<int, int> ItemToAdd) const

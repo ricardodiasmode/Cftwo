@@ -135,6 +135,11 @@ FWeaponItem UInventoryComponent::GetWeaponInfo(const int Index)
 	return *(WeaponsDataTable->FindRow<FWeaponItem>(FName(*(FString::FromInt(Index))), ""));
 }
 
+FEquipmentItem UInventoryComponent::GetEquipmentInfo(const int Index)
+{
+	return *(EquipmentDataTable->FindRow<FEquipmentItem>(FName(*(FString::FromInt(Index))), ""));
+}
+
 bool UInventoryComponent::HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount)
 {
 	FInventoryItem ItemInfo = GetItemInfo(ItemToCraft);
@@ -244,7 +249,12 @@ bool UInventoryComponent::UseItem(const int InventoryIndex)
 	return false;
 }
 
-bool UInventoryComponent::ItemOnIndexIsWeapon(const int SlotIndex)
+bool UInventoryComponent::ItemOnIndexIsOfType(const int SlotIndex, const EItemType TypeToCheck)
 {
-	return Slots[SlotIndex].ItemInfo.ItemType == EItemType::WEAPON;
+	return Slots[SlotIndex].ItemInfo.ItemType == TypeToCheck;
+}
+
+FEquipmentItem UInventoryComponent::GetEquipmentInfoFromSlotIndex(const int InventoryIndex)
+{
+	return GetEquipmentInfo(Slots[InventoryIndex].ItemInfo.OtherDataTableId);
 }
