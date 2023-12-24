@@ -1,3 +1,2 @@
-- verificar se roupa está diminuindo dano;
 - comida e sistema de comida;
 - testar

@@ -328,7 +328,7 @@ int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 
 void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 {
-	const float DamageMultiplierReduction = (100 - CurrentDefensePoints)/100;
+	const float DamageMultiplierReduction = (100.f - static_cast<float>(CurrentDefensePoints))/100.f;
 	CurrentHealth -= Damage * DamageMultiplierReduction;
 	if (CurrentHealth < 0.f)
 		CurrentHealth = 0.f;
