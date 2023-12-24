@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "Components/Inventory/InventoryComponent.h"
+#include "../UI/Inventory/InventoryWidget.h"
 #include "GameplayHUD.generated.h"
 
-class UInventoryWidget;
 class UCraftWidget;
 class UStatusWidget;
+class AGameplayCharacter;
 
 /**
  * 
@@ -44,7 +45,7 @@ protected:
 public:
 	void UpdateInventory(TArray<FInventorySlot> SlotsRef);
 
-	void InitializeStatusWidget();
+	void InitializeStatusWidget(AGameplayCharacter* CharacterRef);
 
 	void OnDie();
 
@@ -54,4 +55,5 @@ public:
 
 	void OnUpdateHungry(const float CurrentHungry);
 	
+	void OnWeaponChange() { InventoryWidget->OnWeaponChange(); }
 };

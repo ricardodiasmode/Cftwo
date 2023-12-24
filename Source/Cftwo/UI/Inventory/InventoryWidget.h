@@ -21,4 +21,7 @@ public:
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateSlots();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnWeaponChange();
 };

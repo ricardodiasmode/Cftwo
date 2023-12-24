@@ -97,6 +97,7 @@ void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AGameplayCharacter, Hitting);
+	DOREPLIFETIME(AGameplayCharacter, CurrentHealth);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -189,35 +190,32 @@ void AGameplayCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void AGameplayCharacter::Client_InitializeInventory_Implementation()
+void AGameplayCharacter::InitializeInventory()
 {
-	APlayerController* ControllerRef = Cast<APlayerController>(GetController());
-	if (ControllerRef) {
-		InventoryComponent->CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
-		InventoryComponent->UpdateInventory();
-	}
+	InventoryComponent->CharacterHUD = HUDRef;
+	InventoryComponent->UpdateInventory();
 }
 
-void AGameplayCharacter::Client_InitializeStatusWidget_Implementation()
+void AGameplayCharacter::InitializeStatusWidget()
 {
-	APlayerController* ControllerRef = Cast<APlayerController>(GetController());
-	if (ControllerRef) {
-		Cast<AGameplayHUD>(ControllerRef->GetHUD())->InitializeStatusWidget();
-	}
+	if (HUDRef)
+		HUDRef->InitializeStatusWidget(this);
 }
 
-void AGameplayCharacter::BeginPlay()
+void AGameplayCharacter::Client_OnSetPlayerController_Implementation()
 {
-	// Call the base class  
-	Super::BeginPlay();
-
-	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
+		//Add Input Mapping Context
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+
+		// Caching HUD
+		HUDRef = Cast<AGameplayHUD>(PlayerController->GetHUD());
+		InitializeInventory();
+		InitializeStatusWidget();
 	}
 }
 
@@ -334,14 +332,26 @@ void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 	CurrentHealth -= Damage * DamageMultiplierReduction;
 	if (CurrentHealth < 0.f)
 		CurrentHealth = 0.f;
-
-	APlayerController* ControllerRef = Cast<APlayerController>(GetController());
-	if (ControllerRef) {
-		Cast<AGameplayHUD>(ControllerRef->GetHUD())->OnUpdateHealth(CurrentHealth);
+	
+	if (HUDRef)
+	{
+		HUDRef->OnUpdateHealth(CurrentHealth);
+	} else {
+		if (Cast<APlayerController>(GetController())->GetHUD())
+		{
+			HUDRef = Cast<AGameplayHUD>(Cast<APlayerController>(GetController())->GetHUD());
+			HUDRef->OnUpdateHealth(CurrentHealth);
+		}
 	}
 
 	if (CurrentHealth <= 0.f)
 		Die();
+}
+
+void AGameplayCharacter::OnRep_CurrentHealth()
+{
+	if (HUDRef)
+		HUDRef->OnUpdateHealth(CurrentHealth);
 }
 
 void AGameplayCharacter::Die()
@@ -394,6 +404,9 @@ void AGameplayCharacter::OnWeaponChange(UStaticMesh* WeaponMeshRef, FTransform W
 {
 	WeaponMesh->SetStaticMesh(WeaponMeshRef);
 	WeaponMesh->SetRelativeTransform(WeaponTransform);
+	
+	if (HUDRef != nullptr)
+		HUDRef->OnWeaponChange();
 }
 
 void AGameplayCharacter::PickItem()
@@ -466,24 +479,28 @@ void AGameplayCharacter::EquipItemOnIndex(const int InventoryIndex)
 	switch (EquipmentInfo.Type)
 	{
 	case EEquipmentType::HELMET:
-		if (Helmet != nullptr)
+		if (Helmet->GetSkeletalMeshAsset() != nullptr)
 			return; // has already a helmet equipped
 		Helmet->SetSkeletalMesh(EquipmentInfo.MeshRef);
+		Multicast_ChangeEquipment(Helmet, EquipmentInfo.MeshRef);
 		break;
 	case EEquipmentType::CHEST:
-		if (Chest != nullptr)
+		if (Chest->GetSkeletalMeshAsset() != nullptr)
 			return; // has already a chest equipped
 		Chest->SetSkeletalMesh(EquipmentInfo.MeshRef);
+		Multicast_ChangeEquipment(Chest, EquipmentInfo.MeshRef);
 		break;
 	case EEquipmentType::PANTS:
-		if (Pants != nullptr)
+		if (Pants->GetSkeletalMeshAsset() != nullptr)
 			return; // has already a pants equipped
 		Pants->SetSkeletalMesh(EquipmentInfo.MeshRef);
+		Multicast_ChangeEquipment(Pants, EquipmentInfo.MeshRef);
 		break;
 	case EEquipmentType::SHOES:
-		if (Shoes != nullptr)
+		if (Shoes->GetSkeletalMeshAsset() != nullptr)
 			return; // has already a shoes equipped
 		Shoes->SetSkeletalMesh(EquipmentInfo.MeshRef);
+		Multicast_ChangeEquipment(Shoes, EquipmentInfo.MeshRef);
 		break;
 	default:
 		break;
@@ -492,6 +509,11 @@ void AGameplayCharacter::EquipItemOnIndex(const int InventoryIndex)
 	CurrentDefensePoints += EquipmentInfo.DefensePoints;
 	
 	InventoryComponent->RemoveItem(InventoryIndex, 1);
+}
+
+void AGameplayCharacter::Multicast_ChangeEquipment_Implementation(USkeletalMeshComponent* SKMRef, USkeletalMesh* MeshToSet)
+{
+	SKMRef->SetSkeletalMesh(MeshToSet);
 }
 
 void AGameplayCharacter::AddItem(TPair<int, int> ItemToAdd) const

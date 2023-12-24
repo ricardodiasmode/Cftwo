@@ -88,6 +88,8 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	int CurrentDefensePoints = 0;
 
+	AGameplayHUD* HUDRef = nullptr;
+
 public:
 	// Controlls whether or not player is hitting
 	UPROPERTY(BlueprintReadWrite, Replicated)
@@ -102,7 +104,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* WeaponMesh = nullptr;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentHealth)
 	float CurrentHealth = 100.f;
 
 	float MaxHealth = 100.f;
@@ -157,7 +159,13 @@ private:
 	UFUNCTION(Server, reliable)
 	void Server_TryUseItem(const int InventoryIndex);
 
+	UFUNCTION(NetMulticast, reliable)
+	void Multicast_ChangeEquipment(USkeletalMeshComponent* SKMRef, USkeletalMesh* MeshToSet);
+
 protected:
+
+	UFUNCTION()
+	virtual void OnRep_CurrentHealth();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -167,9 +175,6 @@ protected:
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	// To add mapping context
-	virtual void BeginPlay() override;
 
 	virtual void Tick(const float DeltaTime) override;
 
@@ -178,6 +183,9 @@ protected:
 public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
+
+	UFUNCTION(Client, reliable)
+	void Client_OnSetPlayerController();
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -191,11 +199,9 @@ public:
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_OnCraft(const int ItemIndex);
 
-	UFUNCTION(Client, reliable)
-	void Client_InitializeInventory();
+	void InitializeInventory();
 
-	UFUNCTION(Client, reliable)
-	void Client_InitializeStatusWidget();
+	void InitializeStatusWidget();
 
 	// Called by server to fire a punch effect
 	UFUNCTION(BlueprintCallable)

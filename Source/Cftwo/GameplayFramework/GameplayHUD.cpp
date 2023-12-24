@@ -2,8 +2,6 @@
 
 
 #include "GameplayHUD.h"
-#include "../Utils/GeneralFunctionLibrary.h"
-#include "../UI/Inventory/InventoryWidget.h"
 #include "../UI/RespawnWidget.h"
 #include "../UI/CraftWidget.h"
 #include "../UI/StatusWidget.h"
@@ -34,9 +32,8 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
     CraftWidget->OnUpdateAvailableItems(SlotsRef);
 }
 
-void AGameplayHUD::InitializeStatusWidget()
+void AGameplayHUD::InitializeStatusWidget(AGameplayCharacter* CharacterRef)
 {
-    AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwningPawn());
     StatusWidget = CreateWidget<UStatusWidget>(GetWorld(), StatusWidgetClass);
     StatusWidget->MaxHealth = CharacterRef->MaxHealth;
     StatusWidget->CurrentHealth = CharacterRef->CurrentHealth;

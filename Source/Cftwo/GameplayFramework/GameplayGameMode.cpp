@@ -47,14 +47,12 @@ void AGameplayGameMode::SpawnPlayerCharacter(APlayerController* NewPlayer)
 				}),
 			0.1f,
 			false);
-		GPrintDebug("failed to spawn");
 	}
 	else {
 		FVector RandomLoc = AllPlayerStartLocation[FMath::RandRange(0, AllPlayerStartLocation.Num() - 1)];
 		FActorSpawnParameters SpawnInfo;
 		AGameplayCharacter* CharacterRef = GetWorld()->SpawnActor<AGameplayCharacter>(GameplayCharacterClass, RandomLoc, FRotator(0), SpawnInfo);
 		NewPlayer->Possess(CharacterRef);
-		CharacterRef->Client_InitializeInventory();
-		CharacterRef->Client_InitializeStatusWidget();
+		CharacterRef->Client_OnSetPlayerController();
 	}
 }
