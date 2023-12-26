@@ -232,18 +232,24 @@ void UInventoryComponent::DropAllItems()
 
 bool UInventoryComponent::UseItem(const int InventoryIndex)
 {
-	EItemType CurrentItemType = Slots[InventoryIndex].ItemInfo.ItemType;
+	const EItemType CurrentItemType = Slots[InventoryIndex].ItemInfo.ItemType;
 	if (CurrentItemType == EItemType::FOOD)
 	{
-		// get hungry back
+		AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
+		const float AmountToSet = FMath::Clamp(CharacterRef->CurrentHungry + Slots[InventoryIndex].ItemInfo.BuffOnUse,
+			0.f, CharacterRef->MaxHungry);
+		CharacterRef->CurrentHungry = AmountToSet;
+		RemoveItem(InventoryIndex, 1);
 		return true;
 	}
-	else if (CurrentItemType == EItemType::HEAL)
+	
+	if (CurrentItemType == EItemType::HEAL)
 	{
 		AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
-		float AmountSet = FMath::Clamp(CharacterRef->CurrentHealth + Slots[InventoryIndex].ItemInfo.BuffOnUse,
+		const float AmountToSet = FMath::Clamp(CharacterRef->CurrentHealth + Slots[InventoryIndex].ItemInfo.BuffOnUse,
 			0.f, CharacterRef->MaxHealth);
-		CharacterRef->CurrentHealth = AmountSet;
+		CharacterRef->CurrentHealth = AmountToSet;
+		RemoveItem(InventoryIndex, 1);
 		return true;
 	}
 	return false;

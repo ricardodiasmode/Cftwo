@@ -109,7 +109,7 @@ public:
 
 	float MaxHealth = 100.f;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentHungry)
 	float CurrentHungry = 100.f;
 
 	float MaxHungry = 100.f;
@@ -166,6 +166,9 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_CurrentHealth();
+	
+	UFUNCTION()
+	virtual void OnRep_CurrentHungry();
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -187,6 +190,9 @@ public:
 	UFUNCTION(Client, reliable)
 	void Client_OnSetPlayerController();
 
+	UFUNCTION(Server, reliable)
+	void Server_OnSetPlayerController();
+
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
@@ -202,6 +208,8 @@ public:
 	void InitializeInventory();
 
 	void InitializeStatusWidget();
+	
+	void RemoveHungry();
 
 	// Called by server to fire a punch effect
 	UFUNCTION(BlueprintCallable)
@@ -218,6 +226,7 @@ public:
 	FWeaponItem GetWeaponInfo(const int WeaponId) { return InventoryComponent->GetWeaponInfo(WeaponId); }
 
 	int GetWeaponIdOnSlot(const int Id);
+	void RemoveHealth(int Amount);
 
 	UFUNCTION(Server, reliable)
 	void Server_OnGetHitted(const float Damage);

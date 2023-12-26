@@ -6,6 +6,7 @@
 #include "../UI/CraftWidget.h"
 #include "../UI/StatusWidget.h"
 #include "GameplayPlayerController.h"
+#include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Characters/GameplayCharacter.h"
 
 void AGameplayHUD::BeginPlay()

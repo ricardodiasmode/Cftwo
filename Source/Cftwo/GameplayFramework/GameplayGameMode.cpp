@@ -53,6 +53,6 @@ void AGameplayGameMode::SpawnPlayerCharacter(APlayerController* NewPlayer)
 		FActorSpawnParameters SpawnInfo;
 		AGameplayCharacter* CharacterRef = GetWorld()->SpawnActor<AGameplayCharacter>(GameplayCharacterClass, RandomLoc, FRotator(0), SpawnInfo);
 		NewPlayer->Possess(CharacterRef);
-		CharacterRef->Client_OnSetPlayerController();
+		CharacterRef->Server_OnSetPlayerController();
 	}
 }

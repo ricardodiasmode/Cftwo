@@ -98,6 +98,7 @@ void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AGameplayCharacter, Hitting);
 	DOREPLIFETIME(AGameplayCharacter, CurrentHealth);
+	DOREPLIFETIME(AGameplayCharacter, CurrentHungry);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -219,6 +220,38 @@ void AGameplayCharacter::Client_OnSetPlayerController_Implementation()
 	}
 }
 
+void AGameplayCharacter::RemoveHungry()
+{ // must be called only by server
+	CurrentHungry = FMath::Clamp(CurrentHungry - 1.f, 0.f, MaxHungry);
+	
+	if (HUDRef)
+	{
+		HUDRef->OnUpdateHungry(CurrentHungry);
+	} else {
+		if (Cast<APlayerController>(GetController())->GetHUD())
+		{
+			HUDRef = Cast<AGameplayHUD>(Cast<APlayerController>(GetController())->GetHUD());
+			HUDRef->OnUpdateHungry(CurrentHungry);
+		}
+	}
+
+	if (CurrentHungry == 0)
+		RemoveHealth(1.f);
+}
+
+void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
+{
+	Client_OnSetPlayerController();
+
+	FTimerHandle HungryTimer;
+	GetWorldTimerManager().SetTimer(HungryTimer,
+		FTimerDelegate::CreateLambda([this] {
+			RemoveHungry();
+		}),
+		5.f,
+		true);
+}
+
 void AGameplayCharacter::OnHit()
 {
 	FVector EndLoc = GetActorLocation() + GetFollowCamera()->GetForwardVector();
@@ -326,10 +359,10 @@ int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 	return ItemInfo.OtherDataTableId;
 }
 
-void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
+void AGameplayCharacter::RemoveHealth(const int Amount)
 {
 	const float DamageMultiplierReduction = (100.f - static_cast<float>(CurrentDefensePoints))/100.f;
-	CurrentHealth -= Damage * DamageMultiplierReduction;
+	CurrentHealth -= Amount * DamageMultiplierReduction;
 	if (CurrentHealth < 0.f)
 		CurrentHealth = 0.f;
 	
@@ -348,10 +381,21 @@ void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 		Die();
 }
 
+void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
+{
+	RemoveHealth(Damage);
+}
+
 void AGameplayCharacter::OnRep_CurrentHealth()
 {
 	if (HUDRef)
 		HUDRef->OnUpdateHealth(CurrentHealth);
+}
+
+void AGameplayCharacter::OnRep_CurrentHungry()
+{
+	if (HUDRef)
+		HUDRef->OnUpdateHungry(CurrentHungry);
 }
 
 void AGameplayCharacter::Die()
