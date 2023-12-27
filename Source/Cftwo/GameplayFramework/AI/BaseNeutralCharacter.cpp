@@ -65,7 +65,7 @@ TArray<TPair<int, int>> ABaseNeutralCharacter::OnHarvest()
 	return ReturnArray;
 }
 
-void ABaseNeutralCharacter::OnDie()
+void ABaseNeutralCharacter::Server_OnDie_Implementation()
 {
 	if(!SpawnerRef)
 	{
@@ -77,7 +77,7 @@ void ABaseNeutralCharacter::OnDie()
 
 void ABaseNeutralCharacter::Destroyed()
 {
-	OnDie();
+	Server_OnDie();
 	
 	Super::Destroyed();
 }

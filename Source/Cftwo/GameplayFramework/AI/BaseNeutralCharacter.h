@@ -53,6 +53,7 @@ public:
 
 	TArray<TPair<int, int>> OnHarvest();
 
-	void OnDie();
+	UFUNCTION(Server, reliable)
+	void Server_OnDie();
 	
 };

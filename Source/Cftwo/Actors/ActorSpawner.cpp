@@ -7,7 +7,6 @@
 #include "Components/BoxComponent.h"
 #include "../Utils/ActorToSpawn.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "SpawnableActor.h"
 #include "Cftwo/GameplayFramework/AI/BaseNeutralCharacter.h"
 #include "Cftwo/GameplayFramework/Characters/GameplayCharacter.h"
 
@@ -41,7 +40,7 @@ void AActorSpawner::Tick(float DeltaTime)
 void AActorSpawner::Server_StartSpawnTimer_Implementation()
 {
 	FTimerHandle UnusedHandle;
-	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AActorSpawner::CheckShouldSpawn, 4.f, true, 0.1f);
+	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AActorSpawner::CheckShouldSpawn, 1.f, true, 0.1f);
 }
 
 void AActorSpawner::SpawnAllFoliages()
@@ -112,11 +111,11 @@ void AActorSpawner::SpawnActor(const int Index)
 
 void AActorSpawner::OnLoseActor(AActor* ActorRef)
 {
-	for (FActorMatrix CurrentVector : ActorsSpawned)
+	for (int i = 0; i < ActorsSpawned.Num(); i++)
 	{
-		if (CurrentVector.ActorArray.Contains(ActorRef))
+		if (ActorsSpawned[i].ActorArray.Contains(ActorRef))
 		{
-			CurrentVector.ActorArray.Remove(ActorRef);
+			ActorsSpawned[i].ActorArray.Remove(ActorRef);
 			return;
 		}
 	}
