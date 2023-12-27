@@ -2,8 +2,6 @@
 
 
 #include "BaseNeutralCharacter.h"
-
-#include "IDetailTreeNode.h"
 #include "../../Actors/ActorSpawner.h"
 #include "Net/UnrealNetwork.h"
 
