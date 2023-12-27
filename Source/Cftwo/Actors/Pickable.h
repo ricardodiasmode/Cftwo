@@ -30,7 +30,7 @@ public:
 	// Sets default values for this actor's properties
 	APickable();
 
-	FInventoryItem GetItemInfo(const int Index);
+	FInventoryItem GetItemInfo(const int Index) const;
 
 	void OnPick();
 

@@ -244,4 +244,6 @@ public:
 	FVector GetLockPoint() const { return LockPoint->GetComponentLocation(); }
 
 	void EquipItemOnIndex(const int InventoryIndex);
+
+	void DropItem(const int SlotIndex);
 };

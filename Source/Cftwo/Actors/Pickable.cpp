@@ -3,6 +3,8 @@
 
 #include "Pickable.h"
 
+#include "Cftwo/Utils/GeneralFunctionLibrary.h"
+
 // Sets default values
 APickable::APickable()
 {
@@ -19,11 +21,11 @@ APickable::APickable()
 void APickable::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	StaticMesh->SetStaticMesh(GetItemInfo(ItemId).Mesh);
 }
 
-FInventoryItem APickable::GetItemInfo(const int Index)
+FInventoryItem APickable::GetItemInfo(const int Index) const
 {
 	return *(ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(Index))), ""));
 }

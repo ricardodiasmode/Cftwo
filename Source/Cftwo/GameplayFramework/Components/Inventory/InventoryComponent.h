@@ -92,4 +92,6 @@ public:
 	bool ItemOnIndexIsOfType(const int SlotIndex, const EItemType TypeToCheck);
 
 	FEquipmentItem GetEquipmentInfoFromSlotIndex(const int InventoryIndex);
+
+	void DropItem(const int SlotIndex);
 };

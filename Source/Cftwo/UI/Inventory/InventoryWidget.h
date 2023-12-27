@@ -24,4 +24,7 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnWeaponChange();
+
+	UFUNCTION(BlueprintCallable)
+	void DropItem(const int SlotIndex);
 };

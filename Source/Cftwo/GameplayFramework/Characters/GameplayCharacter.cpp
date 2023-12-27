@@ -582,6 +582,11 @@ void AGameplayCharacter::EquipItemOnIndex(const int InventoryIndex)
 	InventoryComponent->RemoveItem(InventoryIndex, 1);
 }
 
+void AGameplayCharacter::DropItem(const int SlotIndex)
+{
+	InventoryComponent->DropItem(SlotIndex);
+}
+
 void AGameplayCharacter::Multicast_ChangeEquipment_Implementation(USkeletalMeshComponent* SKMRef, USkeletalMesh* MeshToSet)
 {
 	SKMRef->SetSkeletalMesh(MeshToSet);

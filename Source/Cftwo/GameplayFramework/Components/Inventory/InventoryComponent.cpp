@@ -207,26 +207,27 @@ void UInventoryComponent::TryCraft(const int ItemToCraft)
 		RemoveItem(Indexes[i], Amount[i]);
 	}
 
-	GiveItem(ItemToCraft, 1);
+	if(!GiveItem(ItemToCraft, 1))
+	{ // If could not add to inventory, spawn it
+		FActorSpawnParameters SpawnInfo;
+		const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
+		constexpr int ItemAmount = 1;
+		const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
+		APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+		CurrentPickable->ItemId = ItemToCraft;
+		CurrentPickable->Amount = ItemAmount;
+		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+	}
 }
 
 void UInventoryComponent::DropAllItems()
 {
-	FActorSpawnParameters SpawnInfo;
-	FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
-
 	for (int i = 0; i < Slots.Num(); i++)
 	{
 		if (Slots[i].Amount == 0)
 			continue;
 
-		const int ItemIndex = Slots[i].ItemInfo.Index;
-		const int ItemAmount = Slots[i].Amount;
-		FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
-		APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-		CurrentPickable->ItemId = ItemIndex;
-		CurrentPickable->Amount = ItemAmount;
-		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+		DropItem(i);
 	}
 }
 
@@ -255,4 +256,18 @@ bool UInventoryComponent::ItemOnIndexIsOfType(const int SlotIndex, const EItemTy
 FEquipmentItem UInventoryComponent::GetEquipmentInfoFromSlotIndex(const int InventoryIndex)
 {
 	return GetEquipmentInfo(Slots[InventoryIndex].ItemInfo.OtherDataTableId);
+}
+
+void UInventoryComponent::DropItem(const int SlotIndex)
+{
+	FActorSpawnParameters SpawnInfo;
+	const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
+	const int ItemIndex = Slots[SlotIndex].ItemInfo.Index;
+	const int ItemAmount = Slots[SlotIndex].Amount;
+	const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
+	APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+	CurrentPickable->ItemId = ItemIndex;
+	CurrentPickable->Amount = ItemAmount;
+	UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+	RemoveItem(SlotIndex, ItemAmount);
 }
