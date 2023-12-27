@@ -1,2 +1,2 @@
-- comida e sistema de comida;
+- nao ta desequipando item quando clica em um item que nao da pra usar;
 - testar

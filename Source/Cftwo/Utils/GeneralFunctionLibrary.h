@@ -21,6 +21,20 @@ public:
 	FActorMatrix() = default;
 };
 
+USTRUCT(Blueprintable)
+struct FIntPair
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	int First = -1;
+	
+	UPROPERTY(EditAnywhere)
+	int Second = 0;
+	
+};
+
 /**
  * 
  */

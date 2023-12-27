@@ -2,6 +2,8 @@
 
 
 #include "BaseNeutralCharacter.h"
+
+#include "IDetailTreeNode.h"
 #include "../../Actors/ActorSpawner.h"
 #include "Net/UnrealNetwork.h"
 
@@ -35,27 +37,32 @@ void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage
 		Die();
 }
 
-TPair<int, int> ABaseNeutralCharacter::OnHarvest()
+TArray<TPair<int, int>> ABaseNeutralCharacter::OnHarvest()
 {
-	int RandomId = FMath::RandRange(0, ItemsToDrop.Num() - 1);
-	int i = 0;
-	for (auto& Elem : ItemsToDrop)
+	TArray<TPair<int, int>> ReturnArray;
+	while (ReturnArray.Num() == 0 && ItemsToDrop.Num() > 0) // Make sure we will add something
 	{
-		if (RandomId == i)
+		int i = 0;
+		for (auto& Elem : ItemsToDrop)
 		{
-			RandomId = Elem.Key; // getting the key of the random index
-			break;
+			i++;
+			const int RandomChance = FMath::RandRange(1, 99);
+			if (RandomChance > Elem.Value.First)
+				continue;
+		
+			const float RandomAmount = FMath::RandRange(1, ItemsToDrop[Elem.Key].Second);
+
+			ReturnArray.Add({Elem.Key, RandomAmount});
+		
+			HarvestLeft--;
+			if (HarvestLeft == 0)
+			{
+				Destroy();
+				break;
+			}
 		}
-		i++;
 	}
-
-	const float RandomAmount = FMath::RandRange(1, ItemsToDrop[RandomId]);
-
-	HarvestLeft--;
-	if (HarvestLeft == 0)
-		Destroy();
-
-	return TPair<int, int>(RandomId, RandomAmount);
+	return ReturnArray;
 }
 
 void ABaseNeutralCharacter::OnDie()

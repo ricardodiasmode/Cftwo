@@ -220,10 +220,8 @@ void AGameplayCharacter::Client_OnSetPlayerController_Implementation()
 	}
 }
 
-void AGameplayCharacter::RemoveHungry()
-{ // must be called only by server
-	CurrentHungry = FMath::Clamp(CurrentHungry - 1.f, 0.f, MaxHungry);
-	
+void AGameplayCharacter::UpdateHungryWidget()
+{
 	if (HUDRef)
 	{
 		HUDRef->OnUpdateHungry(CurrentHungry);
@@ -234,9 +232,30 @@ void AGameplayCharacter::RemoveHungry()
 			HUDRef->OnUpdateHungry(CurrentHungry);
 		}
 	}
+}
+
+void AGameplayCharacter::RemoveHungry()
+{ // must be called only by server
+	CurrentHungry = FMath::Clamp(CurrentHungry - 1.f, 0.f, MaxHungry);
+	
+	UpdateHungryWidget();
 
 	if (CurrentHungry == 0)
 		RemoveHealth(1.f);
+}
+
+void AGameplayCharacter::AddHungry(const int Amount)
+{ // must be called only by server
+	CurrentHungry = FMath::Clamp(CurrentHungry + Amount,
+			0.f, MaxHungry);
+	UpdateHungryWidget();
+}
+
+void AGameplayCharacter::AddHealth(const int Amount)
+{ // must be called only by server
+	CurrentHealth = FMath::Clamp(CurrentHealth + Amount,
+			0.f, MaxHealth);
+	UpdateHealthWidget();
 }
 
 void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
@@ -359,13 +378,8 @@ int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 	return ItemInfo.OtherDataTableId;
 }
 
-void AGameplayCharacter::RemoveHealth(const int Amount)
+void AGameplayCharacter::UpdateHealthWidget()
 {
-	const float DamageMultiplierReduction = (100.f - static_cast<float>(CurrentDefensePoints))/100.f;
-	CurrentHealth -= Amount * DamageMultiplierReduction;
-	if (CurrentHealth < 0.f)
-		CurrentHealth = 0.f;
-	
 	if (HUDRef)
 	{
 		HUDRef->OnUpdateHealth(CurrentHealth);
@@ -376,6 +390,16 @@ void AGameplayCharacter::RemoveHealth(const int Amount)
 			HUDRef->OnUpdateHealth(CurrentHealth);
 		}
 	}
+}
+
+void AGameplayCharacter::RemoveHealth(const int Amount)
+{
+	const float DamageMultiplierReduction = (100.f - static_cast<float>(CurrentDefensePoints))/100.f;
+	CurrentHealth -= Amount * DamageMultiplierReduction;
+	if (CurrentHealth < 0.f)
+		CurrentHealth = 0.f;
+	
+	UpdateHealthWidget();
 
 	if (CurrentHealth <= 0.f)
 		Die();

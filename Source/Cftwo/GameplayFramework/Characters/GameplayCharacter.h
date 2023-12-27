@@ -208,8 +208,10 @@ public:
 	void InitializeInventory();
 
 	void InitializeStatusWidget();
-	
+
+	void UpdateHungryWidget();
 	void RemoveHungry();
+	void AddHungry(int Amount);
 
 	// Called by server to fire a punch effect
 	UFUNCTION(BlueprintCallable)
@@ -226,7 +228,9 @@ public:
 	FWeaponItem GetWeaponInfo(const int WeaponId) { return InventoryComponent->GetWeaponInfo(WeaponId); }
 
 	int GetWeaponIdOnSlot(const int Id);
+	void UpdateHealthWidget();
 	void RemoveHealth(int Amount);
+	void AddHealth(const int Amount);
 
 	UFUNCTION(Server, reliable)
 	void Server_OnGetHitted(const float Damage);

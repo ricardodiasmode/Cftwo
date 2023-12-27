@@ -233,26 +233,18 @@ void UInventoryComponent::DropAllItems()
 bool UInventoryComponent::UseItem(const int InventoryIndex)
 {
 	const EItemType CurrentItemType = Slots[InventoryIndex].ItemInfo.ItemType;
-	if (CurrentItemType == EItemType::FOOD)
-	{
-		AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
-		const float AmountToSet = FMath::Clamp(CharacterRef->CurrentHungry + Slots[InventoryIndex].ItemInfo.BuffOnUse,
-			0.f, CharacterRef->MaxHungry);
-		CharacterRef->CurrentHungry = AmountToSet;
-		RemoveItem(InventoryIndex, 1);
-		return true;
-	}
+	if (CurrentItemType != EItemType::FOOD &&
+		CurrentItemType != EItemType::HEAL) return false;
 	
-	if (CurrentItemType == EItemType::HEAL)
-	{
-		AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
-		const float AmountToSet = FMath::Clamp(CharacterRef->CurrentHealth + Slots[InventoryIndex].ItemInfo.BuffOnUse,
-			0.f, CharacterRef->MaxHealth);
-		CharacterRef->CurrentHealth = AmountToSet;
-		RemoveItem(InventoryIndex, 1);
-		return true;
-	}
-	return false;
+	AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
+
+	if (CurrentItemType == EItemType::FOOD)
+		CharacterRef->AddHungry(Slots[InventoryIndex].ItemInfo.BuffOnUse);
+	else if (CurrentItemType == EItemType::HEAL)
+		CharacterRef->AddHealth(Slots[InventoryIndex].ItemInfo.BuffOnUse);
+	
+	RemoveItem(InventoryIndex, 1);
+	return true;
 }
 
 bool UInventoryComponent::ItemOnIndexIsOfType(const int SlotIndex, const EItemType TypeToCheck)

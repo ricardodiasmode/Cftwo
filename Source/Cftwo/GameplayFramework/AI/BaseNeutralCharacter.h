@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Cftwo/Actors/SpawnableActor.h"
+#include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "GameFramework/Character.h"
 #include "BaseNeutralCharacter.generated.h"
 
@@ -13,9 +14,9 @@ class CFTWO_API ABaseNeutralCharacter : public ACharacter, public SpawnableActor
 	GENERATED_BODY()
 
 protected:
-	// <id, max amount>
+	// <id, probability, max amount>
 	UPROPERTY(EditDefaultsOnly)
-	TMap<int, int> ItemsToDrop;
+	TMap<int, FIntPair> ItemsToDrop;
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	float CurrentHealth = 100.f;
@@ -50,7 +51,7 @@ public:
 
 	bool AmIAlive() const { return CurrentHealth > 0.f; }
 
-	TPair<int, int> OnHarvest();
+	TArray<TPair<int, int>> OnHarvest();
 
 	void OnDie();
 	

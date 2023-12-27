@@ -104,7 +104,11 @@ void UWeaponComponent::OnPunch()
 				if (CurrentIA->AmIAlive())
 					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE);
 				else
-					CharacterRef->AddItem(CurrentIA->OnHarvest());
+				{
+					TArray<TPair<int, int>> ItemsToAdd = CurrentIA->OnHarvest();
+					for (TPair<int,int> ItemToAdd : ItemsToAdd)
+						CharacterRef->AddItem(ItemToAdd);
+				}
 				return;
 			}
 			else {
