@@ -455,8 +455,8 @@ int AGameplayCharacter::GetEquippedWeaponId()
 }
 
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon()
-{
-	const int WeaponIdOnItemsDT = GetEquippedWeaponItemId();
+{	
+	const int WeaponIdOnItemsDT = GetEquippedWeaponItemId();	
 	const int WeaponIdOnWeaponsDT = GetEquippedWeaponId();
 
 	if (WeaponIdOnItemsDT == -1 ||
@@ -536,7 +536,10 @@ void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryInd
 		return;
 	}
 
-	InventoryComponent->UseItem(InventoryIndex);
+	if (InventoryComponent->UseItem(InventoryIndex))
+		return;
+
+	WeaponComponent->SetCurrentWeapon(-1);
 
 }
 
