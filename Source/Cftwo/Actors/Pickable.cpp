@@ -4,6 +4,7 @@
 #include "Pickable.h"
 
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 APickable::APickable()
@@ -15,6 +16,11 @@ APickable::APickable()
 	RootComponent = StaticMesh;
 	StaticMesh->SetCollisionObjectType(ECC_GameTraceChannel1);
 	StaticMesh->SetSimulatePhysics(true);
+
+	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+	SphereCollision->SetupAttachment(RootComponent);
+	SphereCollision->SetCollisionObjectType(ECC_GameTraceChannel1);
+	SphereCollision->SetSphereRadius(200.f);
 }
 
 // Called when the game starts or when spawned

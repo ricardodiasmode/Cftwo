@@ -38,6 +38,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> StatusWidgetClass;
+
+	AGameplayCharacter* CharacterRef = nullptr;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -56,4 +58,13 @@ public:
 	void OnUpdateHungry(const float CurrentHungry);
 	
 	void OnWeaponChange() { InventoryWidget->OnWeaponChange(); }
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPickableClose();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPickableFar();
+
+	UFUNCTION(BlueprintCallable)
+	void OnPickup();
 };

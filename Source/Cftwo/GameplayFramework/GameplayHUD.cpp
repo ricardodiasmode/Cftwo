@@ -18,6 +18,8 @@ void AGameplayHUD::BeginPlay()
 
     CraftWidget = CreateWidget<UCraftWidget>(GetWorld(), CraftWidgetClass);
     CraftWidget->AddToViewport();
+
+    CharacterRef = Cast<AGameplayCharacter>(GetOwningPawn());
 }
 
 void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
@@ -33,13 +35,16 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
     CraftWidget->OnUpdateAvailableItems(SlotsRef);
 }
 
-void AGameplayHUD::InitializeStatusWidget(AGameplayCharacter* CharacterRef)
+void AGameplayHUD::InitializeStatusWidget(AGameplayCharacter* OwningCharacter)
 {
+    if (CharacterRef == nullptr)
+        CharacterRef = OwningCharacter;
+    
     StatusWidget = CreateWidget<UStatusWidget>(GetWorld(), StatusWidgetClass);
-    StatusWidget->MaxHealth = CharacterRef->MaxHealth;
-    StatusWidget->CurrentHealth = CharacterRef->CurrentHealth;
-    StatusWidget->MaxHungry = CharacterRef->MaxHungry;
-    StatusWidget->CurrentHungry = CharacterRef->CurrentHungry;
+    StatusWidget->MaxHealth = OwningCharacter->MaxHealth;
+    StatusWidget->CurrentHealth = OwningCharacter->CurrentHealth;
+    StatusWidget->MaxHungry = OwningCharacter->MaxHungry;
+    StatusWidget->CurrentHungry = OwningCharacter->CurrentHungry;
     StatusWidget->AddToViewport();
     StatusWidget->OnUpdateHealth();
     StatusWidget->OnUpdateHungry();
@@ -73,3 +78,14 @@ void AGameplayHUD::OnDie()
     URespawnWidget* RespawnWidget = CreateWidget<URespawnWidget>(GetWorld(), RespawnWidgetClass);
     RespawnWidget->AddToViewport();
 }
+
+void AGameplayHUD::OnPickup()
+{
+    if (!CharacterRef)
+        CharacterRef = Cast<AGameplayCharacter>(GetOwningPawn());
+
+    check(CharacterRef); // Here character must be valid
+
+    CharacterRef->Pickup();
+}
+

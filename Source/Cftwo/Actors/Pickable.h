@@ -14,6 +14,8 @@ class CFTWO_API APickable : public AActor
 
 protected:
 	class UStaticMeshComponent* StaticMesh = nullptr;
+	
+	class USphereComponent* SphereCollision = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ItemsDataTable = nullptr;

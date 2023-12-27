@@ -116,6 +116,8 @@ public:
 	
 	class AActorSpawner* SpawnerRef = nullptr;
 
+	APickable* ClosePickable = nullptr;
+
 private:
 	
 	// Trigger player hitting status and set timer for stop hitting
@@ -183,6 +185,12 @@ protected:
 
 	virtual void Destroyed() override;
 
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
@@ -246,4 +254,6 @@ public:
 	void EquipItemOnIndex(const int InventoryIndex);
 
 	void DropItem(const int SlotIndex);
+	
+	void Pickup();
 };

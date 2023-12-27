@@ -4,6 +4,7 @@
 #include "GameplayCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "NetworkMessage.h"
 #include "Net/UnrealNetwork.h"
 #include "../Components/WeaponComponent.h"
 #include "../Components/Inventory/InventoryComponent.h"
@@ -25,7 +26,10 @@ AGameplayCharacter::AGameplayCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-		
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Overlap);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AGameplayCharacter::OnOverlapBegin);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AGameplayCharacter::OnComponentEndOverlap);
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -189,6 +193,25 @@ void AGameplayCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!Cast<APickable>(OtherActor) || ClosePickable != nullptr)
+		return;
+
+	ClosePickable = Cast<APickable>(OtherActor);
+	HUDRef->OnPickableClose();
+}
+
+void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (Cast<APickable>(OtherActor) != ClosePickable)
+		return;
+
+	GPrintDebug("end pickap overlap");
+	HUDRef->OnPickableFar();
+	ClosePickable = nullptr;
 }
 
 void AGameplayCharacter::InitializeInventory()
@@ -612,4 +635,10 @@ void AGameplayCharacter::Destroyed()
 	OnDie();
 	
 	Super::Destroyed();
+}
+
+void AGameplayCharacter::Pickup()
+{
+	InventoryComponent->GiveItem(ClosePickable->ItemId, ClosePickable->Amount);
+	ClosePickable->OnPick();
 }
