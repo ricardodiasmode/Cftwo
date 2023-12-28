@@ -55,8 +55,6 @@ public:
 private:
 	void TryFireWeapon();
 
-	void FireBow();
-
 	UFUNCTION(Server, reliable)
 	void Server_SpawnProjectile(FVector CameraForward, FVector CameraLoc, TSubclassOf<ABaseProjectile> ProjectileToSpawnClass);
 
