@@ -1,5 +1,3 @@
-- montanhas no final do mapa;
-- colocar mesh no pickable da rock;
 - porco continua correndo morto;
 - porco deve correr do agressor;
 - testar
