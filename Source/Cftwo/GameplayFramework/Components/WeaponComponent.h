@@ -8,6 +8,7 @@
 #include "Engine/DataTable.h"
 #include "WeaponComponent.generated.h"
 
+class UNiagaraComponent;
 class UNiagaraSystem;
 class ABaseProjectile;
 
@@ -71,8 +72,8 @@ public:
 
 	// Only called by server to handle collision
 	void OnHit();
-	void SpawnVFXAtLocation(UNiagaraSystem* VFXToSpawn, FVector LocationToSpawn);
-	void SpawnDustOnAttackBreakable(FHitResult CurrentHit, ABreakableObject* BreakableObject);
+	UNiagaraComponent* SpawnVFXAtLocation(UNiagaraSystem* VFXToSpawn, const FVector& LocationToSpawn, const FRotator& RotationToSpawn);
+	void SpawnVFXOnAttack(FHitResult CurrentHit,  AActor* Target, UNiagaraSystem* VFX);
 	void OnPunch();
 
 	// Validate whether or not we can hit and set m_CanHit.

@@ -12,6 +12,7 @@
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -64,22 +65,21 @@ void UWeaponComponent::OnHit()
 		TryFireWeapon();
 }
 
-void UWeaponComponent::SpawnVFXAtLocation(UNiagaraSystem* VFXToSpawn, const FVector LocationToSpawn)
+UNiagaraComponent* UWeaponComponent::SpawnVFXAtLocation(UNiagaraSystem* VFXToSpawn, const FVector& LocationToSpawn, const FRotator& RotationToSpawn)
 {
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
+	return UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
 	                                               VFXToSpawn,
 	                                               LocationToSpawn,
-	                                               FRotator(0.f),
+	                                               RotationToSpawn,
 	                                               FVector(1.f),
 	                                               true,
 	                                               true);
 }
 
-void UWeaponComponent::SpawnDustOnAttackBreakable(FHitResult CurrentHit, ABreakableObject* BreakableObject)
+void UWeaponComponent::SpawnVFXOnAttack(FHitResult CurrentHit, AActor* Target, UNiagaraSystem* VFX)
 {
+	FVector DesiredLoc = Target->GetActorLocation();
 	FVector VFXInitialTraceLoc = CurrentHit.Location;
-	FVector DesiredLoc = BreakableObject->GetActorLocation();
-	DesiredLoc.Z = CurrentHit.Location.Z;
 					
 	TArray<FHitResult> VFXOutHit;
 	GetWorld()->LineTraceMultiByChannel(VFXOutHit,
@@ -90,15 +90,18 @@ void UWeaponComponent::SpawnDustOnAttackBreakable(FHitResult CurrentHit, ABreaka
 	bool VFXSpawned = false;
 	for (FHitResult CurrentVFXOutHit : VFXOutHit)
 	{
-		if (CurrentVFXOutHit.GetActor() == BreakableObject)
+		if (CurrentVFXOutHit.GetActor() == Target)
 		{
-			SpawnVFXAtLocation(CharacterRef->DustVFX, CurrentVFXOutHit.Location);
+			UNiagaraComponent* SpawnedNiagara = SpawnVFXAtLocation(VFX, CurrentVFXOutHit.ImpactPoint, CurrentVFXOutHit.ImpactNormal.Rotation());
+			SpawnedNiagara->AttachToComponent(Target->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
 			VFXSpawned = true;
 			break;
 		}
 	}
 	if (!VFXSpawned)
-		SpawnVFXAtLocation(CharacterRef->DustVFX, CurrentHit.Location);
+	{
+		SpawnVFXAtLocation(VFX, CurrentHit.Location, CurrentHit.ImpactNormal.Rotation());
+	}
 }
 
 void UWeaponComponent::OnPunch()
@@ -133,12 +136,15 @@ void UWeaponComponent::OnPunch()
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
 				CurrentCharacter->Server_OnGetHitted(PUNCH_DAMAGE);
+				SpawnVFXOnAttack(CurrentHit, CurrentCharacter, CharacterRef->BloodVFX);
 				return;
 			}
 
 			// If target is IA
 			if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
+				SpawnVFXOnAttack(CurrentHit, CurrentIA, CharacterRef->BloodVFX);
+				
 				if (CurrentIA->AmIAlive())
 					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE, GetOwner());
 				else
@@ -156,7 +162,7 @@ void UWeaponComponent::OnPunch()
 				BreakableObject->RemoveHP();
 				CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
 
-				SpawnDustOnAttackBreakable(CurrentHit, BreakableObject);
+				SpawnVFXOnAttack(CurrentHit, BreakableObject, CharacterRef->DustVFX);
 
 				return;
 			}

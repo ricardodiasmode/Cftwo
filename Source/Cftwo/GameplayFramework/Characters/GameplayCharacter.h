@@ -121,6 +121,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UNiagaraSystem* DustVFX = nullptr;
 	
+	UPROPERTY(EditDefaultsOnly)
+	UNiagaraSystem* BloodVFX = nullptr;
+	
 private:
 	
 	// Trigger player hitting status and set timer for stop hitting
