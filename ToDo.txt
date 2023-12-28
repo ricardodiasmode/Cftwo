@@ -1,3 +1,2 @@
 - porco continua correndo morto;
-- porco deve correr do agressor;
-- testar
+- testar;

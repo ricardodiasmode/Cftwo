@@ -21,6 +21,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	float CurrentHealth = 100.f;
 
+	UPROPERTY(EditDefaultsOnly)
+	FName AgressorBlackboardName;
+
 	int HarvestLeft = 3;
 	
 	/** Where the lock aim will be */
@@ -44,7 +47,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(Server, reliable)
-	void Server_OnGetHitted(const float Damage);
+	void Server_OnGetHitted(const float Damage, AActor* Agressor);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();

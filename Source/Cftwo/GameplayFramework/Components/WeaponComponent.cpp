@@ -102,7 +102,7 @@ void UWeaponComponent::OnPunch()
 			else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
 				if (CurrentIA->AmIAlive())
-					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE);
+					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE, GetOwner());
 				else
 				{
 					TArray<TPair<int, int>> ItemsToAdd = CurrentIA->OnHarvest();

@@ -37,7 +37,7 @@ void ABaseProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 	}
 	else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(OtherActor))
 	{
-		CurrentIA->Server_OnGetHitted(Damage);
+		CurrentIA->Server_OnGetHitted(Damage, GetOwner());
 		return;
 	}
 

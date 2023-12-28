@@ -8,6 +8,6 @@ public class Cftwo : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Perlin_Noise", "ProceduralMeshComponent", "Foliage", "Core", "Networking", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { "AIModule", "Perlin_Noise", "ProceduralMeshComponent", "Foliage", "Core", "Networking", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput" });
 	}
 }

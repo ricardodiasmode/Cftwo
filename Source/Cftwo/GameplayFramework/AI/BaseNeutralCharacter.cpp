@@ -2,7 +2,10 @@
 
 
 #include "BaseNeutralCharacter.h"
+
+#include "AIController.h"
 #include "../../Actors/ActorSpawner.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -28,9 +31,12 @@ void ABaseNeutralCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 }
 
-void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage)
+void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage, AActor* Agressor)
 {
 	CurrentHealth -= Damage;
+
+	Cast<AAIController>(GetController())->GetBlackboardComponent()->SetValueAsObject(AgressorBlackboardName, Agressor);
+	
 	if (CurrentHealth <= 0)
 		Die();
 }
