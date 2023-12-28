@@ -213,7 +213,7 @@ public:
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_OnCraft(const int ItemIndex);
 
-	void InitializeInventory();
+	void InitializeInventory() const;
 
 	void InitializeStatusWidget();
 

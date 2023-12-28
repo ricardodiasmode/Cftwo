@@ -23,10 +23,10 @@ void AProceduralTerrainGenerator::GenerateTerrain()
 {
 	CreateVerticesAndTriangles();
 
-	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(Vertices, Triangles, UV0, Normals, Tangents);
+	UKismetProceduralMeshLibrary::CalculateTangentsForMesh(CenterVertices, CenterTriangles, CenterUV, CenterNormals, CenterTangents);
 
 	ProceduralMesh->ClearMeshSection(0);
-	ProceduralMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UV0, TArray<FColor>(), Tangents, true);
+	ProceduralMesh->CreateMeshSection(0, CenterVertices, CenterTriangles, CenterNormals, CenterUV, TArray<FColor>(), CenterTangents, true);
 	ProceduralMesh->SetMaterial(0, MaterialRef);
 }
 
@@ -47,10 +47,9 @@ void AProceduralTerrainGenerator::BeginPlay()
 
 void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 {
-	Vertices.Reset();
-	UV0.Reset();
-
-	Triangles.Reset();
+	CenterVertices.Reset();
+	CenterUV.Reset();
+	CenterTriangles.Reset();
 
 	int CurrentVertex = 0;
 
@@ -59,20 +58,35 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 		for (int j = 0; j <= YSize; j++)
 		{
 			// Creating vertices
-			float XAsFloat = static_cast<float>(i);
-			float YAsFloat = static_cast<float>(j);
-			Vertices.Add(FVector(i * Scale, j * Scale, Perlin_Noise(XAsFloat, YAsFloat, ZSmoothness) * ZMultiplier));
-			UV0.Add(FVector2D(i * UVScale, j * UVScale));
+			const float XAsFloat = static_cast<float>(i);
+			const float YAsFloat = static_cast<float>(j);
+			float ZVertex = Perlin_Noise(XAsFloat, YAsFloat, ZSmoothness) * ZMultiplier;
+
+			// Make sure the border will be higher than the center
+			const float LowerXBorder = static_cast<float>(XSize) * EdgeSize;
+			const float UpperXBorder = static_cast<float>(XSize) - LowerXBorder;
+			const float LowerYBorder = static_cast<float>(YSize) * EdgeSize;
+			const float UpperYBorder = static_cast<float>(YSize) - LowerYBorder;
+			if (i < LowerXBorder || i > UpperXBorder ||
+				j < LowerYBorder || j > UpperYBorder)
+			{
+				const float MaxCenterHeight = ZMultiplier / ZSmoothness;
+				const float DesiredValue = abs(ZVertex * EdgeMultiplier);
+				ZVertex = FMath::Max(DesiredValue, MaxCenterHeight * 1.2f); // Must greater than max center height
+			}
+
+			CenterVertices.Add(FVector(i * Scale, j * Scale, ZVertex));
+			CenterUV.Add(FVector2D(i * UVScale, j * UVScale));
 
 			// Creating triangles
 			if (i < XSize && j < YSize)
 			{
-				Triangles.Add(CurrentVertex);
-				Triangles.Add(CurrentVertex + 1);
-				Triangles.Add(CurrentVertex + YSize + 1);
-				Triangles.Add(CurrentVertex + 1);
-				Triangles.Add(CurrentVertex + YSize + 2);
-				Triangles.Add(CurrentVertex + YSize + 1);
+				CenterTriangles.Add(CurrentVertex);
+				CenterTriangles.Add(CurrentVertex + 1);
+				CenterTriangles.Add(CurrentVertex + YSize + 1);
+				CenterTriangles.Add(CurrentVertex + 1);
+				CenterTriangles.Add(CurrentVertex + YSize + 2);
+				CenterTriangles.Add(CurrentVertex + YSize + 1);
 				CurrentVertex++;
 			}
 		}

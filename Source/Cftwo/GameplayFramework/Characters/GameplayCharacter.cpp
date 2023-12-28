@@ -201,7 +201,9 @@ void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 		return;
 
 	ClosePickable = Cast<APickable>(OtherActor);
-	HUDRef->OnPickableClose();
+
+	if (HUDRef)
+		HUDRef->OnPickableClose();
 }
 
 void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -209,12 +211,13 @@ void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* Overla
 	if (Cast<APickable>(OtherActor) != ClosePickable)
 		return;
 
-	GPrintDebug("end pickap overlap");
-	HUDRef->OnPickableFar();
 	ClosePickable = nullptr;
+	
+	if (HUDRef)
+		HUDRef->OnPickableFar();
 }
 
-void AGameplayCharacter::InitializeInventory()
+void AGameplayCharacter::InitializeInventory() const
 {
 	InventoryComponent->CharacterHUD = HUDRef;
 	InventoryComponent->UpdateInventory();
@@ -248,7 +251,7 @@ void AGameplayCharacter::UpdateHungryWidget()
 	if (HUDRef)
 	{
 		HUDRef->OnUpdateHungry(CurrentHungry);
-	} else {
+	} else if (Cast<APlayerController>(GetController())) {
 		if (Cast<APlayerController>(GetController())->GetHUD())
 		{
 			HUDRef = Cast<AGameplayHUD>(Cast<APlayerController>(GetController())->GetHUD());
@@ -406,7 +409,7 @@ void AGameplayCharacter::UpdateHealthWidget()
 	if (HUDRef)
 	{
 		HUDRef->OnUpdateHealth(CurrentHealth);
-	} else {
+	} else if (Cast<APlayerController>(GetController())) {
 		if (Cast<APlayerController>(GetController())->GetHUD())
 		{
 			HUDRef = Cast<AGameplayHUD>(Cast<APlayerController>(GetController())->GetHUD());

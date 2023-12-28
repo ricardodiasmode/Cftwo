@@ -31,11 +31,11 @@ class CFTWO_API AProceduralTerrainGenerator : public AActor
 	GENERATED_BODY()
 
 private:
-	TArray<FVector> Vertices;
-	TArray<int> Triangles;
-	TArray<FVector2D> UV0;
-	TArray<FVector> Normals;
-	TArray<struct FProcMeshTangent> Tangents;
+	TArray<FVector> CenterVertices;
+	TArray<int> CenterTriangles;
+	TArray<FVector2D> CenterUV;
+	TArray<FVector> CenterNormals;
+	TArray<FProcMeshTangent> CenterTangents;
 
 	float coefs[11];
 
@@ -59,6 +59,10 @@ public:
 	float ZMultiplier = 100.f;
 	UPROPERTY(EditAnywhere)
 	float ZSmoothness = 10.f;
+	UPROPERTY(EditAnywhere)
+	float EdgeMultiplier = 5.f;
+	UPROPERTY(EditAnywhere)
+	float EdgeSize = 0.2f;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FFoliageToSpawn> Foliages;
