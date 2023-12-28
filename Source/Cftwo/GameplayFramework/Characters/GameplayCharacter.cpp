@@ -299,6 +299,9 @@ void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
 
 void AGameplayCharacter::OnHit()
 {
+	if (GetVelocity().Length() > 0)
+		return;
+	
 	FVector EndLoc = GetActorLocation() + GetFollowCamera()->GetForwardVector();
 	EndLoc.Z = GetActorLocation().Z;
 	FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
@@ -384,7 +387,7 @@ void AGameplayCharacter::Server_TriggerHitDamage_Implementation()
 }
 
 void AGameplayCharacter::OnPunch()
-{
+{	
 	WeaponComponent->OnPunch();
 }
 
