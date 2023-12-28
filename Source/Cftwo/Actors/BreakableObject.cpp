@@ -13,12 +13,51 @@ ABreakableObject::ABreakableObject()
 	StaticMeshComponent->SetCollisionObjectType(ECC_WorldStatic);
 }
 
+void ABreakableObject::ShakeOnGetHitted()
+{
+	if (GetWorldTimerManager().IsTimerActive(ShakeStartTimerHandle))
+		GetWorldTimerManager().ClearTimer(ShakeStartTimerHandle);
+	if (GetWorldTimerManager().IsTimerActive(ShakeFinishTimerHandle))
+		GetWorldTimerManager().ClearTimer(ShakeFinishTimerHandle);
+
+	StaticMeshComponent->SetWorldRotation(InitialMeshRotation);
+
+	// Start shake loop
+	GetWorldTimerManager().SetTimer(ShakeStartTimerHandle,
+		FTimerDelegate::CreateLambda([this] {
+			const FRotator RandomRotation(FMath::RandRange(-ShakeIntensity, ShakeIntensity),
+				FMath::RandRange(-ShakeIntensity, ShakeIntensity),
+				0.f);
+			const FRotator InterpedRotation = FMath::RInterpTo(StaticMeshComponent->GetComponentRotation(),
+				StaticMeshComponent->GetComponentRotation() + RandomRotation,
+				ShakeInterval,
+				8.f);
+			StaticMeshComponent->SetWorldRotation(InterpedRotation);
+		}),
+		ShakeInterval,
+		true);
+
+	// Finish shake loop after some time
+	GetWorldTimerManager().SetTimer(ShakeFinishTimerHandle,
+		FTimerDelegate::CreateLambda([this] {
+			if (GetWorldTimerManager().IsTimerActive(ShakeStartTimerHandle))
+				GetWorldTimerManager().ClearTimer(ShakeStartTimerHandle);
+			StaticMeshComponent->SetWorldRotation(InitialMeshRotation);
+		}),
+		ShakeDuration,
+		false);
+
+	
+	
+}
+
 // Called when the game starts or when spawned
 void ABreakableObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	StaticMeshComponent->SetStaticMesh(StaticMeshRef);
+	InitialMeshRotation = StaticMeshComponent->GetComponentRotation();
 }
 
 void ABreakableObject::RemoveHP()
@@ -29,7 +68,7 @@ void ABreakableObject::RemoveHP()
 		Break();	
 	} else {
 		// Remove HP effect
-		StaticMeshComponent->SetWorldScale3D(StaticMeshComponent->GetComponentScale()*0.9f);
+		ShakeOnGetHitted();
 	}
 }	
 

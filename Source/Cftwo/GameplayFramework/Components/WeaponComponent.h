@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Cftwo/Actors/BreakableObject.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
 #include "WeaponComponent.generated.h"
 
+class UNiagaraSystem;
 class ABaseProjectile;
 
 USTRUCT(BlueprintType)
@@ -71,6 +73,8 @@ public:
 
 	// Only called by server to handle collision
 	void OnHit();
+	void SpawnVFXAtLocation(UNiagaraSystem* VFXToSpawn, FVector LocationToSpawn);
+	void SpawnDustOnAttackBreakable(FHitResult CurrentHit, ABreakableObject* BreakableObject);
 	void OnPunch();
 
 	// Validate whether or not we can hit and set m_CanHit.

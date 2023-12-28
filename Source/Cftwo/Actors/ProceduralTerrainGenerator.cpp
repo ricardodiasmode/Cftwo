@@ -72,7 +72,8 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 			{
 				const float MaxCenterHeight = ZMultiplier / ZSmoothness;
 				const float DesiredValue = abs(ZVertex * EdgeMultiplier);
-				ZVertex = FMath::Max(DesiredValue, MaxCenterHeight * 1.2f); // Must greater than max center height
+				const float EdgeHeightMultiplier = FMath::RandRange(MinimumEdgeMultiplier, MinimumEdgeMultiplier*2.f);
+				ZVertex = FMath::Max(DesiredValue, MaxCenterHeight * EdgeHeightMultiplier); // Must greater than max center height
 			}
 
 			CenterVertices.Add(FVector(i * Scale, j * Scale, ZVertex));

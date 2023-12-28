@@ -6,15 +6,12 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/InstancedStaticMeshComponent.h"
-#include "../Characters/GameplayCharacter.h"
 #include "../AI/BaseNeutralCharacter.h"
 #include "../../Actors/BreakableObject.h"
-#include "../../Utils/GeneralFunctionLibrary.h"
 #include "Inventory/InventoryComponent.h"
-#include "InstancedFoliageActor.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Widgets/Text/ISlateEditableTextWidget.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -67,6 +64,43 @@ void UWeaponComponent::OnHit()
 		TryFireWeapon();
 }
 
+void UWeaponComponent::SpawnVFXAtLocation(UNiagaraSystem* VFXToSpawn, const FVector LocationToSpawn)
+{
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
+	                                               VFXToSpawn,
+	                                               LocationToSpawn,
+	                                               FRotator(0.f),
+	                                               FVector(1.f),
+	                                               true,
+	                                               true);
+}
+
+void UWeaponComponent::SpawnDustOnAttackBreakable(FHitResult CurrentHit, ABreakableObject* BreakableObject)
+{
+	FVector VFXInitialTraceLoc = CurrentHit.Location;
+	FVector DesiredLoc = BreakableObject->GetActorLocation();
+	DesiredLoc.Z = CurrentHit.Location.Z;
+					
+	TArray<FHitResult> VFXOutHit;
+	GetWorld()->LineTraceMultiByChannel(VFXOutHit,
+	                                    VFXInitialTraceLoc,
+	                                    DesiredLoc,
+	                                    ECC_Visibility);
+
+	bool VFXSpawned = false;
+	for (FHitResult CurrentVFXOutHit : VFXOutHit)
+	{
+		if (CurrentVFXOutHit.GetActor() == BreakableObject)
+		{
+			SpawnVFXAtLocation(CharacterRef->DustVFX, CurrentVFXOutHit.Location);
+			VFXSpawned = true;
+			break;
+		}
+	}
+	if (!VFXSpawned)
+		SpawnVFXAtLocation(CharacterRef->DustVFX, CurrentHit.Location);
+}
+
 void UWeaponComponent::OnPunch()
 {
 	FVector START_LOCATION = CharacterRef->GetActorLocation() +
@@ -94,12 +128,16 @@ void UWeaponComponent::OnPunch()
 		true
 	)) {
 		for (FHitResult CurrentHit : OutHits) {
+
+			// If target is character
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
 				CurrentCharacter->Server_OnGetHitted(PUNCH_DAMAGE);
 				return;
 			}
-			else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
+
+			// If target is IA
+			if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
 				if (CurrentIA->AmIAlive())
 					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE, GetOwner());
@@ -111,53 +149,16 @@ void UWeaponComponent::OnPunch()
 				}
 				return;
 			}
-			else {
-				// Get object display name to know if is a breakable obj
-				FString ObjectName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetActor());
 
-				// Check if was already converted
-				if (Cast<ABreakableObject>(CurrentHit.GetActor())) {
-					ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor());
-					BreakableObject->RemoveHP();
-					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
-					return;
-				}
-				else if (Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent()) != nullptr) {
+			// If target is breakable
+			if (ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor()))
+			{
+				BreakableObject->RemoveHP();
+				CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
 
-					FString ComponentName = UKismetSystemLibrary::GetDisplayName(CurrentHit.GetComponent());
-					if (!ComponentName.Contains("Breakable"))
-						return;
+				SpawnDustOnAttackBreakable(CurrentHit, BreakableObject);
 
-					UInstancedStaticMeshComponent* InstancedComp = Cast<UInstancedStaticMeshComponent>(CurrentHit.GetComponent());
-					
-					TArray<int> InstancesOverlapped = InstancedComp->GetInstancesOverlappingSphere(CurrentHit.Location, RADIUS, true);
-					const int InstanceIndex = InstancesOverlapped.IsEmpty() ? 0 : InstancesOverlapped[0];
-
-					// Removing foliage
-					UStaticMesh* FoliageInstanceMesh = InstancedComp->GetStaticMesh();
-					FTransform FoliageInstanceTransform;
-					InstancedComp->GetInstanceTransform(InstanceIndex,
-						FoliageInstanceTransform, true);
-					InstancedComp->RemoveInstance(InstanceIndex);
-
-					// Spawning breakable obj
-					ABreakableObject* BreakableSpawned = GetWorld()->SpawnActor<ABreakableObject>(ABreakableObject::StaticClass(), FoliageInstanceTransform);
-					BreakableSpawned->StaticMeshComponent->SetStaticMesh(FoliageInstanceMesh);
-
-					if (ComponentName.Contains("Rock")) {
-						int RockIndex = 0;
-						BreakableSpawned->ItemToGive = RockIndex;
-						BreakableSpawned->RemoveHP();
-						CharacterRef->InventoryComponent->GiveItem(RockIndex, 1);
-						return;
-					}
-					else if (ComponentName.Contains("Tree")) {
-						int TreeIndex = 1;
-						BreakableSpawned->ItemToGive = TreeIndex;
-						CharacterRef->InventoryComponent->GiveItem(TreeIndex, 1);
-						return;
-					}
-				}
+				return;
 			}
 		}
 	}

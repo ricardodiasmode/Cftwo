@@ -117,7 +117,10 @@ public:
 	class AActorSpawner* SpawnerRef = nullptr;
 
 	APickable* ClosePickable = nullptr;
-
+	
+	UPROPERTY(EditDefaultsOnly)
+	UNiagaraSystem* DustVFX = nullptr;
+	
 private:
 	
 	// Trigger player hitting status and set timer for stop hitting

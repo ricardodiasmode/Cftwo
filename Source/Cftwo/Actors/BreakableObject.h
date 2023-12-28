@@ -14,8 +14,13 @@ class CFTWO_API ABreakableObject : public AActor
 
 private:
 	// Means that needs {CurrentHP} value to break. Must be decreased by RemoveHP() function.
-	int CurrentHP = 3;
+	int CurrentHP = 8;
 
+	FTimerHandle ShakeStartTimerHandle;
+	FTimerHandle ShakeFinishTimerHandle;
+
+	FRotator InitialMeshRotation;
+	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UStaticMeshComponent* StaticMeshComponent = nullptr;
@@ -27,6 +32,15 @@ public:
 		int ItemToGive = -1;
 	
 	class AActorSpawner* SpawnerRef = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ShakeDuration = 0.3f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ShakeInterval = 0.05f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ShakeIntensity = 1.5f;
 	
 private:
 	void Break();	
@@ -39,6 +53,8 @@ public:
 	// Sets default values for this actor's properties
 	ABreakableObject();
 
+	void ShakeOnGetHitted();
+	
 	void RemoveHP();
 
 	void OnDie();

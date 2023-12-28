@@ -1,2 +1,5 @@
+- o soco nao deve mudar rotação se tiver andando;
 - porco continua correndo morto;
-- testar;
+- adicionar vfx em tudo;
+- adicionar som em tudo;
+- ver se ficou divertido o que já tem;

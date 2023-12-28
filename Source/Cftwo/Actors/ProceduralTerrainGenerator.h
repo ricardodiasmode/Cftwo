@@ -63,6 +63,8 @@ public:
 	float EdgeMultiplier = 5.f;
 	UPROPERTY(EditAnywhere)
 	float EdgeSize = 0.2f;
+	UPROPERTY(EditAnywhere)
+	float MinimumEdgeMultiplier = 1.5f;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FFoliageToSpawn> Foliages;
