@@ -17,6 +17,11 @@ ABaseProjectile::ABaseProjectile()
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	RootComponent = SphereCollision;
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseProjectile::OnOverlapBegin);
+
+	for (UActorComponent* CurrentComponent : GetComponents())
+	{
+		CurrentComponent->SetCanEverAffectNavigation(false);
+	}
 }
 
 // Called when the game starts or when spawned

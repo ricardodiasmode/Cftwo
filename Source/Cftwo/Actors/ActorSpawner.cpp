@@ -18,6 +18,11 @@ AActorSpawner::AActorSpawner()
 
 	SpawnerBounds = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnerBounds"));
 	RootComponent = SpawnerBounds;
+	
+	for (UActorComponent* CurrentComponent : GetComponents())
+	{
+		CurrentComponent->SetCanEverAffectNavigation(false);
+	}
 }
 
 // Called when the game starts or when spawned

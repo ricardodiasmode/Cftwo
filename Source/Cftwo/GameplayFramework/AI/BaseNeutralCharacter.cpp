@@ -33,6 +33,13 @@ void ABaseNeutralCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage, AActor* Agressor)
 {
+	if (!GetController())
+		return;
+	if (!Cast<AAIController>(GetController()))
+		return;
+	if (!Cast<AAIController>(GetController())->GetBlackboardComponent())
+		return;
+		
 	CurrentHealth -= Damage;
 
 	Cast<AAIController>(GetController())->GetBlackboardComponent()->SetValueAsObject(AgressorBlackboardName, Agressor);

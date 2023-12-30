@@ -21,6 +21,11 @@ APickable::APickable()
 	SphereCollision->SetupAttachment(RootComponent);
 	SphereCollision->SetCollisionObjectType(ECC_GameTraceChannel1);
 	SphereCollision->SetSphereRadius(200.f);
+	
+	for (UActorComponent* CurrentComponent : GetComponents())
+	{
+		CurrentComponent->SetCanEverAffectNavigation(false);
+	}
 }
 
 // Called when the game starts or when spawned

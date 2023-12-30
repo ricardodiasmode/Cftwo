@@ -11,6 +11,11 @@ ABreakableObject::ABreakableObject()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UStaticMeshComponent"));
 	RootComponent = StaticMeshComponent;
 	StaticMeshComponent->SetCollisionObjectType(ECC_WorldStatic);
+	
+	for (UActorComponent* CurrentComponent : GetComponents())
+	{
+		CurrentComponent->SetCanEverAffectNavigation(false);
+	}
 }
 
 void ABreakableObject::ShakeOnGetHitted()

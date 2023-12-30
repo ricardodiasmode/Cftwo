@@ -95,6 +95,11 @@ AGameplayCharacter::AGameplayCharacter()
 
 	LockPoint = CreateDefaultSubobject<USceneComponent>(TEXT("LockPoint"));
 	LockPoint->SetupAttachment(GetMesh(), "DEF-spine_003");
+	
+	for (UActorComponent* CurrentComponent : GetComponents())
+	{
+		CurrentComponent->SetCanEverAffectNavigation(false);
+	}
 }
 
 void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
