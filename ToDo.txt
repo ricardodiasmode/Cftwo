@@ -1,3 +1,4 @@
+- ta dando muitos crashes;
 - adicionar vfx em tudo;
 - adicionar som em tudo;
 - ver se ficou divertido o que já tem;

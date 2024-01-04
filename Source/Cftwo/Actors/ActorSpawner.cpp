@@ -77,11 +77,11 @@ void AActorSpawner::CheckShouldSpawn()
 				continue;
 		}
 
-		SpawnActor(i);
+		while(!SpawnActor(i));
 	}
 }
 
-void AActorSpawner::SpawnActor(const int Index)
+bool AActorSpawner::SpawnActor(const int Index)
 {
 	FVector StartLocation = UKismetMathLibrary::RandomPointInBoundingBox(SpawnerBounds->GetComponentLocation(),
 		SpawnerBounds->GetLocalBounds().BoxExtent);
@@ -93,6 +93,9 @@ void AActorSpawner::SpawnActor(const int Index)
 		StartLocation, EndLocation,
 		ECollisionChannel::ECC_Visibility))
 	{
+		if (Cast<ABreakableObject>(OutHit.GetActor()))
+			return false;
+		
 		TSubclassOf<AActor> ClassToSpawn = ActorsToSpawn[Index].ActorClass;
 		FVector SpawnLoc = OutHit.ImpactPoint;
 		if (ActorsToSpawn[Index].Foliage)
@@ -112,6 +115,7 @@ void AActorSpawner::SpawnActor(const int Index)
 			Cast<ABaseNeutralCharacter>(ActorRef)->SpawnerRef = this;
 		ActorsSpawned[Index].ActorArray.Add(ActorRef);
 	}
+	return true;
 }
 
 void AActorSpawner::OnLoseActor(AActor* ActorRef)

@@ -48,5 +48,3 @@ void ABaseProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 
 	Destroy();
 }
-
-
