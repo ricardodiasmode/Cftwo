@@ -60,12 +60,18 @@ void AGameplayHUD::OnRespawn()
 
 void AGameplayHUD::OnUpdateHealth(const float CurrentHealth)
 {
+    if (StatusWidget == nullptr)
+        return;
+    
     StatusWidget->CurrentHealth = CurrentHealth;
     StatusWidget->OnUpdateHealth();
 }
 
 void AGameplayHUD::OnUpdateHungry(const float CurrentHungry)
 {
+    if (StatusWidget == nullptr)
+        return;
+    
     StatusWidget->CurrentHungry = CurrentHungry;
     StatusWidget->OnUpdateHungry();
 }
