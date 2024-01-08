@@ -14,6 +14,8 @@ void AGameplayPlayerController::Server_AskToRespawn_Implementation()
 
 void AGameplayPlayerController::Client_AskToPunch_Implementation()
 {
+	if (!Cast<AGameplayCharacter>(GetPawn()))
+		return;
 	Cast<AGameplayCharacter>(GetPawn())->OnHit();
 }
 

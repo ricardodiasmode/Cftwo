@@ -268,8 +268,9 @@ void AGameplayCharacter::UpdateHungryWidget()
 void AGameplayCharacter::RemoveHungry()
 { // must be called only by server
 	CurrentHungry = FMath::Clamp(CurrentHungry - 1.f, 0.f, MaxHungry);
-	
-	UpdateHungryWidget();
+
+	if (HasAuthority())
+		UpdateHungryWidget();
 
 	if (CurrentHungry == 0)
 		RemoveHealth(1.f);
@@ -279,14 +280,18 @@ void AGameplayCharacter::AddHungry(const int Amount)
 { // must be called only by server
 	CurrentHungry = FMath::Clamp(CurrentHungry + Amount,
 			0.f, MaxHungry);
-	UpdateHungryWidget();
+	
+	if (HasAuthority())
+		UpdateHungryWidget();
 }
 
 void AGameplayCharacter::AddHealth(const int Amount)
 { // must be called only by server
 	CurrentHealth = FMath::Clamp(CurrentHealth + Amount,
 			0.f, MaxHealth);
-	UpdateHealthWidget();
+	
+	if (HasAuthority())
+		UpdateHealthWidget();
 }
 
 void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
@@ -433,7 +438,8 @@ void AGameplayCharacter::RemoveHealth(const int Amount)
 	if (CurrentHealth < 0.f)
 		CurrentHealth = 0.f;
 	
-	UpdateHealthWidget();
+	if (HasAuthority())
+		UpdateHealthWidget();
 
 	if (CurrentHealth <= 0.f)
 		Die();
