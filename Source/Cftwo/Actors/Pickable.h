@@ -21,7 +21,9 @@ protected:
 	UDataTable* ItemsDataTable = nullptr;
 	
 public:
+	UPROPERTY(EditDefaultsOnly)
 	int ItemId = -1;
+	UPROPERTY(EditDefaultsOnly)
 	int Amount = 0;
 
 protected:

@@ -16,8 +16,8 @@ void AGameplayHUD::BeginPlay()
     InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
     InventoryWidget->AddToViewport();
 
-    CraftWidget = CreateWidget<UCraftWidget>(GetWorld(), CraftWidgetClass);
-    CraftWidget->AddToViewport();
+    // CraftWidget = CreateWidget<UCraftWidget>(GetWorld(), CraftWidgetClass);
+    // CraftWidget->AddToViewport();
 
     CharacterRef = Cast<AGameplayCharacter>(GetOwningPawn());
 }
@@ -32,7 +32,7 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
     InventoryWidget->Slots.Append(SlotsRef);
     InventoryWidget->UpdateSlots();
 
-    CraftWidget->OnUpdateAvailableItems(SlotsRef);
+    // CraftWidget->OnUpdateAvailableItems(SlotsRef);
 }
 
 void AGameplayHUD::InitializeStatusWidget(AGameplayCharacter* OwningCharacter)
