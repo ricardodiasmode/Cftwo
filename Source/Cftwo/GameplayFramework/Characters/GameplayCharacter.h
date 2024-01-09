@@ -41,6 +41,12 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* LeftHandItemComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* RightHandItemComponent = nullptr;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -89,6 +95,12 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	int CurrentDefensePoints = 0;
 
 	AGameplayHUD* HUDRef = nullptr;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	FName LeftHandSocketName = "DEF-hand_L";
+	UPROPERTY(EditDefaultsOnly)
+	FName RightHandSocketName = "DEF-hand_R";
 
 public:
 	// Controlls whether or not player is hitting
@@ -262,4 +274,6 @@ public:
 	void DropItem(const int SlotIndex);
 	
 	void Pickup();
+	
+	void OnUpdateInventory(TArray<FInventorySlot> Slots);
 };

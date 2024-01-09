@@ -107,6 +107,9 @@ bool UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 	int AddedAmount = CanReceiveItem(ItemIndex, Amount);
 	if(AddedAmount > 0) {
 		ItemMap.Add(ItemIndex, AddedAmount);
+
+		Cast<AGameplayCharacter>(GetOwner())->OnUpdateInventory(Slots);
+		
 		Client_UpdateInventory(Slots);
 		return true;
 	}

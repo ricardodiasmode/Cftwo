@@ -15,7 +15,7 @@ class CFTWO_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:
-	static constexpr auto MAX_INVENTORY_SIZE = 5;
+	static constexpr auto MAX_INVENTORY_SIZE = 2;
 
 	// Map of <Index, Amount> where {Index} is the identifier of the item in DT and
 	// {Amount} is the amount in the inventory

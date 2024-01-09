@@ -95,6 +95,12 @@ AGameplayCharacter::AGameplayCharacter()
 
 	LockPoint = CreateDefaultSubobject<USceneComponent>(TEXT("LockPoint"));
 	LockPoint->SetupAttachment(GetMesh(), "DEF-spine_003");
+
+	LeftHandItemComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftHandItemComponent"));
+	LeftHandItemComponent->SetupAttachment(GetMesh(), LeftHandSocketName);
+
+	RightHandItemComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightHandItemComponent"));
+	RightHandItemComponent->SetupAttachment(GetMesh(), RightHandSocketName);
 	
 	for (UActorComponent* CurrentComponent : GetComponents())
 	{
@@ -658,4 +664,22 @@ void AGameplayCharacter::Pickup()
 {
 	InventoryComponent->GiveItem(ClosePickable->ItemId, ClosePickable->Amount);
 	ClosePickable->OnPick();
+}
+
+void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots)
+{
+	if (Slots.Num() == 0)
+		return;
+	
+	LeftHandItemComponent->SetStaticMesh(Slots[0].ItemInfo.Mesh);
+	LeftHandItemComponent->SetRelativeTransform(Slots[0].ItemInfo.TransformOnHand);
+	
+	if (Slots.Num() < 2)
+		return;
+	
+	RightHandItemComponent->SetStaticMesh(Slots[1].ItemInfo.Mesh);
+	FVector RightLoc = Slots[1].ItemInfo.TransformOnHand.GetLocation();
+	FRotator RightRot = Slots[1].ItemInfo.TransformOnHand.Rotator();
+	FVector RightScale = Slots[1].ItemInfo.TransformOnHand.GetScale3D();
+	RightHandItemComponent->SetRelativeTransform(FTransform(RightRot, -RightLoc, RightScale));
 }

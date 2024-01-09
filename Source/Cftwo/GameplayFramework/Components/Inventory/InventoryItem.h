@@ -45,6 +45,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMesh* Mesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FTransform TransformOnHand;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int BuffOnUse = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EItemType ItemType = EItemType::NONE;
