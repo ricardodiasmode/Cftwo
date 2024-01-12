@@ -90,9 +90,6 @@ AGameplayCharacter::AGameplayCharacter()
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
-	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMesh->SetupAttachment(GetMesh(), "DEF-hand_L");
-
 	LockPoint = CreateDefaultSubobject<USceneComponent>(TEXT("LockPoint"));
 	LockPoint->SetupAttachment(GetMesh(), "DEF-spine_003");
 
@@ -140,10 +137,6 @@ void AGameplayCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 		//Crafting
 		EnhancedInputComponent->BindAction(CraftAction, ETriggerEvent::Completed,
 			this, &AGameplayCharacter::OnCraft);
-
-		//ChangingItem
-		EnhancedInputComponent->BindAction(ChangeItemAction, ETriggerEvent::Started,
-			this, &AGameplayCharacter::OnChangeItem);
 
 		//PickingItem
 		EnhancedInputComponent->BindAction(PickItemAction, ETriggerEvent::Started,
@@ -330,7 +323,7 @@ void AGameplayCharacter::Client_OnHit_Implementation(const FRotator& RotationToS
 {
 	GetMesh()->SetWorldRotation(RotationToSet);
 	
-	if (WeaponComponent->FireWeaponEquipped &&
+	if (IsEquippedWeaponFireWeapon() &&
 		!GetWorldTimerManager().IsTimerActive(LockAimTimerHandle))
 	{
 		GetWorldTimerManager().SetTimer(
@@ -348,17 +341,6 @@ void AGameplayCharacter::Client_OnHit_Implementation(const FRotator& RotationToS
 				0.01f,
 				true);
 	}
-}
-
-void AGameplayCharacter::OnChangeItem(const FInputActionValue& Value)
-{
-	float ValueAsFloat = Value.Get<float>();
-	Server_ChangeItem(ValueAsFloat > 0.f);
-}
-
-void AGameplayCharacter::Server_ChangeItem_Implementation(const bool Forward)
-{
-	WeaponComponent->ChangeEquippedWeapon(Forward);
 }
 
 void AGameplayCharacter::OnCraft()
@@ -484,43 +466,25 @@ void AGameplayCharacter::Client_OnDie_Implementation()
 	}
 }
 
-int AGameplayCharacter::GetEquippedWeaponItemId()
+int AGameplayCharacter::GetEquippedWeaponId() const
 {
-	const int WeaponSlotId = WeaponComponent->GetCurrentWeapon();
-	if (WeaponSlotId == -1)
-		return -1;
-	return InventoryComponent->Slots[WeaponSlotId].ItemInfo.Index;
+	if(InventoryComponent->Slots[0].ItemInfo.ItemType == EItemType::WEAPON)
+		return InventoryComponent->Slots[0].ItemInfo.OtherDataTableId;
+	
+	if (InventoryComponent->Slots[1].ItemInfo.ItemType == EItemType::WEAPON)
+		return InventoryComponent->Slots[1].ItemInfo.OtherDataTableId;
+
+	return -1;
 }
 
-int AGameplayCharacter::GetEquippedWeaponId()
-{
-	const int WeaponSlotId = WeaponComponent->GetCurrentWeapon();
-	if (WeaponSlotId == -1)
-		return -1;
-	return InventoryComponent->Slots[WeaponSlotId].ItemInfo.OtherDataTableId;
-}
-
-bool AGameplayCharacter::IsEquippedWeaponFireWeapon()
+bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
 {	
-	const int WeaponIdOnItemsDT = GetEquippedWeaponItemId();	
 	const int WeaponIdOnWeaponsDT = GetEquippedWeaponId();
 
-	if (WeaponIdOnItemsDT == -1 ||
-		WeaponIdOnWeaponsDT == -1)
+	if (WeaponIdOnWeaponsDT == -1)
 		return false;
 
-	return
-		InventoryComponent->IsWeapon(WeaponIdOnItemsDT) &&
-		InventoryComponent->IsFireWeapon(WeaponIdOnWeaponsDT);
-}
-
-void AGameplayCharacter::OnWeaponChange(UStaticMesh* WeaponMeshRef, FTransform WeaponTransform)
-{
-	WeaponMesh->SetStaticMesh(WeaponMeshRef);
-	WeaponMesh->SetRelativeTransform(WeaponTransform);
-	
-	if (HUDRef != nullptr)
-		HUDRef->OnWeaponChange();
+	return InventoryComponent->IsFireWeapon(WeaponIdOnWeaponsDT);
 }
 
 void AGameplayCharacter::PickItem()
@@ -570,23 +534,18 @@ void AGameplayCharacter::UseItem(const int InventoryIndex)
 
 void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryIndex)
 {
-	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::WEAPON))
-	{
-		WeaponComponent->SetCurrentWeapon(InventoryIndex);
-		return;
-	}
 
 	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::EQUIP))
 	{
 		EquipItemOnIndex(InventoryIndex);
 		return;
 	}
+	
+	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::WEAPON))
+		return;
 
 	if (InventoryComponent->UseItem(InventoryIndex))
 		return;
-
-	WeaponComponent->SetCurrentWeapon(-1);
-
 }
 
 void AGameplayCharacter::EquipItemOnIndex(const int InventoryIndex)

@@ -57,8 +57,6 @@ public:
 
 	void OnUpdateHungry(const float CurrentHungry);
 	
-	void OnWeaponChange() { InventoryWidget->OnWeaponChange(); }
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPickableClose();
 

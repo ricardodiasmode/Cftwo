@@ -24,6 +24,11 @@ UWeaponComponent::UWeaponComponent()
 	// ...
 }
 
+int UWeaponComponent::GetEquippedWeapon()
+{
+	return CharacterRef->GetEquippedWeaponId();
+}
+
 
 // Called when the game starts
 void UWeaponComponent::BeginPlay()
@@ -59,7 +64,7 @@ void UWeaponComponent::OnHit()
 	if (!CanHit())
 		return;
 
-	if (GetEquippedWeaponByIndex(m_CurrentWeapon) == -1)
+	if (GetEquippedWeapon() == -1)
 		OnPunch();
 	else
 		TryFireWeapon();
@@ -170,42 +175,11 @@ void UWeaponComponent::OnPunch()
 	}
 }
 
-void UWeaponComponent::ChangeEquippedWeapon(const bool Forward)
-{
-	if (Forward)
-		m_CurrentWeapon = FMath::Clamp(m_CurrentWeapon + 1, -1, 5);
-	else
-		m_CurrentWeapon = FMath::Clamp(m_CurrentWeapon - 1, -1, 5);
-
-	OnChangeEquippedWeapon();
-}
-
-void UWeaponComponent::SetCurrentWeapon(const int SlotIndex)
-{
-	m_CurrentWeapon = SlotIndex;
-	OnChangeEquippedWeapon();
-}
-
-void UWeaponComponent::OnChangeEquippedWeapon()
-{
-	FireWeaponEquipped = CharacterRef->IsEquippedWeaponFireWeapon();
-	if (FireWeaponEquipped) {
-		int EquippedWeaponId = CharacterRef->GetEquippedWeaponId();
-		CharacterRef->OnWeaponChange(
-			CharacterRef->GetWeaponInfo(EquippedWeaponId).Mesh,
-			CharacterRef->GetWeaponInfo(EquippedWeaponId).AttachTransform
-			);
-	}
-	else {
-		CharacterRef->OnWeaponChange(nullptr, FTransform());
-	}
-}
-
 void UWeaponComponent::TryFireWeapon()
 {
-	int EquippedWeaponId = CharacterRef->GetEquippedWeaponId();
+	const int EquippedWeaponId = CharacterRef->GetEquippedWeaponId();
 
-	FWeaponItem WeaponInfo = CharacterRef->GetWeaponInfo(EquippedWeaponId);
+	const FWeaponItem WeaponInfo = CharacterRef->GetWeaponInfo(EquippedWeaponId);
 	if (CharacterRef->IsEquippedWeaponFireWeapon())
 	{
 		Client_SpawnProjectile(WeaponInfo.ProjectileClassToSpawn);

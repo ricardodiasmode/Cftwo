@@ -84,10 +84,6 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* CraftAction;
 
-		/** Change Item Input Action */
-		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* ChangeItemAction;
-
 		/** Pick Item Input Action */
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* PickItemAction;
@@ -112,9 +108,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInventoryComponent* InventoryComponent = nullptr;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* WeaponMesh = nullptr;
 
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentHealth)
 	float CurrentHealth = 100.f;
@@ -156,11 +149,6 @@ private:
 	UFUNCTION(Server, Reliable)
 	void Server_TryCraft(const int ItemIndex);
 	void OnCraft();
-
-	void OnChangeItem(const FInputActionValue& Value);
-
-	UFUNCTION(Server, Reliable)
-	void Server_ChangeItem(const bool Forward);
 
 	void Die();
 
@@ -239,19 +227,16 @@ public:
 	void RemoveHungry();
 	void AddHungry(int Amount);
 
-	// Called by server to fire a punch effect
-	UFUNCTION(BlueprintCallable)
 	void OnPunch();
 
-	int GetEquippedWeaponItemId();
-	int GetEquippedWeaponId();
+	int GetEquippedWeaponId() const;
 
-	bool IsEquippedWeaponFireWeapon();
+	bool IsEquippedWeaponFireWeapon() const;
 
 	UFUNCTION(BlueprintPure)
-	bool FireWeaponEquipped() { return WeaponComponent->FireWeaponEquipped; }
+	bool FireWeaponEquipped() const { return IsEquippedWeaponFireWeapon(); }
 
-	FWeaponItem GetWeaponInfo(const int WeaponId) { return InventoryComponent->GetWeaponInfo(WeaponId); }
+	FWeaponItem GetWeaponInfo(const int WeaponId) const { return InventoryComponent->GetWeaponInfo(WeaponId); }
 
 	int GetWeaponIdOnSlot(const int Id);
 	void UpdateHealthWidget();
@@ -260,8 +245,6 @@ public:
 
 	UFUNCTION(Server, reliable)
 	void Server_OnGetHitted(const float Damage);
-
-	void OnWeaponChange(UStaticMesh* WeaponMeshRef, FTransform WeaponTransform);
 
 	void AddItem(TPair<int, int> ItemToAdd) const;
 
