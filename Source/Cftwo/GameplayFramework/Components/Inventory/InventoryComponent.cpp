@@ -193,6 +193,7 @@ void UInventoryComponent::RemoveItem(const int SlotIndex, const int Amount)
 		Slots[SlotIndex].Amount -= Amount;
 
 	Client_UpdateInventory(Slots);
+	Cast<AGameplayCharacter>(GetOwner())->OnUpdateInventory(Slots);
 }
 
 void UInventoryComponent::TryCraft(const int ItemToCraft)
