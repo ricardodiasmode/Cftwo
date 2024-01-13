@@ -161,14 +161,25 @@ void UWeaponComponent::OnPunch()
 				return;
 			}
 
+			// If wanna convert the equipped item
+			if (CharacterRef->FirstItemCanConvert() &&
+				CurrentHit.bBlockingHit)
+			{
+				CharacterRef->InventoryComponent->ConvertItem(0, 2);
+				return;
+			}
+
 			// If target is breakable
 			if (ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor()))
 			{
-				BreakableObject->RemoveHP();
-				CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
-
-				SpawnVFXOnAttack(CurrentHit, BreakableObject, CharacterRef->DustVFX);
-
+				const bool NeedTool = BreakableObject->NecessaryTool != -1;
+				const bool HasNecessaryTool = CharacterRef->InventoryComponent->HasItemOnFirstIndex(BreakableObject->NecessaryTool);
+				if (!NeedTool || HasNecessaryTool)
+				{
+					BreakableObject->RemoveHP();
+					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
+					SpawnVFXOnAttack(CurrentHit, BreakableObject, CharacterRef->DustVFX);
+				}
 				return;
 			}
 		}

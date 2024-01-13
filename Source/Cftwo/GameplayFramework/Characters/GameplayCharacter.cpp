@@ -477,6 +477,11 @@ int AGameplayCharacter::GetEquippedWeaponId() const
 	return -1;
 }
 
+bool AGameplayCharacter::FirstItemCanConvert() const
+{
+	return InventoryComponent->Slots[0].ItemInfo.ConvertTo != -1;
+}
+
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
 {	
 	const int WeaponIdOnWeaponsDT = GetEquippedWeaponId();

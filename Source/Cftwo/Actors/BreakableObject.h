@@ -26,10 +26,13 @@ public:
 		class UStaticMeshComponent* StaticMeshComponent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		class UStaticMesh* StaticMeshRef = nullptr;
+	class UStaticMesh* StaticMeshRef = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		int ItemToGive = -1;
+	int ItemToGive = -1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int NecessaryTool = -1;
 	
 	class AActorSpawner* SpawnerRef = nullptr;
 

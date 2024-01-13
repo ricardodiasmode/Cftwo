@@ -275,3 +275,15 @@ void UInventoryComponent::DropItem(const int SlotIndex)
 	UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
 	RemoveItem(SlotIndex, ItemAmount);
 }
+
+void UInventoryComponent::ConvertItem(const int SlotIndex, const int Amount)
+{
+	const int ItemIndexToGive = Slots[SlotIndex].ItemInfo.ConvertTo;
+	RemoveItem(SlotIndex, Amount);
+	GiveItem(ItemIndexToGive, Amount);
+}
+
+bool UInventoryComponent::HasItemOnFirstIndex(const int ItemIndex)
+{
+	return Slots[0].ItemInfo.Index == ItemIndex;
+}

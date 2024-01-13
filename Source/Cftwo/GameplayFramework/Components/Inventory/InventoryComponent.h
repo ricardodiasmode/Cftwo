@@ -94,4 +94,8 @@ public:
 	FEquipmentItem GetEquipmentInfoFromSlotIndex(const int InventoryIndex);
 
 	void DropItem(const int SlotIndex);
+	
+	void ConvertItem(const int SlotIndex, const int Amount);
+	
+	bool HasItemOnFirstIndex(const int ItemIndex);
 };

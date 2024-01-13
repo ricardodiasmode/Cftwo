@@ -259,4 +259,6 @@ public:
 	void Pickup();
 	
 	void OnUpdateInventory(TArray<FInventorySlot> Slots);
+	
+	bool FirstItemCanConvert() const;
 };

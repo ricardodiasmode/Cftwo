@@ -50,6 +50,8 @@ public:
 	int BuffOnUse = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EItemType ItemType = EItemType::NONE;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int ConvertTo = -1;
 };
 
 USTRUCT(BlueprintType)
