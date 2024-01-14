@@ -261,4 +261,7 @@ public:
 	void OnUpdateInventory(TArray<FInventorySlot> Slots);
 	
 	bool FirstItemCanConvert() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex);
 };

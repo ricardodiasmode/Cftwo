@@ -165,7 +165,7 @@ void UWeaponComponent::OnPunch()
 			if (CharacterRef->FirstItemCanConvert() &&
 				CurrentHit.bBlockingHit)
 			{
-				CharacterRef->InventoryComponent->ConvertItem(0, 2);
+				CharacterRef->InventoryComponent->ConvertItem(0, 1, 2);
 				return;
 			}
 

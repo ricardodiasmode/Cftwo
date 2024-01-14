@@ -482,6 +482,11 @@ bool AGameplayCharacter::FirstItemCanConvert() const
 	return InventoryComponent->Slots[0].ItemInfo.ConvertTo != -1;
 }
 
+void AGameplayCharacter::SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex)
+{
+	InventoryComponent->SwapSlots(FirstSlotIndex, SecondSlotIndex);
+}
+
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
 {	
 	const int WeaponIdOnWeaponsDT = GetEquippedWeaponId();

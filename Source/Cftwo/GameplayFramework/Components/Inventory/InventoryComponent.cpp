@@ -276,14 +276,22 @@ void UInventoryComponent::DropItem(const int SlotIndex)
 	RemoveItem(SlotIndex, ItemAmount);
 }
 
-void UInventoryComponent::ConvertItem(const int SlotIndex, const int Amount)
+void UInventoryComponent::ConvertItem(const int SlotIndex, const int AmountToRemove, const int AmountToGive)
 {
 	const int ItemIndexToGive = Slots[SlotIndex].ItemInfo.ConvertTo;
-	RemoveItem(SlotIndex, Amount);
-	GiveItem(ItemIndexToGive, Amount);
+	RemoveItem(SlotIndex, AmountToRemove);
+	GiveItem(ItemIndexToGive, AmountToGive);
 }
 
 bool UInventoryComponent::HasItemOnFirstIndex(const int ItemIndex)
 {
 	return Slots[0].ItemInfo.Index == ItemIndex;
 }
+
+void UInventoryComponent::SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex)
+{
+	const FInventorySlot FirstSlotCopy = Slots[FirstSlotIndex];
+	Slots[FirstSlotIndex] = Slots[SecondSlotIndex];
+	Slots[SecondSlotIndex] = FirstSlotCopy;
+	UpdateInventory();
+}	

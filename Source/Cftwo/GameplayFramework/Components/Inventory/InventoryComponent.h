@@ -95,7 +95,9 @@ public:
 
 	void DropItem(const int SlotIndex);
 	
-	void ConvertItem(const int SlotIndex, const int Amount);
+	void ConvertItem(const int SlotIndex, const int AmountToRemove, const int AmountToGive);
 	
 	bool HasItemOnFirstIndex(const int ItemIndex);
+	
+	void SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex);
 };
