@@ -3,6 +3,7 @@
 
 #include "GameplayPlayerController.h"
 #include "GameplayGameMode.h"
+#include "GameplayHUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "Characters/GameplayCharacter.h"
 
@@ -24,4 +25,19 @@ void AGameplayPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	SetShowMouseCursor(true);
+}
+
+void AGameplayPlayerController::Client_SetPawnInHUD_Implementation()
+{
+	if (!GetHUD())
+		return;
+
+	Cast<AGameplayHUD>(GetHUD())->CharacterRef = Cast<AGameplayCharacter>(GetPawn());
+}
+
+void AGameplayPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	Client_SetPawnInHUD();
 }

@@ -19,7 +19,6 @@ void AGameplayHUD::BeginPlay()
     // CraftWidget = CreateWidget<UCraftWidget>(GetWorld(), CraftWidgetClass);
     // CraftWidget->AddToViewport();
 
-    CharacterRef = Cast<AGameplayCharacter>(GetOwningPawn());
 }
 
 void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)

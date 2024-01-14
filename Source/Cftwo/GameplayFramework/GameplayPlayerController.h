@@ -23,4 +23,9 @@ public:
 
 	UFUNCTION(Client, reliable, BlueprintCallable)
 	void Client_AskToPunch();
+
+	UFUNCTION(Client, reliable)
+	void Client_SetPawnInHUD();
+
+	virtual void OnPossess(APawn* InPawn) override;
 };

@@ -38,8 +38,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> StatusWidgetClass;
-
-	AGameplayCharacter* CharacterRef = nullptr;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -65,4 +63,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnPickup();
+
+	AGameplayCharacter* CharacterRef = nullptr;
 };
