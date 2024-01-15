@@ -1,3 +1,4 @@
+- mecanica da mochila;
 - levar a camera para direita ao equipar arma;
 - adicionar vfx em tudo;
 - adicionar som em tudo;
