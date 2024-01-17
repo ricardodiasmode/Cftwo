@@ -143,10 +143,15 @@ FEquipmentItem UInventoryComponent::GetEquipmentInfo(const int Index)
 	return *(EquipmentDataTable->FindRow<FEquipmentItem>(FName(*(FString::FromInt(Index))), ""));
 }
 
+FBackpackItem UInventoryComponent::GetBackpackInfo(const int Index)
+{
+	return *(BackpackDataTable->FindRow<FBackpackItem>(FName(*(FString::FromInt(Index))), ""));
+}
+
 bool UInventoryComponent::HasItemsToCraft(const int ItemToCraft, TArray<int>* Indexes, TArray<int>* Amount)
 {
 	FInventoryItem ItemInfo = GetItemInfo(ItemToCraft);
-	for (FItemRecipe CurrentRecipe : ItemInfo.Recipe)
+	for (const FItemRecipe CurrentRecipe : ItemInfo.Recipe)
 	{
 		bool Found = false;
 		HasRecipe(CurrentRecipe, &Found, Indexes, Amount);
@@ -257,11 +262,6 @@ bool UInventoryComponent::ItemOnIndexIsOfType(const int SlotIndex, const EItemTy
 	return Slots[SlotIndex].ItemInfo.ItemType == TypeToCheck;
 }
 
-FEquipmentItem UInventoryComponent::GetEquipmentInfoFromSlotIndex(const int InventoryIndex)
-{
-	return GetEquipmentInfo(Slots[InventoryIndex].ItemInfo.OtherDataTableId);
-}
-
 void UInventoryComponent::DropItem(const int SlotIndex)
 {
 	FActorSpawnParameters SpawnInfo;
@@ -294,4 +294,23 @@ void UInventoryComponent::SwapSlots(const int FirstSlotIndex, const int SecondSl
 	Slots[FirstSlotIndex] = Slots[SecondSlotIndex];
 	Slots[SecondSlotIndex] = FirstSlotCopy;
 	UpdateInventory();
+}
+
+void UInventoryComponent::IncreaseNumberOfSlots(const int NumberOfSlots)
+{
+	MAX_INVENTORY_SIZE = NumberOfSlots;
+	const int CurrentNumberOfSlots = Slots.Num();
+	for (int i = CurrentNumberOfSlots; i < MAX_INVENTORY_SIZE; i++)
+		Slots.Add(FInventorySlot());
+	UpdateInventory();
+}
+
+FEquipmentItem UInventoryComponent::GetEquipmentInfoFromSlotIndex(const int InventoryIndex)
+{
+	return GetEquipmentInfo(Slots[InventoryIndex].ItemInfo.OtherDataTableId);
+}
+
+FBackpackItem UInventoryComponent::GetBackpackInfoFromSlotIndex(const int InventoryIndex)
+{
+	return GetBackpackInfo(Slots[InventoryIndex].ItemInfo.OtherDataTableId);
 }	

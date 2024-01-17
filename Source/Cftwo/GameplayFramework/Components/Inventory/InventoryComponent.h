@@ -15,7 +15,7 @@ class CFTWO_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
 private:
-	static constexpr auto MAX_INVENTORY_SIZE = 2;
+	int MAX_INVENTORY_SIZE = 2;
 
 	// Map of <Index, Amount> where {Index} is the identifier of the item in DT and
 	// {Amount} is the amount in the inventory
@@ -32,6 +32,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* EquipmentDataTable = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* BackpackDataTable = nullptr;
 
 	// Array of items in the slot
 	UPROPERTY(ReplicatedUsing = UpdateInventory)
@@ -84,6 +87,8 @@ public:
 	FWeaponItem GetWeaponInfo(const int Index);
 	
 	FEquipmentItem GetEquipmentInfo(const int Index);
+	
+	FBackpackItem GetBackpackInfo(const int Index);
 
 	void DropAllItems();
 
@@ -100,4 +105,8 @@ public:
 	bool HasItemOnFirstIndex(const int ItemIndex);
 	
 	void SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex);
+	
+	void IncreaseNumberOfSlots(const int NumberOfSlots);
+	
+	FBackpackItem GetBackpackInfoFromSlotIndex(const int InventoryIndex);
 };

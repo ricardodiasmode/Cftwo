@@ -25,6 +25,9 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	class USkeletalMeshComponent* Chest = nullptr;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* Backpack = nullptr;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* Pants = nullptr;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

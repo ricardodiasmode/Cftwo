@@ -15,6 +15,7 @@ enum class EItemType : uint8 {
 	WEAPON = 2     UMETA(DisplayName = "WEAPON"),
 	HEAL = 3     UMETA(DisplayName = "HEAL"),
 	EQUIP = 4     UMETA(DisplayName = "EQUIP"),
+	BACKPACK = 5     UMETA(DisplayName = "BACKPACK"),
 };
 
 UENUM(BlueprintType)
@@ -84,4 +85,19 @@ public:
 	USkeletalMesh* MeshRef = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int DefensePoints = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FBackpackItem : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int Index = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FTransform TransformOnEquip;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UStaticMesh* MeshRef = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int Slots = -1;
 };

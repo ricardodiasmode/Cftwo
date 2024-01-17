@@ -4,7 +4,6 @@
 #include "GameplayCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "NetworkMessage.h"
 #include "Net/UnrealNetwork.h"
 #include "../Components/WeaponComponent.h"
 #include "../Components/Inventory/InventoryComponent.h"
@@ -73,6 +72,10 @@ AGameplayCharacter::AGameplayCharacter()
 	Chest->SetupAttachment(GetMesh());
 	Chest->SetLeaderPoseComponent(GetMesh());
 	Chest->SetRenderCustomDepth(true);
+
+	Backpack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Backpack"));
+	Backpack->SetupAttachment(GetMesh(), "spine_fk_003");
+	Backpack->SetRenderCustomDepth(true);
 
 	Pants = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Pants"));
 	Pants->SetupAttachment(GetMesh());
@@ -548,6 +551,16 @@ void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryInd
 	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::EQUIP))
 	{
 		EquipItemOnIndex(InventoryIndex);
+		return;
+	}
+
+	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::BACKPACK))
+	{
+		const FBackpackItem BackpackInfo = InventoryComponent->GetBackpackInfoFromSlotIndex(InventoryIndex);
+		InventoryComponent->IncreaseNumberOfSlots(BackpackInfo.Slots);
+		InventoryComponent->RemoveItem(InventoryIndex, 1);
+		Backpack->SetStaticMesh(BackpackInfo.MeshRef);
+		Backpack->SetRelativeTransform(BackpackInfo.TransformOnEquip);
 		return;
 	}
 	

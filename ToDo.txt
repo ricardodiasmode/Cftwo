@@ -1,5 +1,5 @@
-- mecanica da mochila;
-- levar a camera para direita ao equipar arma;
+- mochila aparecer nas costas;
+- vfx no slot quando crafta item;
 - adicionar vfx em tudo;
 - adicionar som em tudo;
-- ver se ficou divertido o que já tem;
+- testar multiplayer;
