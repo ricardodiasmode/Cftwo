@@ -47,11 +47,15 @@ private:
 	/** Try to add the item in the correct slot
 	 * @return The amount of the {ItemIndex} that can be added given the amount that want add
 	*/
-	int CanReceiveItem(int ItemIndex, int Amount);
+	int CanReceiveItem(int ItemIndex, int Amount, int& FoundSlot);
 
 	/** Tells client to update his inventory HUD */
 	UFUNCTION(Client, reliable)
 	void Client_UpdateInventory(const TArray<FInventorySlot>& SlotsRef);
+
+	/** Tells client to pop craft effect on slot */
+	UFUNCTION(Client, reliable)
+	void Client_SetCraftPopOnSlot(const int SlotIndex);
 
 	FInventoryItem GetItemInfo(const int Index);
 
@@ -65,9 +69,9 @@ public:
 	/** Try to give the desired item to the owning player 
 	 * @param ItemIndex: The index of th item to give to the player
 	 * @param Amount: The amount to give
-	 * @return Whether or not could give the item 
+	 * @return Where the given item is (the first found slot)
 	*/
-	bool GiveItem(int ItemIndex, int Amount);
+	int GiveItem(int ItemIndex, int Amount);
 
 	void RemoveItem(const int SlotIndex, const int Amount);
 

@@ -83,10 +83,6 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* HitAction;
 
-		/** Craft Input Action */
-		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-		class UInputAction* CraftAction;
-
 		/** Pick Item Input Action */
 		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* PickItemAction;
@@ -151,7 +147,6 @@ private:
 	// Server check whether or not player can craft the selected item
 	UFUNCTION(Server, Reliable)
 	void Server_TryCraft(const int ItemIndex);
-	void OnCraft();
 
 	void Die();
 

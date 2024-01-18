@@ -24,4 +24,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void DropItem(const int SlotIndex);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetCraftPopOnSlot(const int SlotIndex);
 };

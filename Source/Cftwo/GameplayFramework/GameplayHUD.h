@@ -63,6 +63,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnPickup();
+	
+	void SetCraftPopOnSlot(const int SlotIndex);
 
 	AGameplayCharacter* CharacterRef = nullptr;
 };

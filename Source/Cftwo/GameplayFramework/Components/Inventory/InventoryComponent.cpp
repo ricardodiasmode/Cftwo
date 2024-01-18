@@ -34,8 +34,10 @@ void UInventoryComponent::BeginPlay()
 		Slots.Add(FInventorySlot());
 }
 
-int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
+int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount, int& FoundSlot)
 {
+	FoundSlot = -1;
+	
 	// We use this variable to know how much we added
 	int LocalAmount = Amount;
 		
@@ -63,6 +65,9 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 
 				// Controlling how much we already add
 				LocalAmount -= AmountToAdd;
+
+				if (FoundSlot == -1) // Setting the first found slot
+					FoundSlot = i;
 
 				// If could add everything, then we are good to go
 				if (LocalAmount == 0)
@@ -93,6 +98,9 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 
 		Slots[i] = SlotToAdd;
 
+		if (FoundSlot == -1) // Setting the first found slot
+			FoundSlot = i;
+
 		// If could add everything, then we are good to go
 		if (LocalAmount == 0) {
 			return Amount;
@@ -102,18 +110,18 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount)
 	return Amount - LocalAmount;
 }
 
-bool UInventoryComponent::GiveItem(int ItemIndex, int Amount)
+int UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 {
-	int AddedAmount = CanReceiveItem(ItemIndex, Amount);
+	int FoundSlot = -1;
+	int AddedAmount = CanReceiveItem(ItemIndex, Amount, FoundSlot);
 	if(AddedAmount > 0) {
 		ItemMap.Add(ItemIndex, AddedAmount);
 
 		Cast<AGameplayCharacter>(GetOwner())->OnUpdateInventory(Slots);
 		
 		Client_UpdateInventory(Slots);
-		return true;
 	}
-	return false;
+	return FoundSlot;
 }
 
 void UInventoryComponent::UpdateInventory()
@@ -125,6 +133,13 @@ void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FIn
 {
 	if (CharacterHUD != nullptr) {
 		CharacterHUD->UpdateInventory(SlotsRef);
+	}
+}
+
+void UInventoryComponent::Client_SetCraftPopOnSlot_Implementation(const int SlotIndex)
+{
+	if (CharacterHUD != nullptr) {
+		CharacterHUD->SetCraftPopOnSlot(SlotIndex);
 	}
 }
 
@@ -216,7 +231,11 @@ void UInventoryComponent::TryCraft(const int ItemToCraft)
 		RemoveItem(Indexes[i], Amount[i]);
 	}
 
-	if(!GiveItem(ItemToCraft, 1))
+	const int CraftedOnSlot = GiveItem(ItemToCraft, 1);
+	if(CraftedOnSlot != -1)
+	{
+		Client_SetCraftPopOnSlot(CraftedOnSlot);
+	} else
 	{ // If could not add to inventory, spawn it
 		FActorSpawnParameters SpawnInfo;
 		const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;

@@ -137,9 +137,6 @@ void AGameplayCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 		//Hitting
 		EnhancedInputComponent->BindAction(HitAction, ETriggerEvent::Completed,
 											this, &AGameplayCharacter::OnHit);
-		//Crafting
-		EnhancedInputComponent->BindAction(CraftAction, ETriggerEvent::Completed,
-			this, &AGameplayCharacter::OnCraft);
 
 		//PickingItem
 		EnhancedInputComponent->BindAction(PickItemAction, ETriggerEvent::Started,
@@ -274,7 +271,7 @@ void AGameplayCharacter::RemoveHungry()
 	if (HasAuthority())
 		UpdateHungryWidget();
 
-	if (CurrentHungry == 0)
+	if (CurrentHungry == 0 && CurrentHealth > 0)
 		RemoveHealth(1.f);
 }
 
@@ -344,11 +341,6 @@ void AGameplayCharacter::Client_OnHit_Implementation(const FRotator& RotationToS
 				0.01f,
 				true);
 	}
-}
-
-void AGameplayCharacter::OnCraft()
-{
-	Client_OnCraft(2);
 }
 
 void AGameplayCharacter::Client_OnCraft_Implementation(const int ItemIndex)
@@ -455,6 +447,8 @@ void AGameplayCharacter::OnRep_CurrentHungry()
 
 void AGameplayCharacter::Die()
 {
+	if (!InventoryComponent)
+		return;
 	InventoryComponent->DropAllItems();
 	Client_OnDie();
 	Destroy();

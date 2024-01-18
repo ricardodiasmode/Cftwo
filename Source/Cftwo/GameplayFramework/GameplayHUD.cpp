@@ -94,3 +94,8 @@ void AGameplayHUD::OnPickup()
     CharacterRef->Pickup();
 }
 
+void AGameplayHUD::SetCraftPopOnSlot(const int SlotIndex)
+{
+    InventoryWidget->SetCraftPopOnSlot(SlotIndex);
+}
+
