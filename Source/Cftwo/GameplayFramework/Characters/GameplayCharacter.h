@@ -91,12 +91,6 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	AGameplayHUD* HUDRef = nullptr;
 
-protected:
-	UPROPERTY(EditDefaultsOnly)
-	FName LeftHandSocketName = "DEF-hand_L";
-	UPROPERTY(EditDefaultsOnly)
-	FName RightHandSocketName = "DEF-hand_R";
-
 public:
 	// Controlls whether or not player is hitting
 	UPROPERTY(BlueprintReadWrite, Replicated)
@@ -252,8 +246,10 @@ public:
 
 	void EquipItemOnIndex(const int InventoryIndex);
 
+	UFUNCTION(BlueprintCallable)
 	void DropItem(const int SlotIndex);
-	
+
+	UFUNCTION(BlueprintCallable)
 	void Pickup();
 	
 	void OnUpdateInventory(TArray<FInventorySlot> Slots);
@@ -262,4 +258,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex);
+
+	UFUNCTION(BlueprintPure)
+	bool HasItem(const int ItemIndex);
+
+	UFUNCTION(BlueprintPure)
+	int GetItemOnIndex(const int SlotIndex);
 };

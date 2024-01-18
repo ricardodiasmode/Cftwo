@@ -173,7 +173,7 @@ void UWeaponComponent::OnPunch()
 			if (ABreakableObject* BreakableObject = Cast<ABreakableObject>(CurrentHit.GetActor()))
 			{
 				const bool NeedTool = BreakableObject->NecessaryTool != -1;
-				const bool HasNecessaryTool = CharacterRef->InventoryComponent->HasItemOnFirstIndex(BreakableObject->NecessaryTool);
+				const bool HasNecessaryTool = CharacterRef->InventoryComponent->HasItemOnAnyHand(BreakableObject->NecessaryTool);
 				if (!NeedTool || HasNecessaryTool)
 				{
 					BreakableObject->RemoveHP();

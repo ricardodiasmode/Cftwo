@@ -13,6 +13,7 @@ class CFTWO_API APickable : public AActor
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh = nullptr;
 	
 	class USphereComponent* SphereCollision = nullptr;

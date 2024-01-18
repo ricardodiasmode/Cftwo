@@ -28,7 +28,7 @@ private:
 
 	void CheckShouldSpawn();
 
-	void SpawnAllFoliages();
+	void SpawnAllActors();
 
 	bool SpawnActor(const int Index);
 	
@@ -39,9 +39,6 @@ protected:
 public:
 	// Sets default values for this actor's properties
 	AActorSpawner();
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	void OnLoseActor(AActor* ActorRef);
 

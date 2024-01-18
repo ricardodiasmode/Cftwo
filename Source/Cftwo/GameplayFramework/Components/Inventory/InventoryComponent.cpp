@@ -302,9 +302,19 @@ void UInventoryComponent::ConvertItem(const int SlotIndex, const int AmountToRem
 	GiveItem(ItemIndexToGive, AmountToGive);
 }
 
-bool UInventoryComponent::HasItemOnFirstIndex(const int ItemIndex)
+bool UInventoryComponent::HasItemOnAnyHand(const int ItemIndex)
 {
-	return Slots[0].ItemInfo.Index == ItemIndex;
+	return Slots[0].ItemInfo.Index == ItemIndex || Slots[1].ItemInfo.Index == ItemIndex;
+}
+
+bool UInventoryComponent::HasItem(const int ItemIndex)
+{
+	for (const FInventorySlot CurrentSlot : Slots)
+	{
+		if (CurrentSlot.ItemInfo.Index == ItemIndex)
+			return true;
+	}
+	return false;
 }
 
 void UInventoryComponent::SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex)

@@ -32,14 +32,7 @@ void AActorSpawner::BeginPlay()
 	
 	Server_StartSpawnTimer();
 
-	SpawnAllFoliages();
-}
-
-// Called every frame
-void AActorSpawner::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
+	SpawnAllActors();
 }
 
 void AActorSpawner::Server_StartSpawnTimer_Implementation()
@@ -48,16 +41,11 @@ void AActorSpawner::Server_StartSpawnTimer_Implementation()
 	GetWorldTimerManager().SetTimer(UnusedHandle, this, &AActorSpawner::CheckShouldSpawn, 1.f, true, 0.1f);
 }
 
-void AActorSpawner::SpawnAllFoliages()
+void AActorSpawner::SpawnAllActors()
 {
 	for (int i = 0; i < ActorsToSpawn.Num(); i++)
 	{
 		ActorsSpawned.Add(FActorMatrix());
-
-		if (!ActorsToSpawn[i].Foliage)
-		{
-			continue;
-		}			
 
 		for (int j=0; j < ActorsToSpawn[i].MinimumSpawned; j++)
 		{

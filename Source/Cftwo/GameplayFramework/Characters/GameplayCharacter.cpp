@@ -97,10 +97,10 @@ AGameplayCharacter::AGameplayCharacter()
 	LockPoint->SetupAttachment(GetMesh(), "DEF-spine_003");
 
 	LeftHandItemComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftHandItemComponent"));
-	LeftHandItemComponent->SetupAttachment(GetMesh(), LeftHandSocketName);
+	LeftHandItemComponent->SetupAttachment(GetMesh(), "socket_item_hand_l");
 
 	RightHandItemComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightHandItemComponent"));
-	RightHandItemComponent->SetupAttachment(GetMesh(), RightHandSocketName);
+	RightHandItemComponent->SetupAttachment(GetMesh(), "socket_item_hand_r");
 	
 	for (UActorComponent* CurrentComponent : GetComponents())
 	{
@@ -484,6 +484,16 @@ void AGameplayCharacter::SwapSlots(const int FirstSlotIndex, const int SecondSlo
 	InventoryComponent->SwapSlots(FirstSlotIndex, SecondSlotIndex);
 }
 
+bool AGameplayCharacter::HasItem(const int ItemIndex)
+{
+	return InventoryComponent->HasItem(ItemIndex);
+}
+
+int AGameplayCharacter::GetItemOnIndex(const int SlotIndex)
+{
+	return InventoryComponent->Slots[SlotIndex].ItemInfo.Index;
+}
+
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
 {	
 	const int WeaponIdOnWeaponsDT = GetEquippedWeaponId();
@@ -638,6 +648,8 @@ void AGameplayCharacter::Destroyed()
 
 void AGameplayCharacter::Pickup()
 {
+	if (!ClosePickable)
+		return;
 	InventoryComponent->GiveItem(ClosePickable->ItemId, ClosePickable->Amount);
 	ClosePickable->OnPick();
 }
@@ -654,8 +666,8 @@ void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots)
 		return;
 	
 	RightHandItemComponent->SetStaticMesh(Slots[1].ItemInfo.Mesh);
-	FVector RightLoc = Slots[1].ItemInfo.TransformOnHand.GetLocation();
-	FRotator RightRot = Slots[1].ItemInfo.TransformOnHand.Rotator();
-	FVector RightScale = Slots[1].ItemInfo.TransformOnHand.GetScale3D();
+	const FVector RightLoc = Slots[1].ItemInfo.TransformOnHand.GetLocation();
+	const FRotator RightRot = Slots[1].ItemInfo.TransformOnHand.Rotator();
+	const FVector RightScale = Slots[1].ItemInfo.TransformOnHand.GetScale3D();
 	RightHandItemComponent->SetRelativeTransform(FTransform(RightRot, -RightLoc, RightScale));
 }

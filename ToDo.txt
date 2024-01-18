@@ -1,6 +1,4 @@
-- remover colisão do player com o pegavel;
-- aumentar fricção do pegavel pra quando ele cair, não sair rolando?
-- arrumar IA;
 - adicionar vfx em tudo;
 - adicionar som em tudo;
 - testar multiplayer;
+- melhorar ia;

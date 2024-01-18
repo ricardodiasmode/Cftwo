@@ -15,6 +15,7 @@ APickable::APickable()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	RootComponent = StaticMesh;
 	StaticMesh->SetCollisionObjectType(ECC_GameTraceChannel1);
+	StaticMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	StaticMesh->SetSimulatePhysics(true);
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));

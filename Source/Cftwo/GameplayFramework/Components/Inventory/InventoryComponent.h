@@ -106,8 +106,9 @@ public:
 	
 	void ConvertItem(const int SlotIndex, const int AmountToRemove, const int AmountToGive);
 	
-	bool HasItemOnFirstIndex(const int ItemIndex);
-	
+	bool HasItemOnAnyHand(const int ItemIndex);
+	bool HasItem(int ItemIndex);
+
 	void SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex);
 	
 	void IncreaseNumberOfSlots(const int NumberOfSlots);
