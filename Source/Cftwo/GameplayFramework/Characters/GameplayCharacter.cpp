@@ -654,7 +654,7 @@ void AGameplayCharacter::Pickup()
 	ClosePickable->OnPick();
 }
 
-void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots)
+void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots, const TArray<FWeaponInventorySlot>& WeaponSlots)
 {
 	if (Slots.Num() == 0)
 		return;

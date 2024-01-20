@@ -21,7 +21,7 @@ void AGameplayHUD::BeginPlay()
 
 }
 
-void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
+void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef, const TArray<FWeaponInventorySlot>& WeaponSlotsRef)
 {
     if (!IsValid(InventoryWidget)) {
         return;
@@ -29,6 +29,8 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef)
 
     InventoryWidget->Slots.Empty();
     InventoryWidget->Slots.Append(SlotsRef);
+    InventoryWidget->WeaponSlots.Empty();
+    InventoryWidget->WeaponSlots.Append(WeaponSlotsRef);
     InventoryWidget->UpdateSlots();
 
     // CraftWidget->OnUpdateAvailableItems(SlotsRef);

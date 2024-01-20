@@ -43,7 +43,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	void UpdateInventory(TArray<FInventorySlot> SlotsRef);
+	void UpdateInventory(TArray<FInventorySlot> SlotsRef, const TArray<FWeaponInventorySlot>& WeaponSlotsRef);
 
 	void InitializeStatusWidget(AGameplayCharacter* CharacterRef);
 

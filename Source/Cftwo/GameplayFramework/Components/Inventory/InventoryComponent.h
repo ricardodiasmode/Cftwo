@@ -40,6 +40,10 @@ public:
 	UPROPERTY(ReplicatedUsing = UpdateInventory)
 	TArray<FInventorySlot> Slots;
 
+	// Array of items in the slot
+	UPROPERTY(ReplicatedUsing = UpdateInventory)
+	TArray<FWeaponInventorySlot> WeaponSlots;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class APickable> PickableClass;
 
@@ -51,7 +55,7 @@ private:
 
 	/** Tells client to update his inventory HUD */
 	UFUNCTION(Client, reliable)
-	void Client_UpdateInventory(const TArray<FInventorySlot>& SlotsRef);
+	void Client_UpdateInventory(const TArray<FInventorySlot>& SlotsRef, const TArray<FWeaponInventorySlot>& WeaponSlotsRef);
 
 	/** Tells client to pop craft effect on slot */
 	UFUNCTION(Client, reliable)
@@ -114,4 +118,15 @@ public:
 	void IncreaseNumberOfSlots(const int NumberOfSlots);
 	
 	FBackpackItem GetBackpackInfoFromSlotIndex(const int InventoryIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void InventorySlotToWeaponSlot(const int InventorySlotIndex, const int WeaponSlotIndex);
+
+	int FindItemIndexFromWeaponIndex(int WeaponSlotIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void WeaponSlotToInventorySlot(const int WeaponSlotIndex, const int InventorySlotIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void DropItemFromWeaponSlot(const int WeaponSlotIndex);
 };

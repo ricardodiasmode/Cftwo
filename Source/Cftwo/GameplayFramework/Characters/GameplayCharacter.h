@@ -252,7 +252,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Pickup();
 	
-	void OnUpdateInventory(TArray<FInventorySlot> Slots);
+	void OnUpdateInventory(TArray<FInventorySlot> Slots, const TArray<FWeaponInventorySlot>& WeaponSlots);
 	
 	bool FirstItemCanConvert() const;
 

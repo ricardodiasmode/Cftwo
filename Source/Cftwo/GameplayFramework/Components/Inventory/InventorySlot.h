@@ -12,7 +12,18 @@ struct FInventorySlot
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadOnly)
-		FInventoryItem ItemInfo;
+	FInventoryItem ItemInfo;
 	UPROPERTY(BlueprintReadOnly)
-		int Amount = 0;
+	int Amount = 0;
+};
+
+USTRUCT(BlueprintType)
+struct FWeaponInventorySlot
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadOnly)
+	int WeaponIndex = -1;
+	UPROPERTY(BlueprintReadOnly)
+	bool SlotFilled = false;
 };

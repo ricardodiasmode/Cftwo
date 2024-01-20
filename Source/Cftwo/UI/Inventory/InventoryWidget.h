@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryWidget.generated.h"
 
+struct FWeaponInventorySlot;
 /**
  * 
  */
@@ -17,13 +18,16 @@ class CFTWO_API UInventoryWidget : public UUserWidget
 public:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<struct FInventorySlot> Slots;
+	
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FWeaponInventorySlot> WeaponSlots;
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateSlots();
 	
 	UFUNCTION(BlueprintCallable)
-	void DropItem(const int SlotIndex);
+	void DropItem(const int SlotIndex, const bool WeaponSlot);
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetCraftPopOnSlot(const int SlotIndex);

@@ -8,6 +8,8 @@
 #include "../../GameplayHUD.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../Characters/GameplayCharacter.h"
+#include "Cftwo/Utils/GeneralFunctionLibrary.h"
+#include "Widgets/Views/STreeView.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -31,6 +33,17 @@ void UInventoryComponent::BeginPlay()
 
 	for (int i=0;i<MAX_INVENTORY_SIZE;i++)
 		Slots.Add(FInventorySlot());
+
+
+	TArray<FWeaponItem*> AllWeaponInfo;
+	WeaponsDataTable->GetAllRows<FWeaponItem>("", AllWeaponInfo);
+	for (const FWeaponItem* CurrentWeaponInfo : AllWeaponInfo)
+	{
+		FWeaponInventorySlot SlotToAdd;
+		SlotToAdd.SlotFilled = false;
+		SlotToAdd.WeaponIndex = CurrentWeaponInfo->Index;
+		WeaponSlots.Add(SlotToAdd);
+	}
 }
 
 int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount, int& FoundSlot)
@@ -123,14 +136,14 @@ int UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 
 void UInventoryComponent::UpdateInventory()
 {
-	Cast<AGameplayCharacter>(GetOwner())->OnUpdateInventory(Slots);
-	Client_UpdateInventory(Slots);
+	Cast<AGameplayCharacter>(GetOwner())->OnUpdateInventory(Slots, WeaponSlots);
+	Client_UpdateInventory(Slots, WeaponSlots);
 }
 
-void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FInventorySlot>& SlotsRef)
+void UInventoryComponent::Client_UpdateInventory_Implementation(const TArray<FInventorySlot>& SlotsRef, const TArray<FWeaponInventorySlot>& WeaponSlotsRef)
 {
 	if (CharacterHUD != nullptr) {
-		CharacterHUD->UpdateInventory(SlotsRef);
+		CharacterHUD->UpdateInventory(SlotsRef, WeaponSlotsRef);
 	}
 }
 
@@ -339,4 +352,68 @@ FEquipmentItem UInventoryComponent::GetEquipmentInfoFromSlotIndex(const int Inve
 FBackpackItem UInventoryComponent::GetBackpackInfoFromSlotIndex(const int InventoryIndex)
 {
 	return GetBackpackInfo(Slots[InventoryIndex].ItemInfo.OtherDataTableId);
+}
+
+void UInventoryComponent::InventorySlotToWeaponSlot(const int InventorySlotIndex, const int WeaponSlotIndex)
+{
+	if (WeaponSlots[WeaponSlotIndex].SlotFilled ||
+		Slots[InventorySlotIndex].ItemInfo.ItemType != EItemType::WEAPON)
+		return;
+
+	WeaponSlots[WeaponSlotIndex].SlotFilled = true;
+	WeaponSlots[WeaponSlotIndex].WeaponIndex = Slots[InventorySlotIndex].ItemInfo.OtherDataTableId;
+
+	RemoveItem(InventorySlotIndex, 1);
+}
+
+int UInventoryComponent::FindItemIndexFromWeaponIndex(const int WeaponSlotIndex)
+{
+	for (int i = 0; i < ItemsDataTable->GetRowNames().Num(); i++)
+	{
+		const FInventoryItem CurrentItemInfo = GetItemInfo(i);
+
+		if (CurrentItemInfo.OtherDataTableId == WeaponSlots[WeaponSlotIndex].WeaponIndex &&
+			CurrentItemInfo.ItemType == EItemType::WEAPON)
+			return i;
+	}
+	return -1;
+}
+
+void UInventoryComponent::WeaponSlotToInventorySlot(const int WeaponSlotIndex, const int InventorySlotIndex)
+{
+	if(Slots[InventorySlotIndex].Amount > 0 ||
+		!WeaponSlots[WeaponSlotIndex].SlotFilled)
+		return;
+
+	const int FoundItemIndex = FindItemIndexFromWeaponIndex(WeaponSlotIndex);
+	if (FoundItemIndex == -1)
+		return;
+	
+	Slots[InventorySlotIndex].Amount = 1;
+	Slots[InventorySlotIndex].ItemInfo = GetItemInfo(FoundItemIndex);
+
+	WeaponSlots[WeaponSlotIndex].SlotFilled = false;
+
+	UpdateInventory();
+}
+
+void UInventoryComponent::DropItemFromWeaponSlot(const int WeaponSlotIndex)
+{
+	const int FoundItemIndex = FindItemIndexFromWeaponIndex(WeaponSlots[WeaponSlotIndex].WeaponIndex);
+	if (FoundItemIndex == -1)
+		return;
+
+	// Removing item
+	WeaponSlots[WeaponSlotIndex].SlotFilled = false;
+	
+	// Spawning
+	FActorSpawnParameters SpawnInfo;
+	const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
+	const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
+	APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+	CurrentPickable->ItemId = FoundItemIndex;
+	CurrentPickable->Amount = 1;
+	UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+
+	UpdateInventory();
 }	
