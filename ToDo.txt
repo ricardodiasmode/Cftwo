@@ -1,3 +1,5 @@
+- trocar item de mão nao da update na mao;
+- criar um weapon deve fazer ela ficar na cintura, e é possivel atribuir ela a um slot previamente criado para ela (com seu icone com pouca opacidade). É possivel colocar essa weapon na mao para ser utilizada.
 - adicionar vfx em tudo;
 - adicionar som em tudo;
 - testar multiplayer;

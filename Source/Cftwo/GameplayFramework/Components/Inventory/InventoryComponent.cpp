@@ -6,7 +6,6 @@
 #include "Net/UnrealNetwork.h"
 #include "../../../Actors/Pickable.h"
 #include "../../GameplayHUD.h"
-#include "../../../Utils/GeneralFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../Characters/GameplayCharacter.h"
 
@@ -40,8 +39,8 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount, int& FoundSlo
 	
 	// We use this variable to know how much we added
 	int LocalAmount = Amount;
-		
-	FInventoryItem* ItemInfo = ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(ItemIndex))), "");
+
+	const FInventoryItem* ItemInfo = ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(ItemIndex))), "");
 
 	TArray<int> FreeSlots;
 	if (ItemMap.Num() == 0)
@@ -52,13 +51,13 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount, int& FoundSlo
 		// Find the maximum stack of this item
 		for (int i=0; i < Slots.Num(); i++)
 		{
-			FInventorySlot CurrentSlot = Slots[i];
+			const FInventorySlot CurrentSlot = Slots[i];
 			if (CurrentSlot.ItemInfo.Index == ItemIndex)
 			{ // Adding as much as possible to this stack
 				// Getting how much we can add to this slot
-				int MaxAmountToAdd = CurrentSlot.ItemInfo.MaxStack - CurrentSlot.Amount;
-				
-				int AmountToAdd = FMath::Min(MaxAmountToAdd, LocalAmount);
+				const int MaxAmountToAdd = CurrentSlot.ItemInfo.MaxStack - CurrentSlot.Amount;
+
+				const int AmountToAdd = FMath::Min(MaxAmountToAdd, LocalAmount);
 					
 				// Adding as much as we can
 				Slots[i].Amount += AmountToAdd;
@@ -81,14 +80,14 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount, int& FoundSlo
 	}
 
 	// Trying to add into another slot
-	for (int i : FreeSlots)
+	for (const int i : FreeSlots)
 	{
 		FInventorySlot SlotToAdd;
 		SlotToAdd.ItemInfo = *ItemInfo;
 
 		// Getting how much we can add to this slot
-		int MaxAmountToAdd = ItemInfo->MaxStack;		
-		int AmountToAdd = FMath::Min(MaxAmountToAdd, LocalAmount);
+		const int MaxAmountToAdd = ItemInfo->MaxStack;
+		const int AmountToAdd = FMath::Min(MaxAmountToAdd, LocalAmount);
 
 		// Adding as much as we can
 		SlotToAdd.Amount = AmountToAdd;
@@ -113,19 +112,18 @@ int UInventoryComponent::CanReceiveItem(int ItemIndex, int Amount, int& FoundSlo
 int UInventoryComponent::GiveItem(int ItemIndex, int Amount)
 {
 	int FoundSlot = -1;
-	int AddedAmount = CanReceiveItem(ItemIndex, Amount, FoundSlot);
+	const int AddedAmount = CanReceiveItem(ItemIndex, Amount, FoundSlot);
 	if(AddedAmount > 0) {
 		ItemMap.Add(ItemIndex, AddedAmount);
 
-		Cast<AGameplayCharacter>(GetOwner())->OnUpdateInventory(Slots);
-		
-		Client_UpdateInventory(Slots);
+		UpdateInventory();
 	}
 	return FoundSlot;
 }
 
 void UInventoryComponent::UpdateInventory()
 {
+	Cast<AGameplayCharacter>(GetOwner())->OnUpdateInventory(Slots);
 	Client_UpdateInventory(Slots);
 }
 
@@ -143,22 +141,22 @@ void UInventoryComponent::Client_SetCraftPopOnSlot_Implementation(const int Slot
 	}
 }
 
-FInventoryItem UInventoryComponent::GetItemInfo(const int Index)
+FInventoryItem UInventoryComponent::GetItemInfo(const int Index) const
 {
 	return *(ItemsDataTable->FindRow<FInventoryItem>(FName(*(FString::FromInt(Index))), ""));
 }
 
-FWeaponItem UInventoryComponent::GetWeaponInfo(const int Index)
+FWeaponItem UInventoryComponent::GetWeaponInfo(const int Index) const
 {
 	return *(WeaponsDataTable->FindRow<FWeaponItem>(FName(*(FString::FromInt(Index))), ""));
 }
 
-FEquipmentItem UInventoryComponent::GetEquipmentInfo(const int Index)
+FEquipmentItem UInventoryComponent::GetEquipmentInfo(const int Index) const
 {
 	return *(EquipmentDataTable->FindRow<FEquipmentItem>(FName(*(FString::FromInt(Index))), ""));
 }
 
-FBackpackItem UInventoryComponent::GetBackpackInfo(const int Index)
+FBackpackItem UInventoryComponent::GetBackpackInfo(const int Index) const
 {
 	return *(BackpackDataTable->FindRow<FBackpackItem>(FName(*(FString::FromInt(Index))), ""));
 }
@@ -185,7 +183,7 @@ void UInventoryComponent::HasRecipe(FItemRecipe Recipe, bool* Found, TArray<int>
 
 	for (int i = 0; i < Slots.Num(); i++)
 	{
-		FInventorySlot CurrentSlot = Slots[i];
+		const FInventorySlot CurrentSlot = Slots[i];
 		if (CurrentSlot.ItemInfo.Index == Recipe.Index) {
 			const int InitialAmount = LocalAmount;
 			LocalAmount = FMath::Max(LocalAmount - CurrentSlot.Amount, 0);
@@ -212,8 +210,7 @@ void UInventoryComponent::RemoveItem(const int SlotIndex, const int Amount)
 	else
 		Slots[SlotIndex].Amount -= Amount;
 
-	Client_UpdateInventory(Slots);
-	Cast<AGameplayCharacter>(GetOwner())->OnUpdateInventory(Slots);
+	UpdateInventory();
 }
 
 void UInventoryComponent::TryCraft(const int ItemToCraft)
@@ -221,7 +218,7 @@ void UInventoryComponent::TryCraft(const int ItemToCraft)
 	// Check whether or not has all necessary items
 	TArray<int> Indexes;
 	TArray<int> Amount;
-	bool CanCraft = HasItemsToCraft(ItemToCraft, &Indexes, &Amount);
+	const bool CanCraft = HasItemsToCraft(ItemToCraft, &Indexes, &Amount);
 
 	if (!CanCraft)
 		return;
@@ -309,7 +306,7 @@ bool UInventoryComponent::HasItemOnAnyHand(const int ItemIndex)
 
 bool UInventoryComponent::HasItem(const int ItemIndex)
 {
-	for (const FInventorySlot CurrentSlot : Slots)
+	for (const FInventorySlot& CurrentSlot : Slots)
 	{
 		if (CurrentSlot.ItemInfo.Index == ItemIndex)
 			return true;

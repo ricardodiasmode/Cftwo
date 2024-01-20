@@ -57,7 +57,7 @@ private:
 	UFUNCTION(Client, reliable)
 	void Client_SetCraftPopOnSlot(const int SlotIndex);
 
-	FInventoryItem GetItemInfo(const int Index);
+	FInventoryItem GetItemInfo(const int Index) const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -88,11 +88,11 @@ public:
 
 	bool IsFireWeapon(const int ItemId) { return GetWeaponInfo(ItemId).FireWeapon; }
 
-	FWeaponItem GetWeaponInfo(const int Index);
+	FWeaponItem GetWeaponInfo(const int Index) const;
 	
-	FEquipmentItem GetEquipmentInfo(const int Index);
+	FEquipmentItem GetEquipmentInfo(const int Index) const;
 	
-	FBackpackItem GetBackpackInfo(const int Index);
+	FBackpackItem GetBackpackInfo(const int Index) const;
 
 	void DropAllItems();
 
