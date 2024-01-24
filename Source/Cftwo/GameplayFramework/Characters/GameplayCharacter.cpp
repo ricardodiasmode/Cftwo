@@ -18,6 +18,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../../Actors/ActorSpawner.h"
+#include "Cftwo/Actors/Workbench.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -201,24 +202,32 @@ void AGameplayCharacter::Look(const FInputActionValue& Value)
 
 void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!Cast<APickable>(OtherActor) || ClosePickable != nullptr)
-		return;
+	if (Cast<APickable>(OtherActor) && ClosePickable == nullptr)
+	{
+		ClosePickable = Cast<APickable>(OtherActor);
 
-	ClosePickable = Cast<APickable>(OtherActor);
-
-	if (HUDRef)
-		HUDRef->OnPickableClose();
+		if (HUDRef)
+			HUDRef->OnPickableClose();
+	} else if (Cast<AWorkbench>(OtherActor) && !CloseWorkbenches.Contains(Cast<AWorkbench>(OtherActor)))
+	{
+		GPrintDebug("adding");
+		CloseWorkbenches.Add(Cast<AWorkbench>(OtherActor));
+	}
 }
 
 void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Cast<APickable>(OtherActor) != ClosePickable)
-		return;
-
-	ClosePickable = nullptr;
+	if (Cast<APickable>(OtherActor) == ClosePickable)
+	{
+		ClosePickable = nullptr;
 	
-	if (HUDRef)
-		HUDRef->OnPickableFar();
+		if (HUDRef)
+			HUDRef->OnPickableFar();
+	} else if (Cast<AWorkbench>(OtherActor) && CloseWorkbenches.Contains(OtherActor))
+	{
+		GPrintDebug("removing");
+		CloseWorkbenches.Remove(Cast<AWorkbench>(OtherActor));
+	}
 }
 
 void AGameplayCharacter::InitializeInventory() const
@@ -484,7 +493,7 @@ void AGameplayCharacter::SwapSlots(const int FirstSlotIndex, const int SecondSlo
 	InventoryComponent->SwapSlots(FirstSlotIndex, SecondSlotIndex);
 }
 
-bool AGameplayCharacter::HasItem(const int ItemIndex)
+bool AGameplayCharacter::HasItem(const int ItemIndex) const
 {
 	return InventoryComponent->HasItem(ItemIndex);
 }
@@ -492,6 +501,17 @@ bool AGameplayCharacter::HasItem(const int ItemIndex)
 int AGameplayCharacter::GetItemOnIndex(const int SlotIndex)
 {
 	return InventoryComponent->Slots[SlotIndex].ItemInfo.Index;
+}
+
+void AGameplayCharacter::SpawnPlaceableAhead(TSubclassOf<AActor> Class) const
+{
+	const FVector StartTraceLocation = GetActorLocation() + GetActorForwardVector() * 50.f + FVector(0.f, 0.f, 50.f);
+	const FVector EndTraceLocation = StartTraceLocation - FVector(0.f, 0.f, 300.f);
+
+	FHitResult OutHit;
+	GetWorld()->LineTraceSingleByChannel(OutHit, StartTraceLocation, EndTraceLocation, ECC_Visibility);
+	GPrintDebug("spawning placeable");
+	GetWorld()->SpawnActor<AActor>(Class, OutHit.ImpactPoint, FRotator(), FActorSpawnParameters());
 }
 
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
@@ -565,6 +585,13 @@ void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryInd
 		InventoryComponent->RemoveItem(InventoryIndex, 1);
 		Backpack->SetStaticMesh(BackpackInfo.MeshRef);
 		Backpack->SetRelativeTransform(BackpackInfo.TransformOnEquip);
+		return;
+	}
+
+	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::PLACEABLE))
+	{
+		const FPlaceableItem PlaceableInfo = InventoryComponent->GetPlaceableInfoFromSlotIndex(InventoryIndex);
+		SpawnPlaceableAhead(PlaceableInfo.ClassToSpawn);
 		return;
 	}
 	

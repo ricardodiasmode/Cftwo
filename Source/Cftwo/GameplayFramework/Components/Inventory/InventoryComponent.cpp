@@ -433,4 +433,9 @@ void UInventoryComponent::DropItemFromWeaponSlot(const int WeaponSlotIndex)
 	UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
 
 	UpdateInventory();
+}
+
+FPlaceableItem UInventoryComponent::GetPlaceableInfoFromSlotIndex(const int InventoryIndex)
+{
+	return *(PlaceableDataTable->FindRow<FPlaceableItem>(FName(*(FString::FromInt(Slots[InventoryIndex].ItemInfo.OtherDataTableId))), ""));
 }	

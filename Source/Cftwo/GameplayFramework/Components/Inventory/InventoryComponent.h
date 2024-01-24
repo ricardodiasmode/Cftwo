@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* BackpackDataTable = nullptr;
 
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* PlaceableDataTable = nullptr;
+	
 	// Array of items in the slot
 	UPROPERTY(ReplicatedUsing = UpdateInventory)
 	TArray<FInventorySlot> Slots;
@@ -129,4 +132,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DropItemFromWeaponSlot(const int WeaponSlotIndex);
+
+	FPlaceableItem GetPlaceableInfoFromSlotIndex(const int InventoryIndex);
 };

@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "GameplayCharacter.generated.h"
 
+class AWorkbench;
 struct FInputActionValue;
 class UCameraComponent;
 class USpringArmComponent;
@@ -84,6 +85,8 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	int CurrentDefensePoints = 0;
 
 	AGameplayHUD* HUDRef = nullptr;
+
+	TArray<AWorkbench*> CloseWorkbenches;
 
 public:
 
@@ -261,8 +264,10 @@ public:
 	void SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex);
 
 	UFUNCTION(BlueprintPure)
-	bool HasItem(const int ItemIndex);
+	bool HasItem(const int ItemIndex) const;
 
 	UFUNCTION(BlueprintPure)
 	int GetItemOnIndex(const int SlotIndex);
+	
+	void SpawnPlaceableAhead(TSubclassOf<AActor> Class) const;
 };

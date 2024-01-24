@@ -16,6 +16,7 @@ enum class EItemType : uint8 {
 	HEAL = 3     UMETA(DisplayName = "HEAL"),
 	EQUIP = 4     UMETA(DisplayName = "EQUIP"),
 	BACKPACK = 5     UMETA(DisplayName = "BACKPACK"),
+	PLACEABLE = 6     UMETA(DisplayName = "PLACEABLE"),
 };
 
 UENUM(BlueprintType)
@@ -96,4 +97,13 @@ public:
 	UStaticMesh* MeshRef = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int Slots = -1;
+};
+
+USTRUCT(BlueprintType)
+struct FPlaceableItem : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> ClassToSpawn;
 };
