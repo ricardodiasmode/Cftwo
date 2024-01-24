@@ -44,12 +44,6 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* LeftHandItemComponent = nullptr;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* RightHandItemComponent = nullptr;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -92,6 +86,13 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	AGameplayHUD* HUDRef = nullptr;
 
 public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* LeftHandItemComponent = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* RightHandItemComponent = nullptr;
+	
 	// Controlls whether or not player is hitting
 	UPROPERTY(BlueprintReadWrite, Replicated)
 		bool Hitting = false;

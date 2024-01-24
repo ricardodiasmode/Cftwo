@@ -294,11 +294,17 @@ bool UInventoryComponent::ItemOnIndexIsOfType(const int SlotIndex, const EItemTy
 void UInventoryComponent::DropItem(const int SlotIndex)
 {
 	FActorSpawnParameters SpawnInfo;
-	const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
+	const FVector LeftHandLocation = Cast<AGameplayCharacter>(GetOwner())->LeftHandItemComponent->GetComponentLocation();
+	const FVector RightHandLocation = Cast<AGameplayCharacter>(GetOwner())->LeftHandItemComponent->GetComponentLocation();
+	const FVector LocationToSpawn = SlotIndex == 0 ? LeftHandLocation : RightHandLocation;
 	const int ItemIndex = Slots[SlotIndex].ItemInfo.Index;
 	const int ItemAmount = Slots[SlotIndex].Amount;
 	const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
-	APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+	APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass,
+		TransformToSpawn,
+		GetOwner(),
+		Cast<APawn>(GetOwner()),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	CurrentPickable->ItemId = ItemIndex;
 	CurrentPickable->Amount = ItemAmount;
 	UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);

@@ -1,5 +1,3 @@
-- Transformar um item de inventario full, ele nao spawna
-- Muitas vezes os itens nao estao spawnando no drop? Colisao ou localização de spawn?
 - adicionar vfx em tudo;
 - adicionar som em tudo;
 - testar multiplayer;
