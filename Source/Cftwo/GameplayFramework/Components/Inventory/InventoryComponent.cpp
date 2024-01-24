@@ -309,7 +309,18 @@ void UInventoryComponent::ConvertItem(const int SlotIndex, const int AmountToRem
 {
 	const int ItemIndexToGive = Slots[SlotIndex].ItemInfo.ConvertTo;
 	RemoveItem(SlotIndex, AmountToRemove);
-	GiveItem(ItemIndexToGive, AmountToGive);
+
+	const int FoundSlot = GiveItem(ItemIndexToGive, AmountToGive);
+	if(FoundSlot == -1)
+	{ // If could not add to inventory, spawn it
+		FActorSpawnParameters SpawnInfo;
+		const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
+		const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
+		APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+		CurrentPickable->ItemId = ItemIndexToGive;
+		CurrentPickable->Amount = AmountToGive;
+		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+	}
 }
 
 bool UInventoryComponent::HasItemOnAnyHand(const int ItemIndex)
