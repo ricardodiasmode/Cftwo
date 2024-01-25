@@ -1,4 +1,3 @@
-- tirar colisão do player com workbench;
 - herb deve converter em corda;
 - ferro faz barra de ferro;
 - pistola é feita com barra de ferro, em vez de ferro;
