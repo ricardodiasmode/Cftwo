@@ -54,6 +54,8 @@ public:
 	EItemType ItemType = EItemType::NONE;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int ConvertTo = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CullDistance = 10000.f;
 };
 
 USTRUCT(BlueprintType)

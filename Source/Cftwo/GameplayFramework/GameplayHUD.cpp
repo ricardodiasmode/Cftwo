@@ -105,4 +105,3 @@ void AGameplayHUD::FarCloseToWorkbench(const bool Far)
 {
     InventoryWidget->FarCloseToWorkbench(Far);
 }
-

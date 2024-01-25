@@ -35,6 +35,7 @@ void APickable::BeginPlay()
 	Super::BeginPlay();
 
 	StaticMesh->SetStaticMesh(GetItemInfo(ItemId).Mesh);
+	StaticMesh->SetCullDistance(GetItemInfo(ItemId).CullDistance);
 }
 
 FInventoryItem APickable::GetItemInfo(const int Index) const

@@ -33,6 +33,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	int NecessaryTool = -1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float MaxDrawDist = 20000;
 	
 	class AActorSpawner* SpawnerRef = nullptr;
 

@@ -63,6 +63,7 @@ void ABreakableObject::BeginPlay()
 	
 	StaticMeshComponent->SetStaticMesh(StaticMeshRef);
 	InitialMeshRotation = StaticMeshComponent->GetComponentRotation();
+	StaticMeshComponent->SetCullDistance(MaxDrawDist);
 }
 
 void ABreakableObject::RemoveHP()
