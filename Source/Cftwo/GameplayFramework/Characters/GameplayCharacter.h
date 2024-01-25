@@ -160,8 +160,14 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void UseItem(const int InventoryIndex);
 
+	UFUNCTION(BlueprintCallable)
+	void ConvertItem(const int InventoryIndex);
+
 	UFUNCTION(Server, reliable)
 	void Server_TryUseItem(const int InventoryIndex);
+
+	UFUNCTION(Server, reliable)
+	void Server_TryConvertItem(const int InventoryIndex);
 
 	UFUNCTION(NetMulticast, reliable)
 	void Multicast_ChangeEquipment(USkeletalMeshComponent* SKMRef, USkeletalMesh* MeshToSet);
@@ -257,8 +263,9 @@ public:
 	void Pickup();
 	
 	void OnUpdateInventory(TArray<FInventorySlot> Slots, const TArray<FWeaponInventorySlot>& WeaponSlots);
-	
-	bool FirstItemCanConvert() const;
+
+	UFUNCTION(BlueprintPure)
+	bool CheckCanConvertItem(const int InventoryIndex) const;
 
 	UFUNCTION(BlueprintCallable)
 	void SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex);

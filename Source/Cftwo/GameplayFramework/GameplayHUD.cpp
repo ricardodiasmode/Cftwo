@@ -101,3 +101,8 @@ void AGameplayHUD::SetCraftPopOnSlot(const int SlotIndex)
     InventoryWidget->SetCraftPopOnSlot(SlotIndex);
 }
 
+void AGameplayHUD::FarCloseToWorkbench(const bool Far)
+{
+    InventoryWidget->FarCloseToWorkbench(Far);
+}
+

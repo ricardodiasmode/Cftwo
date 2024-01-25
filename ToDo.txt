@@ -1,4 +1,3 @@
-- adicionar workbench;
 - adicionar vfx em tudo;
 - adicionar som em tudo;
 - testar multiplayer;

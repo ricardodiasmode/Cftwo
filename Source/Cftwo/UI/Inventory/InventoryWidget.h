@@ -24,6 +24,9 @@ public:
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
+	void FarCloseToWorkbench(const bool Far);
+	
+	UFUNCTION(BlueprintImplementableEvent)
 	void UpdateSlots();
 	
 	UFUNCTION(BlueprintCallable)

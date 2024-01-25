@@ -27,6 +27,7 @@ AGameplayCharacter::AGameplayCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Overlap);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel3, ECR_Overlap);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AGameplayCharacter::OnOverlapBegin);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AGameplayCharacter::OnComponentEndOverlap);
 
@@ -210,14 +211,16 @@ void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 			HUDRef->OnPickableClose();
 	} else if (Cast<AWorkbench>(OtherActor) && !CloseWorkbenches.Contains(Cast<AWorkbench>(OtherActor)))
 	{
-		GPrintDebug("adding");
 		CloseWorkbenches.Add(Cast<AWorkbench>(OtherActor));
+		
+		if (HUDRef)
+			HUDRef->FarCloseToWorkbench(false);
 	}
 }
 
 void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Cast<APickable>(OtherActor) == ClosePickable)
+	if (Cast<APickable>(OtherActor) == ClosePickable && ClosePickable != nullptr)
 	{
 		ClosePickable = nullptr;
 	
@@ -225,8 +228,10 @@ void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* Overla
 			HUDRef->OnPickableFar();
 	} else if (Cast<AWorkbench>(OtherActor) && CloseWorkbenches.Contains(OtherActor))
 	{
-		GPrintDebug("removing");
 		CloseWorkbenches.Remove(Cast<AWorkbench>(OtherActor));
+		
+		if (HUDRef && CloseWorkbenches.Num() == 0)
+			HUDRef->FarCloseToWorkbench(true);
 	}
 }
 
@@ -483,9 +488,9 @@ int AGameplayCharacter::GetEquippedWeaponId() const
 	return -1;
 }
 
-bool AGameplayCharacter::FirstItemCanConvert() const
+bool AGameplayCharacter::CheckCanConvertItem(const int InventoryIndex) const
 {
-	return InventoryComponent->Slots[0].ItemInfo.ConvertTo != -1;
+	return InventoryComponent->Slots[InventoryIndex].ItemInfo.ConvertTo != -1;
 }
 
 void AGameplayCharacter::SwapSlots(const int FirstSlotIndex, const int SecondSlotIndex)
@@ -510,7 +515,6 @@ void AGameplayCharacter::SpawnPlaceableAhead(TSubclassOf<AActor> Class) const
 
 	FHitResult OutHit;
 	GetWorld()->LineTraceSingleByChannel(OutHit, StartTraceLocation, EndTraceLocation, ECC_Visibility);
-	GPrintDebug("spawning placeable");
 	GetWorld()->SpawnActor<AActor>(Class, OutHit.ImpactPoint, FRotator(), FActorSpawnParameters());
 }
 
@@ -564,6 +568,16 @@ void AGameplayCharacter::Server_TryPickItem_Implementation()
 	}
 }
 
+void AGameplayCharacter::ConvertItem(const int InventoryIndex)
+{
+	Server_TryConvertItem(InventoryIndex);
+}
+
+void AGameplayCharacter::Server_TryConvertItem_Implementation(const int InventoryIndex)
+{
+	InventoryComponent->ConvertItem(InventoryIndex, 1, 1);
+}
+
 void AGameplayCharacter::UseItem(const int InventoryIndex)
 {
 	Server_TryUseItem(InventoryIndex);
@@ -571,7 +585,6 @@ void AGameplayCharacter::UseItem(const int InventoryIndex)
 
 void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryIndex)
 {
-
 	if (InventoryComponent->ItemOnIndexIsOfType(InventoryIndex, EItemType::EQUIP))
 	{
 		EquipItemOnIndex(InventoryIndex);
@@ -592,6 +605,7 @@ void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryInd
 	{
 		const FPlaceableItem PlaceableInfo = InventoryComponent->GetPlaceableInfoFromSlotIndex(InventoryIndex);
 		SpawnPlaceableAhead(PlaceableInfo.ClassToSpawn);
+		InventoryComponent->RemoveItem(InventoryIndex, 1);
 		return;
 	}
 	

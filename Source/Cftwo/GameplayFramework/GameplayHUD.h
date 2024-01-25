@@ -67,4 +67,6 @@ public:
 	void SetCraftPopOnSlot(const int SlotIndex);
 
 	AGameplayCharacter* CharacterRef = nullptr;
+
+	void FarCloseToWorkbench(const bool Far);
 };
