@@ -326,6 +326,9 @@ void UInventoryComponent::ConvertItem(const int SlotIndex, const int AmountToRem
 		CurrentPickable->ItemId = ItemIndexToGive;
 		CurrentPickable->Amount = AmountToGive;
 		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+	} else
+	{
+		Client_SetCraftPopOnSlot(FoundSlot);
 	}
 }
 

@@ -1,4 +1,3 @@
-- vfx quando converte item;
 - tirar colisão do player com workbench;
 - herb deve converter em corda;
 - ferro faz barra de ferro;
