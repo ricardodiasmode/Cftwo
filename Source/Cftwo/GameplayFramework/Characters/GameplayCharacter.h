@@ -88,9 +88,9 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	AGameplayHUD* HUDRef = nullptr;
 
-	TArray<AWorkbench*> CloseWorkbenches;
-
 public:
+
+	TArray<AWorkbench*> CloseWorkbenches;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* LeftHandItemComponent = nullptr;

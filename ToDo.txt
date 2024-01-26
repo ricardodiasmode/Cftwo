@@ -1,5 +1,3 @@
-- nao ta dropando item se transformar e inventario estiver full;
-- transformar item com slot com mais de um item faz sumir o botão de transformar;
 - implementar baú: tábua + pedra;
 - tábua = transformação da log;
 - sair de perto de um pickable com outro perto, o segundo não é trackeado;

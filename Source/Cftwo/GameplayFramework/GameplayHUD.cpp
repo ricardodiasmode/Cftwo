@@ -33,6 +33,9 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef, const TArray
     InventoryWidget->WeaponSlots.Append(WeaponSlotsRef);
     InventoryWidget->UpdateSlots();
 
+    if (CharacterRef->CloseWorkbenches.Num() > 0)
+        FarCloseToWorkbench(false);
+
     // CraftWidget->OnUpdateAvailableItems(SlotsRef);
 }
 
