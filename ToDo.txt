@@ -1,7 +1,13 @@
-- herb deve converter em corda;
-- ferro faz barra de ferro;
-- pistola é feita com barra de ferro, em vez de ferro;
-- adicionar vfx em tudo;
-- adicionar som em tudo;
+- ao morrer, fome não reseta para o client?;
+- nao ta dropando item se transformar e inventario estiver full;
+- transformar item com slot com mais de um item faz sumir o botão de transformar;
+- implementar baú: tábua + pedra;
+- tábua = transformação da log;
+- sair de perto de um pickable com outro perto, o segundo não é trackeado;
+- adicionar som de passos;
+- adicionar som batendo nas coisas;
+- adicionar som batendo no personagem e no porco;
+- adicionar som de tiro;
+- adicionar som da flecha;
 - testar multiplayer;
 - melhorar ia;
