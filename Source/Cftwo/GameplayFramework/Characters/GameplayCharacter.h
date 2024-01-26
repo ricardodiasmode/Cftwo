@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "../Components/Inventory/InventoryComponent.h"
 #include "../Components/WeaponComponent.h"
+#include "Cftwo/Actors/Chest.h"
 #include "Cftwo/Actors/SpawnableActor.h"
 #include "GameFramework/Character.h"
 #include "GameplayCharacter.generated.h"
@@ -195,6 +196,12 @@ protected:
 
 	virtual void Destroyed() override;
 
+	UFUNCTION(Client, reliable)
+	void Client_OnCharacterGetCloseToChest(AChest* ChestRef);
+
+	UFUNCTION(Client, reliable)
+	void Client_OnCharacterGetFarToChest(AChest* ChestRef);
+	
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

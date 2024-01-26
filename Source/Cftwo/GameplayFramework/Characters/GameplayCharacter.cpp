@@ -18,6 +18,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../../Actors/ActorSpawner.h"
+#include "Cftwo/Actors/Chest.h"
 #include "Cftwo/Actors/Workbench.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -215,6 +216,9 @@ void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 		
 		if (HUDRef)
 			HUDRef->FarCloseToWorkbench(false);
+	} else if (AChest* ChestRef = Cast<AChest>(OtherActor))
+	{
+		Client_OnCharacterGetCloseToChest(ChestRef);
 	}
 }
 
@@ -232,6 +236,9 @@ void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* Overla
 		
 		if (HUDRef && CloseWorkbenches.Num() == 0)
 			HUDRef->FarCloseToWorkbench(true);
+	} else if (AChest* ChestRef = Cast<AChest>(OtherActor))
+	{
+		Client_OnCharacterGetFarToChest(ChestRef);
 	}
 }
 
@@ -684,6 +691,16 @@ void AGameplayCharacter::Destroyed()
 	OnDie();
 	
 	Super::Destroyed();
+}
+
+void AGameplayCharacter::Client_OnCharacterGetCloseToChest_Implementation(AChest* ChestRef)
+{
+	ChestRef->SetWidgetVisibility(true);
+}
+
+void AGameplayCharacter::Client_OnCharacterGetFarToChest_Implementation(AChest* ChestRef)
+{
+	ChestRef->SetWidgetVisibility(false);
 }
 
 void AGameplayCharacter::Pickup()
