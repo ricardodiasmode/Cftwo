@@ -1,5 +1,4 @@
-- implementar baú: tábua + pedra;
-- tábua = transformação da log;
+- implementar baú: tábua + ferro;
 - sair de perto de um pickable com outro perto, o segundo não é trackeado;
 - adicionar som de passos;
 - adicionar som batendo nas coisas;
