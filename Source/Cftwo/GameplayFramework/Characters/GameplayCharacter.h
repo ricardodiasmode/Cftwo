@@ -74,6 +74,8 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	FTimerHandle LockAimTimerHandle;
 
+	FTimerHandle HungryTimerHandle;
+
 	/** Hit Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* HitAction;

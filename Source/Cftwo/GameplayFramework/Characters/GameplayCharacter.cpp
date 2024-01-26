@@ -311,8 +311,7 @@ void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
 {
 	Client_OnSetPlayerController();
 
-	FTimerHandle HungryTimer;
-	GetWorldTimerManager().SetTimer(HungryTimer,
+	GetWorldTimerManager().SetTimer(HungryTimerHandle,
 		FTimerDelegate::CreateLambda([this] {
 			RemoveHungry();
 		}),
@@ -463,6 +462,9 @@ void AGameplayCharacter::Die()
 {
 	if (!InventoryComponent)
 		return;
+
+	GetWorldTimerManager().ClearTimer(HungryTimerHandle);
+	
 	InventoryComponent->DropAllItems();
 	Client_OnDie();
 	Destroy();
@@ -673,10 +675,7 @@ void AGameplayCharacter::AddItem(TPair<int, int> ItemToAdd) const
 void AGameplayCharacter::OnDie()
 {
 	if(!SpawnerRef)
-	{
-		GPrintDebug("Something is wrong, spawner not setted on gameplay character.");
 		return;
-	}
 	SpawnerRef->OnLoseActor(this);	
 }
 

@@ -6,6 +6,7 @@
 #include "../UI/CraftWidget.h"
 #include "../UI/StatusWidget.h"
 #include "GameplayPlayerController.h"
+#include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Characters/GameplayCharacter.h"
 
 void AGameplayHUD::BeginPlay()
@@ -71,6 +72,8 @@ void AGameplayHUD::OnUpdateHungry(const float CurrentHungry)
 {
     if (StatusWidget == nullptr)
         return;
+
+    GPrintDebugWithVar("Current hungry: %f", CurrentHungry);
     
     StatusWidget->CurrentHungry = CurrentHungry;
     StatusWidget->OnUpdateHungry();
