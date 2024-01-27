@@ -18,8 +18,10 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../../Actors/ActorSpawner.h"
+#include "Animation/AnimInstanceProxy.h"
 #include "Cftwo/Actors/Chest.h"
 #include "Cftwo/Actors/Workbench.h"
+#include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -231,6 +233,9 @@ void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* Overla
 	
 		if (HUDRef)
 			HUDRef->OnPickableFar();
+
+		APickable* PickableRef = Cast<APickable>(OtherActor);
+		CheckOtherPickableClose(PickableRef->SphereCollision->GetScaledSphereRadius(), PickableRef);
 	} else if (Cast<AWorkbench>(OtherActor) && CloseWorkbenches.Contains(OtherActor))
 	{
 		CloseWorkbenches.Remove(Cast<AWorkbench>(OtherActor));
@@ -240,6 +245,32 @@ void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* Overla
 	} else if (AChest* ChestRef = Cast<AChest>(OtherActor))
 	{
 		Client_OnCharacterGetFarToChest(ChestRef);
+	}
+}
+
+void AGameplayCharacter::CheckOtherPickableClose(const float Radius, APickable* PickableToIgnore)
+{
+	FHitResult OutHit;
+	TArray<AActor*> ActorsToIgnore;
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQuery;
+	ObjectTypeQuery.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1));
+	UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(),
+		GetActorLocation(),
+		GetActorLocation(),
+		Radius,
+		ObjectTypeQuery,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::None,
+		OutHit,
+		true);
+
+	if (Cast<APickable>(OutHit.GetActor()) && Cast<APickable>(OutHit.GetActor()) != PickableToIgnore)
+	{
+		ClosePickable = Cast<APickable>(OutHit.GetActor());
+
+		if (HUDRef)
+			HUDRef->OnPickableClose();
 	}
 }
 

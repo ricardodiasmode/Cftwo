@@ -15,13 +15,14 @@ class CFTWO_API APickable : public AActor
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh = nullptr;
-	
-	class USphereComponent* SphereCollision = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ItemsDataTable = nullptr;
 	
 public:
+	
+	class USphereComponent* SphereCollision = nullptr;
+	
 	UPROPERTY(EditAnywhere)
 	int ItemId = -1;
 	UPROPERTY(EditAnywhere)
