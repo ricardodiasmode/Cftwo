@@ -6,14 +6,18 @@
 #include "GameFramework/Actor.h"
 #include "Chest.generated.h"
 
+struct FInventorySlot;
+
 UCLASS()
 class CFTWO_API AChest : public AActor
 {
 	GENERATED_BODY()
-
-public:
-	// slots
+private:
+	static constexpr int NumberOfSlots = 2;
 	
+public:
+	UPROPERTY(ReplicatedUsing = UpdateInventory, BlueprintReadOnly)
+	TArray<FInventorySlot> Slots;
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,4 +29,10 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SetWidgetVisibility(const bool Visible);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateInventory();
+
+	UFUNCTION(Server, reliable)
+	void Server_AddInitialSlots();
 };

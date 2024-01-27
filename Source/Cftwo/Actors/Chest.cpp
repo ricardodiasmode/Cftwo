@@ -3,6 +3,9 @@
 
 #include "Chest.h"
 
+#include "Cftwo/GameplayFramework/Components/Inventory/InventorySlot.h"
+#include "Net/UnrealNetwork.h"
+
 // Sets default values
 AChest::AChest()
 {
@@ -11,10 +14,25 @@ AChest::AChest()
 
 }
 
+void AChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AChest, Slots);
+}
+
 // Called when the game starts or when spawned
 void AChest::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	Server_AddInitialSlots();
 }
 
+void AChest::Server_AddInitialSlots_Implementation()
+{
+	for (int i = 0; i < NumberOfSlots; i++)
+	{
+		Slots.Add(FInventorySlot());
+	}
+	UpdateInventory();
+}

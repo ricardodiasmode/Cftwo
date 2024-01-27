@@ -76,8 +76,6 @@ void AGameplayHUD::OnUpdateHungry(const float CurrentHungry)
     if (StatusWidget == nullptr)
         return;
 
-    GPrintDebugWithVar("Current hungry: %f", CurrentHungry);
-    
     StatusWidget->CurrentHungry = CurrentHungry;
     StatusWidget->OnUpdateHungry();
 }
@@ -112,4 +110,14 @@ void AGameplayHUD::SetCraftPopOnSlot(const int SlotIndex)
 void AGameplayHUD::FarCloseToWorkbench(const bool Far)
 {
     InventoryWidget->FarCloseToWorkbench(Far);
+}
+
+void AGameplayHUD::Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex)
+{
+    CharacterRef->Server_SwapChestInventorySlots(ChestRef, ChestIndex, InventoryIndex);
+}
+
+void AGameplayHUD::DropChestSlot(AChest* ChestRef, const int ChestIndex)
+{
+    CharacterRef->Server_DropChestSlot(ChestRef, ChestIndex);
 }

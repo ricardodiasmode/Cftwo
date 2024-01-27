@@ -8,6 +8,7 @@
 #include "../UI/Inventory/InventoryWidget.h"
 #include "GameplayHUD.generated.h"
 
+class AChest;
 class UCraftWidget;
 class UStatusWidget;
 class AGameplayCharacter;
@@ -69,4 +70,8 @@ public:
 	AGameplayCharacter* CharacterRef = nullptr;
 
 	void FarCloseToWorkbench(const bool Far);
+	
+	void Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex);
+	
+	void DropChestSlot(AChest* ChestRef, const int ChestIndex);
 };

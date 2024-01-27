@@ -20,6 +20,7 @@
 #include "../../Actors/ActorSpawner.h"
 #include "Cftwo/Actors/Chest.h"
 #include "Cftwo/Actors/Workbench.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -727,4 +728,41 @@ void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots, const T
 	const FRotator RightRot = Slots[1].ItemInfo.TransformOnHand.Rotator();
 	const FVector RightScale = Slots[1].ItemInfo.TransformOnHand.GetScale3D();
 	RightHandItemComponent->SetRelativeTransform(FTransform(RightRot, -RightLoc, RightScale));
+}
+
+void AGameplayCharacter::Server_SwapChestInventorySlots_Implementation(AChest* ChestRef, const int ChestIndex, const int InventoryIndex)
+{
+	const FInventorySlot InventorySlot = InventoryComponent->Slots[InventoryIndex];
+	InventoryComponent->Slots[InventoryIndex] = ChestRef->Slots[ChestIndex];
+	InventoryComponent->UpdateInventory();
+	ChestRef->Slots[ChestIndex] = InventorySlot;
+	ChestRef->UpdateInventory();
+}
+
+void AGameplayCharacter::Server_SwapChestSlots_Implementation(AChest* ChestRef, const int FirstChestIndex, const int SecondChestIndex)
+{
+	const FInventorySlot FirstSlot = ChestRef->Slots[FirstChestIndex];
+	ChestRef->Slots[FirstChestIndex] = ChestRef->Slots[SecondChestIndex];
+	ChestRef->Slots[SecondChestIndex] = FirstSlot;
+	ChestRef->UpdateInventory();
+}
+
+void AGameplayCharacter::Server_DropChestSlot_Implementation(AChest* ChestRef, const int ChestIndex)
+{
+	const auto& [ItemInfo, Amount] = ChestRef->Slots[ChestIndex];
+
+	FActorSpawnParameters SpawnInfo;
+	const FVector LocationToSpawn = LeftHandItemComponent->GetComponentLocation();
+	const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
+	APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(InventoryComponent->PickableClass,
+		TransformToSpawn,
+		this,
+		this,
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	CurrentPickable->ItemId = ItemInfo.Index;
+	CurrentPickable->Amount = Amount;
+	UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+
+	ChestRef->Slots[ChestIndex] = FInventorySlot();
+	ChestRef->UpdateInventory();
 }
