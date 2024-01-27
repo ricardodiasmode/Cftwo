@@ -1,8 +1,11 @@
-- adicionar som de passos;
+- som craft;
+- som transformação;
 - adicionar som batendo nas coisas;
 - adicionar som batendo no personagem e no porco;
 - adicionar som de tiro;
 - adicionar som da flecha;
+- adicionar som de backgorund;
 - otimizar;
 - testar multiplayer;
 - melhorar ia;
+- criar menu;
