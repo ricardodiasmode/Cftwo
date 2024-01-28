@@ -15,6 +15,14 @@ class CFTWO_API AGameplayPlayerController : public APlayerController
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> BackgroundSound;
+	
+private:
+	UFUNCTION(Client, reliable)
+	void Client_StartBackgroundSound();
+	
+protected:
 	virtual void BeginPlay() override;
 	
 public:

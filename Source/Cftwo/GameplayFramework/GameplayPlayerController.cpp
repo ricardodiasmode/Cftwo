@@ -20,11 +20,19 @@ void AGameplayPlayerController::Client_AskToPunch_Implementation()
 	Cast<AGameplayCharacter>(GetPawn())->OnHit();
 }
 
+void AGameplayPlayerController::Client_StartBackgroundSound_Implementation()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), BackgroundSound);
+}
+
+
 void AGameplayPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
 	SetShowMouseCursor(true);
+
+	Client_StartBackgroundSound();
 }
 
 void AGameplayPlayerController::Client_SetPawnInHUD_Implementation()

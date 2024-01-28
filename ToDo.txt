@@ -1,6 +1,5 @@
-- adicionar feedback quando pega bullet/arrow;
-- adicionar som de backgorund;
 - adicionar vfx arrow trail;
+- adicionar feedback visual e som quando pega bullet/arrow;
 - otimizar;
 - testar multiplayer;
 - melhorar ia;
