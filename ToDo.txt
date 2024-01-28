@@ -1,6 +1,3 @@
-- adicionar som batendo na arvore;
-- adicionar som batendo no ferro;
-- adicionar som batendo no personagem e no porco;
 - adicionar feedback quando pega bullet/arrow;
 - adicionar som de backgorund;
 - adicionar vfx arrow trail;

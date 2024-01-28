@@ -64,14 +64,14 @@ private:
 	UFUNCTION(Client, reliable)
 	void Client_SetCraftPopOnSlot(const int SlotIndex);
 
-	FInventoryItem GetItemInfo(const int Index) const;
-
 protected:
 	virtual void BeginPlay() override;
 
 public:	
 	// Sets default values for this component's properties
 	UInventoryComponent();
+
+	FInventoryItem GetItemInfo(const int Index) const;
 
 	/** Try to give the desired item to the owning player 
 	 * @param ItemIndex: The index of th item to give to the player

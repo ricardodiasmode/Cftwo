@@ -5,7 +5,6 @@
 #include "../Characters/GameplayCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Components/InstancedStaticMeshComponent.h"
 #include "../AI/BaseNeutralCharacter.h"
 #include "../../Actors/BreakableObject.h"
 #include "Inventory/InventoryComponent.h"
@@ -113,6 +112,19 @@ void UWeaponComponent::SpawnVFXOnAttack(FHitResult CurrentHit, AActor* Target, U
 	}
 }
 
+void UWeaponComponent::SpawnSFXOnAttack(const FHitResult& HitResult, ABreakableObject* BreakableObject)
+{
+	const int ToolIndex = BreakableObject->NecessaryTool;
+	const int WeaponIndex = CharacterRef->InventoryComponent->GetItemInfo(ToolIndex).OtherDataTableId;
+	USoundBase* SoundToPlay = CharacterRef->InventoryComponent->GetWeaponInfo(WeaponIndex).SoundToPlay;
+	Multicast_SpawnSound(SoundToPlay, HitResult.ImpactPoint);
+}
+
+void UWeaponComponent::SpawnSFXOnAttack(const FHitResult& HitResult)
+{
+	Multicast_SpawnSound(PunchSound, HitResult.Location);
+}
+
 void UWeaponComponent::OnPunch()
 {
 	FVector START_LOCATION = CharacterRef->GetActorLocation() +
@@ -146,6 +158,7 @@ void UWeaponComponent::OnPunch()
 			{
 				CurrentCharacter->Server_OnGetHitted(PUNCH_DAMAGE);
 				SpawnVFXOnAttack(CurrentHit, CurrentCharacter, CharacterRef->BloodVFX);
+				SpawnSFXOnAttack(CurrentHit);
 				return;
 			}
 
@@ -153,6 +166,7 @@ void UWeaponComponent::OnPunch()
 			if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
 				SpawnVFXOnAttack(CurrentHit, CurrentIA, CharacterRef->BloodVFX);
+				SpawnSFXOnAttack(CurrentHit);
 				
 				if (CurrentIA->AmIAlive())
 					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE, GetOwner());
@@ -175,6 +189,7 @@ void UWeaponComponent::OnPunch()
 					BreakableObject->RemoveHP();
 					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
 					SpawnVFXOnAttack(CurrentHit, BreakableObject, CharacterRef->DustVFX);
+					SpawnSFXOnAttack(CurrentHit, BreakableObject);
 				}
 				return;
 			}
