@@ -6,6 +6,7 @@
 #include "Cftwo/Actors/BreakableObject.h"
 #include "Components/ActorComponent.h"
 #include "Engine/DataTable.h"
+#include "Inventory/InventoryItem.h"
 #include "WeaponComponent.generated.h"
 
 class UNiagaraComponent;
@@ -49,6 +50,10 @@ public:
 	AGameplayCharacter* CharacterRef = nullptr;
 
 private:
+
+	UFUNCTION(NetMulticast, reliable)
+	void Multicast_SpawnSound(USoundBase* SoundToPlay, const FVector& LocationToSpawn);
+	
 	void TryFireWeapon();
 
 	UFUNCTION(Server, reliable)

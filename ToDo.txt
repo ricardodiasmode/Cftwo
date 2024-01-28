@@ -1,10 +1,9 @@
-- som craft;
-- som transformação;
-- adicionar som batendo nas coisas;
+- adicionar som batendo na arvore;
+- adicionar som batendo no ferro;
 - adicionar som batendo no personagem e no porco;
-- adicionar som de tiro;
-- adicionar som da flecha;
+- adicionar feedback quando pega bullet/arrow;
 - adicionar som de backgorund;
+- adicionar vfx arrow trail;
 - otimizar;
 - testar multiplayer;
 - melhorar ia;

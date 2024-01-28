@@ -190,6 +190,7 @@ void UWeaponComponent::TryFireWeapon()
 	if (CharacterRef->IsEquippedWeaponFireWeapon())
 	{
 		Client_SpawnProjectile(WeaponInfo.ProjectileClassToSpawn);
+		Multicast_SpawnSound(WeaponInfo.SoundToPlay, CharacterRef->GetActorLocation());
 	}
 	else {
 		OnPunch();
@@ -297,4 +298,12 @@ void UWeaponComponent::TryLockAim()
 		CharacterRef->GetController()->SetControlRotation(InterpedRot);
 		return;
 	}
+}
+
+void UWeaponComponent::Multicast_SpawnSound_Implementation(USoundBase* SoundToPlay, const FVector& LocationToSpawn)
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),
+		SoundToPlay,
+		LocationToSpawn
+		);
 }
