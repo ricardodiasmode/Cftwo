@@ -51,19 +51,26 @@ void ABaseProjectile::Tick(const float DeltaTime)
 	}
 }
 
+void ABaseProjectile::Server_OnOverlapBegin_Implementation(AActor* OtherActor)
+{
+	if (AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(OtherActor))
+	{
+		CharacterRef->Server_OnGetHitted(Damage);
+		Cast<AGameplayCharacter>(GetOwner())->Server_OnHitSuccess();
+	}
+	else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(OtherActor))
+	{
+		CurrentIA->Server_OnGetHitted(Damage, GetOwner());
+		Cast<AGameplayCharacter>(GetOwner())->Server_OnHitSuccess();
+	}
+}
+
 void ABaseProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor == GetOwner())
 		return;
 
-	if (AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(OtherActor))
-	{
-		CharacterRef->Server_OnGetHitted(Damage);
-	}
-	else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(OtherActor))
-	{
-		CurrentIA->Server_OnGetHitted(Damage, GetOwner());
-	}
+	Server_OnOverlapBegin(OtherActor);
 
 	if (IsValid(EmmiterRef))
 	{

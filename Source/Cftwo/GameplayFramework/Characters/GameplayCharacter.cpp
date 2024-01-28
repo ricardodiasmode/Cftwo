@@ -797,3 +797,17 @@ void AGameplayCharacter::Server_DropChestSlot_Implementation(AChest* ChestRef, c
 	ChestRef->Slots[ChestIndex] = FInventorySlot();
 	ChestRef->UpdateInventory();
 }
+
+void AGameplayCharacter::Server_OnHitSuccess_Implementation()
+{
+	Client_OnHitSuccess();
+}
+
+void AGameplayCharacter::Client_OnHitSuccess_Implementation()
+{
+	UGameplayStatics::PlaySound2D(GetWorld(),
+		SoundToFireWhenHitSuccess);
+
+	HUDRef->OnHitSuccess();
+}
+

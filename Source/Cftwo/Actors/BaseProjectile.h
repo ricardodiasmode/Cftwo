@@ -32,6 +32,9 @@ protected:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(Server, reliable)
+	void Server_OnOverlapBegin(AActor* OtherActor);
+
 public:
 	// Sets default values for this actor's properties
 	ABaseProjectile();

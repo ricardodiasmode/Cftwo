@@ -89,6 +89,11 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	AGameplayHUD* HUDRef = nullptr;
 
+protected:
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> SoundToFireWhenHitSuccess;
+
 public:
 
 	TArray<AWorkbench*> CloseWorkbenches;
@@ -176,7 +181,6 @@ private:
 	void Multicast_ChangeEquipment(USkeletalMeshComponent* SKMRef, USkeletalMesh* MeshToSet);
 
 protected:
-
 	UFUNCTION()
 	virtual void OnRep_CurrentHealth();
 	
@@ -297,4 +301,10 @@ public:
 	
 	UFUNCTION(Server, reliable, BlueprintCallable)
 	void Server_DropChestSlot(AChest* ChestRef, const int ChestIndex);
+
+	UFUNCTION(Server, reliable)
+	void Server_OnHitSuccess();
+
+	UFUNCTION(Client, reliable)
+	void Client_OnHitSuccess();
 };

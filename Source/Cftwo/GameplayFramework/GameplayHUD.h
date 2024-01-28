@@ -26,8 +26,6 @@ private:
 
 	UCraftWidget* CraftWidget = nullptr;
 
-	UStatusWidget* StatusWidget = nullptr;
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> InventoryWidgetClass;
 
@@ -39,6 +37,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> StatusWidgetClass;
+
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	UStatusWidget* StatusWidget = nullptr;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -61,6 +63,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPickableFar();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHitSuccess();
 
 	UFUNCTION(BlueprintCallable)
 	void OnPickup();
