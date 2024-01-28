@@ -6,21 +6,31 @@
 #include "GameFramework/Actor.h"
 #include "BaseProjectile.generated.h"
 
+class UNiagaraComponent;
+class UNiagaraSystem;
+
 UCLASS()
 class CFTWO_API ABaseProjectile : public AActor
 {
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	class USphereComponent* SphereCollision = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	float Damage = 30.f;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> Emmiter;
+
+	UNiagaraComponent* EmmiterRef;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	virtual void Tick(float DeltaTime) override;
 
 public:
 	// Sets default values for this actor's properties

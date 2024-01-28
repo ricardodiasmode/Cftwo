@@ -1,4 +1,3 @@
-- adicionar vfx arrow trail;
 - adicionar feedback visual e som quando pega bullet/arrow;
 - otimizar;
 - testar multiplayer;

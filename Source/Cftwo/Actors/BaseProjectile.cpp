@@ -2,6 +2,9 @@
 
 
 #include "BaseProjectile.h"
+
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "../GameplayFramework/Characters/GameplayCharacter.h"
 #include "../GameplayFramework/AI/BaseNeutralCharacter.h"
 #include "Components/SphereComponent.h"
@@ -28,7 +31,24 @@ ABaseProjectile::ABaseProjectile()
 void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (Emmiter)
+	{
+		EmmiterRef = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),
+			Emmiter,
+			GetActorLocation(),
+			GetActorRotation() - FRotator(90.f, 0.f, 0.f));
+	}
+}
+
+void ABaseProjectile::Tick(const float DeltaTime)
+{
+	Super::Tick(DeltaTime);	
+
+	if (IsValid(EmmiterRef))
+	{
+		EmmiterRef->SetWorldLocation(GetActorLocation());
+	}
 }
 
 void ABaseProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -43,8 +63,13 @@ void ABaseProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 	else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(OtherActor))
 	{
 		CurrentIA->Server_OnGetHitted(Damage, GetOwner());
-		return;
 	}
 
+	if (IsValid(EmmiterRef))
+	{
+		EmmiterRef->Deactivate();
+	}
+	
 	Destroy();
 }
+
