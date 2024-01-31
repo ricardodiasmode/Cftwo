@@ -36,6 +36,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float MaxDrawDist = 20000;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	bool AmITree = true;
 	
 	class AActorSpawner* SpawnerRef = nullptr;
 

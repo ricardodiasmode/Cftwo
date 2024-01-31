@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BreakableObject.h"
 #include "ActorSpawner.h"
+#include "Cftwo/GameplayFramework/Characters/GameplayCharacter.h"
 
 // Sets default values
 ABreakableObject::ABreakableObject()
@@ -64,6 +65,20 @@ void ABreakableObject::BeginPlay()
 	StaticMeshComponent->SetStaticMesh(StaticMeshRef);
 	InitialMeshRotation = StaticMeshComponent->GetComponentRotation();
 	StaticMeshComponent->SetCullDistance(MaxDrawDist);
+
+	for (auto [ActorArray] : SpawnerRef->ActorsSpawned)
+	{
+		if (ActorArray.Num() == 0)
+			return;
+		
+		if (AGameplayCharacter* CurrentNPC = Cast<AGameplayCharacter>(ActorArray[0]))
+		{
+			if (AmITree)
+				CurrentNPC->BreakableTrees.Add(this);
+			else
+				CurrentNPC->BreakableRocks.Add(this);
+		}
+	}
 }
 
 void ABreakableObject::RemoveHP()

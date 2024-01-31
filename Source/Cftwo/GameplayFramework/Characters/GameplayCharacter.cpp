@@ -18,7 +18,6 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../../Actors/ActorSpawner.h"
-#include "Animation/AnimInstanceProxy.h"
 #include "Cftwo/Actors/Chest.h"
 #include "Cftwo/Actors/Workbench.h"
 #include "Components/SphereComponent.h"

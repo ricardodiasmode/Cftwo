@@ -98,6 +98,12 @@ public:
 
 	TArray<AWorkbench*> CloseWorkbenches;
 
+	UPROPERTY(BlueprintReadOnly)
+	TArray<ABreakableObject*> BreakableRocks;
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<ABreakableObject*> BreakableTrees;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* LeftHandItemComponent = nullptr;
 

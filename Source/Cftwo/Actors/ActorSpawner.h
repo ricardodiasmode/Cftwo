@@ -20,6 +20,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TArray<struct FActorToSpawn> ActorsToSpawn;
 
+public:
 	TArray<FActorMatrix> ActorsSpawned;
 
 private:

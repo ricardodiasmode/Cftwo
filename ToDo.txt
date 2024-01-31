@@ -1,3 +1,4 @@
+- pegar breakable E pickables no BP_NPC. Os breakables devem pegar do ActorSpawner todos os NPCs e se setar neles.
 - otimizar;
 - testar multiplayer;
 - melhorar ia;
