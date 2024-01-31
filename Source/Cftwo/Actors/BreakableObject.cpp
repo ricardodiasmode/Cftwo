@@ -66,17 +66,23 @@ void ABreakableObject::BeginPlay()
 	InitialMeshRotation = StaticMeshComponent->GetComponentRotation();
 	StaticMeshComponent->SetCullDistance(MaxDrawDist);
 
-	for (auto [ActorArray] : SpawnerRef->ActorsSpawned)
+	if (SpawnerRef)
 	{
-		if (ActorArray.Num() == 0)
-			return;
-		
-		if (AGameplayCharacter* CurrentNPC = Cast<AGameplayCharacter>(ActorArray[0]))
+		for (auto [ActorArray] : SpawnerRef->ActorsSpawned)
 		{
-			if (AmITree)
-				CurrentNPC->BreakableTrees.Add(this);
-			else
-				CurrentNPC->BreakableRocks.Add(this);
+			if (ActorArray.Num() == 0)
+				return;
+		
+			if (Cast<AGameplayCharacter>(ActorArray[0]))
+			{
+				for (AActor* CurrentNPC : ActorArray)
+				{
+					if (AmITree)
+						Cast<AGameplayCharacter>(CurrentNPC)->BreakableTrees.Add(this);
+					else
+						Cast<AGameplayCharacter>(CurrentNPC)->BreakableRocks.Add(this);
+				}
+			}
 		}
 	}
 }
@@ -97,6 +103,23 @@ void ABreakableObject::Break()
 {
 	// Break effects
 	OnDie();
+
+	for (auto [ActorArray] : SpawnerRef->ActorsSpawned)
+	{
+		if (ActorArray.Num() == 0)
+			return;
+		
+		if (Cast<AGameplayCharacter>(ActorArray[0]))
+		{
+			for (AActor* CurrentNPC : ActorArray)
+			{
+				if (AmITree)
+					Cast<AGameplayCharacter>(CurrentNPC)->BreakableTrees.Remove(this);
+				else
+					Cast<AGameplayCharacter>(CurrentNPC)->BreakableRocks.Remove(this);
+			}
+		}
+	}
 
 	Destroy();
 }	

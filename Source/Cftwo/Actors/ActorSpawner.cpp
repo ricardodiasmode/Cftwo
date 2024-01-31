@@ -4,11 +4,14 @@
 #include "ActorSpawner.h"
 
 #include "BreakableObject.h"
+#include "Pickable.h"
 #include "Components/BoxComponent.h"
 #include "../Utils/ActorToSpawn.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Cftwo/GameplayFramework/AI/BaseNeutralCharacter.h"
 #include "Cftwo/GameplayFramework/Characters/GameplayCharacter.h"
+#include "EntitySystem/MovieSceneEntitySystemRunner.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AActorSpawner::AActorSpawner()
@@ -94,14 +97,17 @@ bool AActorSpawner::SpawnActor(const int Index)
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		AActor* ActorRef = GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTransform, SpawnParams);
+		AActor* ActorRef = GetWorld()->SpawnActorDeferred<AActor>(ClassToSpawn, SpawnTransform);
 		if (Cast<ABreakableObject>(ActorRef))
 			Cast<ABreakableObject>(ActorRef)->SpawnerRef = this;
 		else if (Cast<AGameplayCharacter>(ActorRef))
 			Cast<AGameplayCharacter>(ActorRef)->SpawnerRef = this;
 		else if (Cast<ABaseNeutralCharacter>(ActorRef))
 			Cast<ABaseNeutralCharacter>(ActorRef)->SpawnerRef = this;
+		else if (Cast<APickable>(ActorRef))
+			Cast<APickable>(ActorRef)->SpawnerRef = this;
 		ActorsSpawned[Index].ActorArray.Add(ActorRef);
+		UGameplayStatics::FinishSpawningActor(ActorRef, SpawnTransform);
 	}
 	return true;
 }

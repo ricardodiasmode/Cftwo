@@ -7,6 +7,8 @@
 #include "../GameplayFramework/Components/Inventory/InventoryItem.h"
 #include "Pickable.generated.h"
 
+class AActorSpawner;
+
 UCLASS()
 class CFTWO_API APickable : public AActor
 {
@@ -22,6 +24,8 @@ protected:
 public:
 	
 	class USphereComponent* SphereCollision = nullptr;
+
+	AActorSpawner* SpawnerRef = nullptr;
 	
 	UPROPERTY(EditAnywhere)
 	int ItemId = -1;

@@ -3,6 +3,8 @@
 
 #include "Pickable.h"
 
+#include "ActorSpawner.h"
+#include "Cftwo/GameplayFramework/Characters/GameplayCharacter.h"
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Components/SphereComponent.h"
 
@@ -36,6 +38,21 @@ void APickable::BeginPlay()
 
 	StaticMesh->SetStaticMesh(GetItemInfo(ItemId).Mesh);
 	StaticMesh->SetCullDistance(GetItemInfo(ItemId).CullDistance);
+
+	if (SpawnerRef)
+	{
+		for (auto [ActorArray] : SpawnerRef->ActorsSpawned)
+		{
+			if (ActorArray.Num() == 0)
+				return;
+		
+			if (Cast<AGameplayCharacter>(ActorArray[0]))
+			{
+				for (AActor* CurrentNPC : ActorArray)
+					Cast<AGameplayCharacter>(CurrentNPC)->Pickables.Add(this);
+			}
+		}
+	}
 }
 
 FInventoryItem APickable::GetItemInfo(const int Index) const
@@ -45,6 +62,22 @@ FInventoryItem APickable::GetItemInfo(const int Index) const
 
 void APickable::OnPick()
 {
+
+	if (SpawnerRef)
+	{
+		for (auto [ActorArray] : SpawnerRef->ActorsSpawned)
+		{
+			if (ActorArray.Num() == 0)
+				return;
+
+			if (Cast<AGameplayCharacter>(ActorArray[0]))
+			{
+				for (AActor* CurrentNPC : ActorArray)
+					Cast<AGameplayCharacter>(CurrentNPC)->Pickables.Remove(this);
+			}
+		}
+	}
+	
 	Destroy();
 }
 

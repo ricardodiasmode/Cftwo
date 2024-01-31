@@ -104,6 +104,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<ABreakableObject*> BreakableTrees;
 
+	UPROPERTY(BlueprintReadOnly)
+	TArray<APickable*> Pickables;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* LeftHandItemComponent = nullptr;
 
