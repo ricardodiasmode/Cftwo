@@ -205,8 +205,6 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void Tick(const float DeltaTime) override;
-
 	virtual void Destroyed() override;
 
 	UFUNCTION(Client, reliable)
@@ -226,6 +224,9 @@ protected:
 public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
+
+	UFUNCTION(BlueprintCallable)
+	void SetRotationAccordingToVelocity();
 
 	UFUNCTION(Client, reliable)
 	void Client_OnSetPlayerController();

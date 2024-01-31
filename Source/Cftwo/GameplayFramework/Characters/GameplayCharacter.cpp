@@ -66,31 +66,37 @@ AGameplayCharacter::AGameplayCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	Helmet = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Helmet"));
 	Helmet->SetupAttachment(GetMesh());
 	Helmet->SetLeaderPoseComponent(GetMesh());
 	Helmet->SetRenderCustomDepth(true);
+	Helmet->PrimaryComponentTick.bStartWithTickEnabled = false; // does this make anim freeze?
 
 	Chest = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Chest"));
 	Chest->SetupAttachment(GetMesh());
 	Chest->SetLeaderPoseComponent(GetMesh());
 	Chest->SetRenderCustomDepth(true);
+	Chest->PrimaryComponentTick.bStartWithTickEnabled = false; // does this make anim freeze?
 
 	Backpack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Backpack"));
 	Backpack->SetupAttachment(GetMesh(), "spine_fk_003");
 	Backpack->SetRenderCustomDepth(true);
+	Backpack->PrimaryComponentTick.bStartWithTickEnabled = false; // does this make anim freeze?
 
 	Pants = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Pants"));
 	Pants->SetupAttachment(GetMesh());
 	Pants->SetLeaderPoseComponent(GetMesh());
 	Pants->SetRenderCustomDepth(true);
+	Pants->PrimaryComponentTick.bStartWithTickEnabled = false; // does this make anim freeze?
 
 	Shoes = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Shoes"));
 	Shoes->SetupAttachment(GetMesh());
 	Shoes->SetLeaderPoseComponent(GetMesh());
 	Shoes->SetRenderCustomDepth(true);
+	Shoes->PrimaryComponentTick.bStartWithTickEnabled = false; // does this make anim freeze?
 
 	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
 	if(WeaponComponent != nullptr)
@@ -150,18 +156,13 @@ void AGameplayCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 }
 
-void AGameplayCharacter::Tick(const float DeltaTime)
+void AGameplayCharacter::SetRotationAccordingToVelocity()
 {
-	Super::Tick(DeltaTime);
-
-	if (GetVelocity().Length() > 10.f && !Hitting)
-	{
-		FVector EndLoc = GetActorLocation() + GetVelocity();
-		EndLoc.Z = GetActorLocation().Z;
-		FRotator DesiredRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
-		DesiredRotation.Yaw -= 90.f;
-		GetMesh()->SetWorldRotation(DesiredRotation);
-	}
+	FVector EndLoc = GetActorLocation() + GetVelocity();
+	EndLoc.Z = GetActorLocation().Z;
+	FRotator DesiredRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
+	DesiredRotation.Yaw -= 90.f;
+	GetMesh()->SetWorldRotation(DesiredRotation);
 }
 
 void AGameplayCharacter::Move(const FInputActionValue& Value)
@@ -169,6 +170,8 @@ void AGameplayCharacter::Move(const FInputActionValue& Value)
 	// Do not move while hitting
 	if (Hitting)
 		return;
+	
+	SetRotationAccordingToVelocity();
 	
 	// input is a Vector2D
 	const FVector2D MovementVector = Value.Get<FVector2D>();

@@ -12,13 +12,15 @@
 APickable::APickable()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	RootComponent = StaticMesh;
 	StaticMesh->SetCollisionObjectType(ECC_GameTraceChannel1);
 	StaticMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	StaticMesh->SetSimulatePhysics(true);
+	StaticMesh->PrimaryComponentTick.bCanEverTick = false;
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	SphereCollision->SetupAttachment(RootComponent);

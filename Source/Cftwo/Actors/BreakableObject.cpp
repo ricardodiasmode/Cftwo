@@ -7,11 +7,13 @@
 ABreakableObject::ABreakableObject()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UStaticMeshComponent"));
 	RootComponent = StaticMeshComponent;
 	StaticMeshComponent->SetCollisionObjectType(ECC_WorldStatic);
+	StaticMeshComponent->PrimaryComponentTick.bCanEverTick = false;
 	
 	for (UActorComponent* CurrentComponent : GetComponents())
 	{
