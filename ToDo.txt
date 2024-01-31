@@ -1,5 +1,4 @@
 - arrumar movimento do porco;
-- remover spherecollision do pickable e colocar no character;
 - deixar pickable hidden e só tirar hidden quando chegar perto;
 - testar multiplayer;
 - melhorar ia;
