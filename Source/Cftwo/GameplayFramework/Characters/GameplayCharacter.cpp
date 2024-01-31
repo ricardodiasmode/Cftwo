@@ -207,15 +207,20 @@ void AGameplayCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+void AGameplayCharacter::OnOverlapPickable(APickable* OtherActor)
+{
+	if (ClosePickable != nullptr)
+		return;
+	
+	ClosePickable = OtherActor;
+
+	if (HUDRef)
+		HUDRef->OnPickableClose();
+}
+
 void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<APickable>(OtherActor) && ClosePickable == nullptr)
-	{
-		ClosePickable = Cast<APickable>(OtherActor);
-
-		if (HUDRef)
-			HUDRef->OnPickableClose();
-	} else if (Cast<AWorkbench>(OtherActor) && !CloseWorkbenches.Contains(Cast<AWorkbench>(OtherActor)))
+	if (Cast<AWorkbench>(OtherActor) && !CloseWorkbenches.Contains(Cast<AWorkbench>(OtherActor)))
 	{
 		CloseWorkbenches.Add(Cast<AWorkbench>(OtherActor));
 		
@@ -227,18 +232,19 @@ void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 	}
 }
 
+void AGameplayCharacter::OnEndOverlapPickable(APickable* OtherActor)
+{
+	ClosePickable = nullptr;
+	
+	if (HUDRef)
+		HUDRef->OnPickableFar();
+
+	CheckOtherPickableClose(WorldCollision->GetScaledSphereRadius(), OtherActor);
+}
+
 void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Cast<APickable>(OtherActor) == ClosePickable && ClosePickable != nullptr)
-	{
-		ClosePickable = nullptr;
-	
-		if (HUDRef)
-			HUDRef->OnPickableFar();
-
-		APickable* PickableRef = Cast<APickable>(OtherActor);
-		CheckOtherPickableClose(PickableRef->SphereCollision->GetScaledSphereRadius(), PickableRef);
-	} else if (Cast<AWorkbench>(OtherActor) && CloseWorkbenches.Contains(OtherActor))
+	if (Cast<AWorkbench>(OtherActor) && CloseWorkbenches.Contains(OtherActor))
 	{
 		CloseWorkbenches.Remove(Cast<AWorkbench>(OtherActor));
 		

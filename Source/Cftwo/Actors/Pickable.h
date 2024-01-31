@@ -22,8 +22,6 @@ protected:
 	UDataTable* ItemsDataTable = nullptr;
 	
 public:
-	
-	class USphereComponent* SphereCollision = nullptr;
 
 	AActorSpawner* SpawnerRef = nullptr;
 	

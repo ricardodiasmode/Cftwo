@@ -21,11 +21,6 @@ APickable::APickable()
 	StaticMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	StaticMesh->SetSimulatePhysics(true);
 	StaticMesh->PrimaryComponentTick.bCanEverTick = false;
-
-	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
-	SphereCollision->SetupAttachment(RootComponent);
-	SphereCollision->SetCollisionObjectType(ECC_GameTraceChannel1);
-	SphereCollision->SetSphereRadius(200.f);
 	
 	for (UActorComponent* CurrentComponent : GetComponents())
 	{

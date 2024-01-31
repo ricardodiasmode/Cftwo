@@ -14,6 +14,7 @@ class AWorkbench;
 struct FInputActionValue;
 class UCameraComponent;
 class USpringArmComponent;
+class USphereComponent;
 
 UCLASS()
 class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
@@ -50,11 +51,7 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
-
-	// /** Jump Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// class UInputAction* JumpAction;
-
+	
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* MoveAction;
@@ -95,6 +92,9 @@ protected:
 	TObjectPtr<USoundBase> SoundToFireWhenHitSuccess;
 
 public:
+
+	UPROPERTY(BlueprintReadWrite)
+	USphereComponent* WorldCollision = nullptr;
 
 	TArray<AWorkbench*> CloseWorkbenches;
 
@@ -224,6 +224,12 @@ protected:
 public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
+
+	UFUNCTION(BlueprintCallable)
+	void OnOverlapPickable(APickable* OtherActor);
+
+	UFUNCTION(BlueprintCallable)
+	void OnEndOverlapPickable(APickable* OtherActor);
 
 	UFUNCTION(BlueprintCallable)
 	void SetRotationAccordingToVelocity();
