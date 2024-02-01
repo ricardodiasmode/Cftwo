@@ -1,4 +1,3 @@
-- arrumar movimento do porco;
+- criar menu;
 - testar multiplayer;
 - melhorar ia;
-- criar menu;
