@@ -1,5 +1,4 @@
 - arrumar movimento do porco;
-- deixar pickable hidden e só tirar hidden quando chegar perto;
 - testar multiplayer;
 - melhorar ia;
 - criar menu;
