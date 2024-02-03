@@ -1,5 +1,4 @@
 - feedback falando que precisa de tool pra bater em arvore ou pedra, se tentar dar soco;
-- som de quando bate em arvore com machado;
 - dano mais forte de porrada com machado;
 - crash ao morrer atirando;
 - testar multiplayer;

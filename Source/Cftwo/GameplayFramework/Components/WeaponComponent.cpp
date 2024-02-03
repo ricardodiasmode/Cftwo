@@ -117,7 +117,7 @@ void UWeaponComponent::SpawnSFXOnAttack(const FHitResult& HitResult, ABreakableO
 	const int ToolIndex = BreakableObject->NecessaryTool;
 	const int WeaponIndex = CharacterRef->InventoryComponent->GetItemInfo(ToolIndex).OtherDataTableId;
 	USoundBase* SoundToPlay = CharacterRef->InventoryComponent->GetWeaponInfo(WeaponIndex).SoundToPlay;
-	Multicast_SpawnSound(SoundToPlay, HitResult.ImpactPoint);
+	Multicast_SpawnSound(SoundToPlay, HitResult.Location);
 }
 
 void UWeaponComponent::SpawnSFXOnAttack(const FHitResult& HitResult)
@@ -186,6 +186,7 @@ void UWeaponComponent::OnPunch()
 				const bool HasNecessaryTool = CharacterRef->InventoryComponent->HasItemOnAnyHand(BreakableObject->NecessaryTool);
 				if (!NeedTool || HasNecessaryTool)
 				{
+					GPrintDebug("a");
 					BreakableObject->RemoveHP();
 					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
 					SpawnVFXOnAttack(CurrentHit, BreakableObject, CharacterRef->DustVFX);
