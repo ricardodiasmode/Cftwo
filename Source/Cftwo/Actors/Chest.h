@@ -12,8 +12,9 @@ UCLASS()
 class CFTWO_API AChest : public AActor
 {
 	GENERATED_BODY()
-private:
-	static constexpr int NumberOfSlots = 2;
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	int NumberOfSlots = 5;
 	
 public:
 	UPROPERTY(ReplicatedUsing = UpdateInventory, BlueprintReadOnly)

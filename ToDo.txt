@@ -1,3 +1,7 @@
-- criar menu;
+- feedback falando que precisa de tool pra bater em arvore ou pedra, se tentar dar soco;
+- som de quando bate em arvore com machado;
+- dano mais forte de porrada com machado;
+- som de place ao colocar workbench e bau no chao;
+- crash ao morrer atirando;
 - testar multiplayer;
 - melhorar ia;
