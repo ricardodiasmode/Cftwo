@@ -91,6 +91,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USoundBase> SoundToFireWhenHitSuccess;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> SoundToFireWhenPlaceItem;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite)

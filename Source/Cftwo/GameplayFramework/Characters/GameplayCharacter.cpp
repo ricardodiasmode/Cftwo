@@ -565,6 +565,9 @@ void AGameplayCharacter::SpawnPlaceableAhead(TSubclassOf<AActor> Class) const
 	FHitResult OutHit;
 	GetWorld()->LineTraceSingleByChannel(OutHit, StartTraceLocation, EndTraceLocation, ECC_Visibility);
 	GetWorld()->SpawnActor<AActor>(Class, OutHit.ImpactPoint, FRotator(), FActorSpawnParameters());
+	
+	UGameplayStatics::PlaySound2D(GetWorld(),
+		SoundToFireWhenPlaceItem);
 }
 
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
