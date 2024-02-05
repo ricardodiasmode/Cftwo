@@ -107,6 +107,12 @@ void AGameplayHUD::SetCraftPopOnSlot(const int SlotIndex)
     InventoryWidget->SetCraftPopOnSlot(SlotIndex);
 }
 
+void AGameplayHUD::OnMistakenWeapon()
+{
+    UUserWidget* MistakenWeapon = CreateWidget<UUserWidget>(GetWorld(), MistakenWeaponWidgetClass);
+    MistakenWeapon->AddToViewport();
+}
+
 void AGameplayHUD::FarCloseToWorkbench(const bool Far)
 {
     InventoryWidget->FarCloseToWorkbench(Far);

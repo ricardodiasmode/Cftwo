@@ -38,9 +38,15 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> StatusWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> MistakenWeaponWidgetClass;
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	UStatusWidget* StatusWidget = nullptr;
+
+public:
+	AGameplayCharacter* CharacterRef = nullptr;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -71,8 +77,8 @@ public:
 	void OnPickup();
 	
 	void SetCraftPopOnSlot(const int SlotIndex);
-
-	AGameplayCharacter* CharacterRef = nullptr;
+	
+	void OnMistakenWeapon();
 
 	void FarCloseToWorkbench(const bool Far);
 	

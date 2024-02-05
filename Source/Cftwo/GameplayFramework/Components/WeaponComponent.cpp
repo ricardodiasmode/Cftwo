@@ -186,12 +186,12 @@ void UWeaponComponent::OnPunch()
 				const bool HasNecessaryTool = CharacterRef->InventoryComponent->HasItemOnAnyHand(BreakableObject->NecessaryTool);
 				if (!NeedTool || HasNecessaryTool)
 				{
-					GPrintDebug("a");
 					BreakableObject->RemoveHP();
 					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
 					SpawnVFXOnAttack(CurrentHit, BreakableObject, CharacterRef->DustVFX);
 					SpawnSFXOnAttack(CurrentHit, BreakableObject);
-				}
+				} else if (NeedTool && !HasNecessaryTool)
+					CharacterRef->Client_OnHitWithoutRightWeapon();
 				return;
 			}
 		}

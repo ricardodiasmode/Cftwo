@@ -1,5 +1,6 @@
 - feedback falando que precisa de tool pra bater em arvore ou pedra, se tentar dar soco;
 - dano mais forte de porrada com machado;
+- arrumar uv do ferro no mundo
 - crash ao morrer atirando;
 - testar multiplayer;
 - melhorar ia;

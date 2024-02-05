@@ -822,3 +822,8 @@ void AGameplayCharacter::Client_OnHitSuccess_Implementation()
 	HUDRef->OnHitSuccess();
 }
 
+void AGameplayCharacter::Client_OnHitWithoutRightWeapon_Implementation()
+{
+	HUDRef->OnMistakenWeapon();
+}
+

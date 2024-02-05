@@ -228,6 +228,9 @@ public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
 
+	UFUNCTION(Client, reliable)
+	void Client_OnHitWithoutRightWeapon();
+
 	UFUNCTION(BlueprintCallable)
 	void OnOverlapPickable(APickable* OtherActor);
 
