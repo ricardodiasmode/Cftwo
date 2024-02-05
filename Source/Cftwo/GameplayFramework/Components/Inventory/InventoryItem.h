@@ -71,6 +71,8 @@ public:
 	TSubclassOf<ABaseProjectile> ProjectileClassToSpawn;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USoundBase> SoundToPlay;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MeleeDamageMultiplier = 1.f;
 };
 
 USTRUCT(BlueprintType)

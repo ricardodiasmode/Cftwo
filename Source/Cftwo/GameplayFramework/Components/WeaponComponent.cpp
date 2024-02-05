@@ -156,7 +156,11 @@ void UWeaponComponent::OnPunch()
 			// If target is character
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
-				CurrentCharacter->Server_OnGetHitted(PUNCH_DAMAGE);
+				float DamageToDeal = PUNCH_DAMAGE;
+				int WeaponEquipped = CharacterRef->GetEquippedWeaponId();
+				if (WeaponEquipped != -1)
+					DamageToDeal *= CharacterRef->InventoryComponent->GetWeaponInfo(WeaponEquipped).MeleeDamageMultiplier;
+				CurrentCharacter->Server_OnGetHitted(DamageToDeal);
 				SpawnVFXOnAttack(CurrentHit, CurrentCharacter, CharacterRef->BloodVFX);
 				SpawnSFXOnAttack(CurrentHit);
 				return;
@@ -165,11 +169,16 @@ void UWeaponComponent::OnPunch()
 			// If target is IA
 			if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
+				float DamageToDeal = PUNCH_DAMAGE;
+				int WeaponEquipped = CharacterRef->GetEquippedWeaponId();
+				if (WeaponEquipped != -1)
+					DamageToDeal *= CharacterRef->InventoryComponent->GetWeaponInfo(WeaponEquipped).MeleeDamageMultiplier;
+				
 				SpawnVFXOnAttack(CurrentHit, CurrentIA, CharacterRef->BloodVFX);
 				SpawnSFXOnAttack(CurrentHit);
 				
 				if (CurrentIA->AmIAlive())
-					CurrentIA->Server_OnGetHitted(PUNCH_DAMAGE, GetOwner());
+					CurrentIA->Server_OnGetHitted(DamageToDeal, GetOwner());
 				else
 				{
 					TArray<TPair<int, int>> ItemsToAdd = CurrentIA->OnHarvest();
