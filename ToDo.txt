@@ -1,3 +1,2 @@
-- ao clicar, a mira vai pra baixo em vez de ficar parada;
 - testar multiplayer;
 - melhorar ia;
