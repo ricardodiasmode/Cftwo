@@ -1,5 +1,3 @@
-- dano mais forte de porrada com machado;
-- arrumar uv do ferro no mundo
 - crash ao morrer atirando;
 - testar multiplayer;
 - melhorar ia;
