@@ -1,3 +1,7 @@
+- anim atirando com flecha;
+- anim atirando com arma;
+- anim batendo machado;
+- anim batendo picareta;
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
 - melhorar ia;

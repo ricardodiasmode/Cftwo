@@ -32,6 +32,8 @@ void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetLifeSpan(5.f);
+
 	if (Emmiter)
 	{
 		EmmiterRef = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),

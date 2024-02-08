@@ -268,6 +268,7 @@ public:
 
 	void OnPunch();
 
+	UFUNCTION(BlueprintPure)
 	int GetEquippedWeaponId() const;
 
 	bool IsEquippedWeaponFireWeapon() const;
