@@ -1,5 +1,4 @@
-- olhar pra baixo faz velocidade diminuir;
-- craft que vai pro chão não da barulho de craft;
+
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
 - melhorar ia;

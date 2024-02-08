@@ -226,6 +226,11 @@ void UInventoryComponent::RemoveItem(const int SlotIndex, const int Amount)
 	UpdateInventory();
 }
 
+void UInventoryComponent::Client_PlaySound_Implementation(USoundBase* SoundToPlay)
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), SoundToPlay);
+}
+
 void UInventoryComponent::TryCraft(const int ItemToCraft)
 {
 	// Check whether or not has all necessary items
@@ -255,6 +260,7 @@ void UInventoryComponent::TryCraft(const int ItemToCraft)
 		CurrentPickable->ItemId = ItemToCraft;
 		CurrentPickable->Amount = ItemAmount;
 		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+		Client_PlaySound(SoundToFireWhenDropCraftedItem);
 	}
 }
 
@@ -326,6 +332,7 @@ void UInventoryComponent::ConvertItem(const int SlotIndex, const int AmountToRem
 		CurrentPickable->ItemId = ItemIndexToGive;
 		CurrentPickable->Amount = AmountToGive;
 		UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+		Client_PlaySound(SoundToFireWhenDropCraftedItem);
 	} else
 	{
 		Client_SetCraftPopOnSlot(FoundSlot);

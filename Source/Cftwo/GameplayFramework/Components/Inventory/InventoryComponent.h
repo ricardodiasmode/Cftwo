@@ -25,6 +25,9 @@ public:
 	AGameplayHUD* CharacterHUD = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> SoundToFireWhenDropCraftedItem;
+
+	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ItemsDataTable = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -63,6 +66,9 @@ private:
 	/** Tells client to pop craft effect on slot */
 	UFUNCTION(Client, reliable)
 	void Client_SetCraftPopOnSlot(const int SlotIndex);
+
+	UFUNCTION(Client, reliable)
+	void Client_PlaySound(USoundBase* SoundToPlay);
 
 protected:
 	virtual void BeginPlay() override;
