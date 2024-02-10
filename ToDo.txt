@@ -1,7 +1,12 @@
-//- anim atirando com arma;
-//- anim atirando com flecha;
-//- anim batendo machado;
-//- anim batendo picareta;
+- anim atirando com arma;
+- anim atirando com flecha;
+- anim batendo machado;
+- anim batendo picareta;
+- implementar lobo;
+- camera shake on being attacked;
+- camera blood when get hitted;
+- passos lobo/pig;
+- hit reaction?
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
 - melhorar ia;

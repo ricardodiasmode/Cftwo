@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	FName AgressorBlackboardName;
 
+	UPROPERTY(EditDefaultsOnly)
+	float DamageToDeal = 40.f;
+
 	int HarvestLeft = 3;
 	
 	/** Where the lock aim will be */
@@ -32,6 +35,9 @@ protected:
 
 public:
 	class AActorSpawner* SpawnerRef = nullptr;
+
+	UFUNCTION(BlueprintCallable, Server, reliable)
+	void Server_TriggerHit();
 
 protected:
 	

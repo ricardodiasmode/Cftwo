@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "../../Actors/ActorSpawner.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Cftwo/GameplayFramework/Characters/GameplayCharacter.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -85,6 +87,45 @@ void ABaseNeutralCharacter::Server_OnDie_Implementation()
 		return;
 	}
 	SpawnerRef->OnLoseActor(this);	
+}
+
+void ABaseNeutralCharacter::Server_TriggerHit_Implementation()
+{
+	FVector START_LOCATION = GetActorLocation() +
+		GetActorForwardVector() * 125.f + GetActorUpVector() * 30.f;
+	FVector END_LOCATION = START_LOCATION;
+	float RADIUS = 60.f;
+	float HALF_HEIGHT = 60.f;
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjTypes;
+	ObjTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	TArray<AActor*> ActorsToIgnore;
+	TArray<FHitResult> OutHits;
+	if (UKismetSystemLibrary::CapsuleTraceMultiForObjects(
+		GetWorld(),
+		START_LOCATION,
+		END_LOCATION,
+		RADIUS,
+		HALF_HEIGHT,
+		ObjTypes,
+		false,
+		ActorsToIgnore,
+		EDrawDebugTrace::Persistent,
+		OutHits,
+		true
+	))
+	{
+		for (FHitResult CurrentHit : OutHits)
+		{
+			// If target is character
+			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
+			{
+				CurrentCharacter->Server_OnGetHitted(DamageToDeal);
+				// SpawnVFXOnAttack(CurrentHit, CurrentCharacter, CharacterRef->BloodVFX);
+				// SpawnSFXOnAttack(CurrentHit);
+				return;
+			}
+		}
+	}
 }
 
 void ABaseNeutralCharacter::Destroyed()
