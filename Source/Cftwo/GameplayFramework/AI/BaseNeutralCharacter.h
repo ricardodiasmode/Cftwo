@@ -27,6 +27,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float DamageToDeal = 40.f;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> SoundToPlayWhenHit;
+
 	int HarvestLeft = 3;
 	
 	/** Where the lock aim will be */

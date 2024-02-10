@@ -7,6 +7,7 @@
 #include "../../Actors/ActorSpawner.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Cftwo/GameplayFramework/Characters/GameplayCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -91,6 +92,10 @@ void ABaseNeutralCharacter::Server_OnDie_Implementation()
 
 void ABaseNeutralCharacter::Server_TriggerHit_Implementation()
 {
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(),
+		SoundToPlayWhenHit,
+		GetActorLocation());
+	
 	FVector START_LOCATION = GetActorLocation() +
 		GetActorForwardVector() * 125.f + GetActorUpVector() * 30.f;
 	FVector END_LOCATION = START_LOCATION;
