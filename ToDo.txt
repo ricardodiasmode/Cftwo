@@ -2,7 +2,6 @@
 - anim atirando com flecha;
 - anim batendo machado;
 - anim batendo picareta;
-- camera shake on being attacked;
 - camera blood when get hitted;
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;

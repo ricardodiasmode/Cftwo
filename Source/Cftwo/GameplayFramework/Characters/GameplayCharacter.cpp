@@ -488,12 +488,20 @@ void AGameplayCharacter::RemoveHealth(const int Amount)
 		Die();
 }
 
+void AGameplayCharacter::Client_OnGetHitted_Implementation()
+{
+	Client_ShakeCamera();
+	Client_PlaySound(SoundToFireWhenHitted);
+
+	HUDRef->OnGetHitted();
+}
+
+
 void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 {
 	RemoveHealth(Damage);
 
-	Client_ShakeCamera();
-	Client_PlaySound(SoundToFireWhenHitted);
+	Client_OnGetHitted();
 }
 
 void AGameplayCharacter::Client_ShakeCamera_Implementation()

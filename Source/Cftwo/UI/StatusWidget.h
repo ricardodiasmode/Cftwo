@@ -32,4 +32,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUpdateHungry();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGetHitted();
 };

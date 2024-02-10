@@ -62,6 +62,14 @@ void AGameplayHUD::OnRespawn()
     PCRef->Server_AskToRespawn();
 }
 
+void AGameplayHUD::OnGetHitted()
+{
+    if (StatusWidget == nullptr)
+        return;
+
+    StatusWidget->OnGetHitted();
+}
+
 void AGameplayHUD::OnUpdateHealth(const float CurrentHealth)
 {
     if (StatusWidget == nullptr)

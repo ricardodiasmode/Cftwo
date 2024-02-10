@@ -298,6 +298,9 @@ public:
 	UFUNCTION(Client, reliable)
 	void Client_PlaySound(USoundBase* SoundToPlay);
 
+	UFUNCTION(Client, reliable)
+	void Client_OnGetHitted();
+
 	void AddItem(TPair<int, int> ItemToAdd) const;
 
 	void OnDie();

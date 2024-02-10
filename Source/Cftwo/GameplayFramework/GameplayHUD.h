@@ -59,6 +59,8 @@ public:
 	void OnDie();
 
 	void OnRespawn();
+	
+	void OnGetHitted();
 
 	void OnUpdateHealth(const float CurrentHealth);
 
