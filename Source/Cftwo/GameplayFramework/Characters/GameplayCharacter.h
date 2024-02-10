@@ -94,6 +94,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USoundBase> SoundToFireWhenPlaceItem;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> SoundToFireWhenHitted;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UCameraShakeBase> DefaultShakeClass;
+
 public:
 
 	UPROPERTY(BlueprintReadWrite)
@@ -285,6 +291,12 @@ public:
 
 	UFUNCTION(Server, reliable)
 	void Server_OnGetHitted(const float Damage);
+
+	UFUNCTION(Client, reliable)
+	void Client_ShakeCamera();
+
+	UFUNCTION(Client, reliable)
+	void Client_PlaySound(USoundBase* SoundToPlay);
 
 	void AddItem(TPair<int, int> ItemToAdd) const;
 

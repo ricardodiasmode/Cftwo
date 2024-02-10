@@ -491,6 +491,21 @@ void AGameplayCharacter::RemoveHealth(const int Amount)
 void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 {
 	RemoveHealth(Damage);
+
+	Client_ShakeCamera();
+	Client_PlaySound(SoundToFireWhenHitted);
+}
+
+void AGameplayCharacter::Client_ShakeCamera_Implementation()
+{
+	APlayerController* MyController = Cast<APlayerController>(GetController());
+	MyController->PlayerCameraManager->StartCameraShake(DefaultShakeClass,
+		1.f);
+}
+
+void AGameplayCharacter::Client_PlaySound_Implementation(USoundBase* SoundToPlay)
+{
+	UGameplayStatics::PlaySound2D(GetWorld(), SoundToPlay);
 }
 
 void AGameplayCharacter::OnRep_CurrentHealth()

@@ -4,7 +4,6 @@
 - anim batendo picareta;
 - camera shake on being attacked;
 - camera blood when get hitted;
-- hit reaction?
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
 - melhorar ia;
