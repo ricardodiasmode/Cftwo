@@ -1,10 +1,9 @@
-- gather wolf;
-- lobo morrendo;
-- arrumar tela de respawn;
 - anim atirando com arma;
 - anim atirando com flecha;
 - anim batendo machado;
 - anim batendo picareta;
+- gather wolf;
+- lobo morrendo;
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
 - melhorar ia;
