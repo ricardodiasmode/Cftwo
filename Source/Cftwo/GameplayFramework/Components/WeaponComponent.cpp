@@ -278,6 +278,9 @@ int UWeaponComponent::GetEquippedWeaponByIndex(const int Id)
 
 void UWeaponComponent::TryLockAim()
 {
+	if (!CharacterRef)
+		return;
+	
 	FActorSpawnParameters SpawnInfo;
 	FVector CameraLoc = CharacterRef->GetFollowCamera()->GetComponentLocation();
 	FVector CameraForward = CharacterRef->GetFollowCamera()->GetForwardVector();
