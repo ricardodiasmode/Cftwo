@@ -59,7 +59,6 @@ FInventoryItem APickable::GetItemInfo(const int Index) const
 
 void APickable::OnPick()
 {
-
 	if (SpawnerRef)
 	{
 		for (auto [ActorArray] : SpawnerRef->ActorsSpawned)
@@ -67,7 +66,10 @@ void APickable::OnPick()
 			if (ActorArray.Num() == 0)
 				return;
 
-			if (Cast<AGameplayCharacter>(ActorArray[0]))
+			if (!IsValid(ActorArray[0]))
+				return;
+
+			if (ActorArray[0]->StaticClass() == AGameplayCharacter::StaticClass())
 			{
 				for (AActor* CurrentNPC : ActorArray)
 					Cast<AGameplayCharacter>(CurrentNPC)->Pickables.Remove(this);

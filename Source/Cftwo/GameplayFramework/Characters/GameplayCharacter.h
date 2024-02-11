@@ -277,6 +277,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	int GetEquippedWeaponId() const;
 
+	UFUNCTION(BlueprintPure)
+	bool WeaponOnRightHand() const;
+
 	bool IsEquippedWeaponFireWeapon() const;
 
 	UFUNCTION(BlueprintPure)

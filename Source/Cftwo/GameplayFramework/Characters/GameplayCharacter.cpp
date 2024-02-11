@@ -560,6 +560,17 @@ int AGameplayCharacter::GetEquippedWeaponId() const
 	return -1;
 }
 
+bool AGameplayCharacter::WeaponOnRightHand() const
+{
+	if(InventoryComponent->Slots[0].ItemInfo.ItemType == EItemType::WEAPON)
+		return false;
+	
+	if (InventoryComponent->Slots[1].ItemInfo.ItemType == EItemType::WEAPON)
+		return true;
+
+	return false;
+}
+
 bool AGameplayCharacter::CheckCanConvertItem(const int InventoryIndex) const
 {
 	return InventoryComponent->Slots[InventoryIndex].ItemInfo.ConvertTo != -1;
@@ -789,10 +800,10 @@ void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots, const T
 		return;
 	
 	RightHandItemComponent->SetStaticMesh(Slots[1].ItemInfo.Mesh);
-	const FVector RightLoc = Slots[1].ItemInfo.TransformOnHand.GetLocation();
-	const FRotator RightRot = Slots[1].ItemInfo.TransformOnHand.Rotator();
-	const FVector RightScale = Slots[1].ItemInfo.TransformOnHand.GetScale3D();
-	RightHandItemComponent->SetRelativeTransform(FTransform(RightRot, -RightLoc, RightScale));
+	// const FVector RightLoc = Slots[1].ItemInfo.TransformOnHand.GetLocation();
+	// const FRotator RightRot = Slots[1].ItemInfo.TransformOnHand.Rotator();
+	// const FVector RightScale = Slots[1].ItemInfo.TransformOnHand.GetScale3D();
+	RightHandItemComponent->SetRelativeTransform(Slots[1].ItemInfo.TransformOnHand);
 }
 
 void AGameplayCharacter::Server_SwapChestInventorySlots_Implementation(AChest* ChestRef, const int ChestIndex, const int InventoryIndex)
