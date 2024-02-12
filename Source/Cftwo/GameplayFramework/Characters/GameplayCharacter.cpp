@@ -788,8 +788,12 @@ void AGameplayCharacter::Pickup()
 {
 	if (!ClosePickable)
 		return;
-	InventoryComponent->GiveItem(ClosePickable->ItemId, ClosePickable->Amount);
+	const int InventoryIndex = InventoryComponent->GiveItem(ClosePickable->ItemId, ClosePickable->Amount);
+	if (InventoryIndex == -1)
+		return;
+	
 	ClosePickable->OnPick();
+	CheckOtherPickableClose(WorldCollision->GetScaledSphereRadius(), nullptr);
 }
 
 void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots, const TArray<FWeaponInventorySlot>& WeaponSlots)
