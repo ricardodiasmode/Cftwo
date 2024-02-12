@@ -156,13 +156,17 @@ void AGameplayCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 }
 
-void AGameplayCharacter::SetRotationAccordingToVelocity()
+void AGameplayCharacter::SetRotationAccordingToVelocity(const float DeltaTime)
 {
+	if (GetVelocity().Length() < 10.f)
+		return;
+	
 	FVector EndLoc = GetActorLocation() + GetVelocity();
 	EndLoc.Z = GetActorLocation().Z;
 	FRotator DesiredRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), EndLoc);
 	DesiredRotation.Yaw -= 90.f;
-	GetMesh()->SetWorldRotation(DesiredRotation);
+	const FRotator InterpedRotation = UKismetMathLibrary::RInterpTo(GetMesh()->GetComponentRotation(), DesiredRotation, DeltaTime, 8.f);
+	GetMesh()->SetWorldRotation(InterpedRotation);
 }
 
 void AGameplayCharacter::Move(const FInputActionValue& Value)
@@ -171,7 +175,7 @@ void AGameplayCharacter::Move(const FInputActionValue& Value)
 	if (Hitting)
 		return;
 	
-	SetRotationAccordingToVelocity();
+	SetRotationAccordingToVelocity(GetWorld()->GetDeltaSeconds());
 	
 	// input is a Vector2D
 	const FVector2D MovementVector = Value.Get<FVector2D>();

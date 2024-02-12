@@ -244,7 +244,7 @@ public:
 	void OnEndOverlapPickable(APickable* OtherActor);
 
 	UFUNCTION(BlueprintCallable)
-	void SetRotationAccordingToVelocity();
+	void SetRotationAccordingToVelocity(const float DeltaTime);
 
 	UFUNCTION(Client, reliable)
 	void Client_OnSetPlayerController();

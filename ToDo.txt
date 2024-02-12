@@ -1,4 +1,3 @@
-- arrumar flick do blend da anim do character quando inicia corrida;
 - ao pegar item com outros do lado, nao aparece pra pegar os outros;
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
