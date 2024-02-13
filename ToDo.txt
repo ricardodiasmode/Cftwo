@@ -1,5 +1,4 @@
-- tela de loading;
-- quit durante jogo;
+- melhorar quando pressiona pra bater e move;
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
 - melhorar ia;
