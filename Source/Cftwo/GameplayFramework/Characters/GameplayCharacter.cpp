@@ -755,9 +755,14 @@ void AGameplayCharacter::Multicast_ChangeEquipment_Implementation(USkeletalMeshC
 	SKMRef->SetSkeletalMesh(MeshToSet);
 }
 
-void AGameplayCharacter::AddItem(TPair<int, int> ItemToAdd) const
+void AGameplayCharacter::AddOrDropItem(TPair<int, int> ItemToAdd)
 {
-	InventoryComponent->GiveItem(ItemToAdd.Key, ItemToAdd.Value);
+	const int InventoryIndex = InventoryComponent->GiveItem(ItemToAdd.Key, ItemToAdd.Value);
+	if (InventoryIndex == -1)
+	{
+		const FInventoryItem ItemInfo = InventoryComponent->GetItemInfo(ItemToAdd.Key);
+		SpawnItemOnHand(ItemInfo, ItemToAdd.Value);
+	}
 }
 
 void AGameplayCharacter::OnDie()
@@ -831,10 +836,8 @@ void AGameplayCharacter::Server_SwapChestSlots_Implementation(AChest* ChestRef, 
 	ChestRef->UpdateInventory();
 }
 
-void AGameplayCharacter::Server_DropChestSlot_Implementation(AChest* ChestRef, const int ChestIndex)
+void AGameplayCharacter::SpawnItemOnHand(FInventoryItem ItemInfo, const int Amount)
 {
-	const auto& [ItemInfo, Amount] = ChestRef->Slots[ChestIndex];
-
 	FActorSpawnParameters SpawnInfo;
 	const FVector LocationToSpawn = LeftHandItemComponent->GetComponentLocation();
 	const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
@@ -846,6 +849,13 @@ void AGameplayCharacter::Server_DropChestSlot_Implementation(AChest* ChestRef, c
 	CurrentPickable->ItemId = ItemInfo.Index;
 	CurrentPickable->Amount = Amount;
 	UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+}
+
+void AGameplayCharacter::Server_DropChestSlot_Implementation(AChest* ChestRef, const int ChestIndex)
+{
+	const auto& [ItemInfo, Amount] = ChestRef->Slots[ChestIndex];
+
+	SpawnItemOnHand(ItemInfo, Amount);
 
 	ChestRef->Slots[ChestIndex] = FInventorySlot();
 	ChestRef->UpdateInventory();

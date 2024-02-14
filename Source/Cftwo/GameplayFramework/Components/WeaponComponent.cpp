@@ -183,7 +183,7 @@ void UWeaponComponent::OnPunch()
 				{
 					TArray<TPair<int, int>> ItemsToAdd = CurrentIA->OnHarvest();
 					for (TPair<int,int> ItemToAdd : ItemsToAdd)
-						CharacterRef->AddItem(ItemToAdd);
+						CharacterRef->AddOrDropItem(ItemToAdd);
 				}
 				return;
 			}

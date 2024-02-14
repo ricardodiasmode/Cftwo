@@ -304,7 +304,7 @@ public:
 	UFUNCTION(Client, reliable)
 	void Client_OnGetHitted();
 
-	void AddItem(TPair<int, int> ItemToAdd) const;
+	void AddOrDropItem(TPair<int, int> ItemToAdd);
 
 	void OnDie();
 
@@ -319,6 +319,8 @@ public:
 	void Pickup();
 	
 	void OnUpdateInventory(TArray<FInventorySlot> Slots, const TArray<FWeaponInventorySlot>& WeaponSlots);
+
+	void SpawnItemOnHand(FInventoryItem ItemInfo, const int Amount);
 
 	UFUNCTION(BlueprintPure)
 	bool CheckCanConvertItem(const int InventoryIndex) const;
