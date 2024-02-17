@@ -497,7 +497,8 @@ void AGameplayCharacter::Client_OnGetHitted_Implementation()
 	Client_ShakeCamera();
 	Client_PlaySound(SoundToFireWhenHitted);
 
-	HUDRef->OnGetHitted();
+	if (HUDRef)
+		HUDRef->OnGetHitted();
 }
 
 
@@ -511,6 +512,10 @@ void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 void AGameplayCharacter::Client_ShakeCamera_Implementation()
 {
 	APlayerController* MyController = Cast<APlayerController>(GetController());
+	if (!MyController)
+		return;
+	if (!MyController->PlayerCameraManager)
+		return;
 	MyController->PlayerCameraManager->StartCameraShake(DefaultShakeClass,
 		1.f);
 }
@@ -871,11 +876,13 @@ void AGameplayCharacter::Client_OnHitSuccess_Implementation()
 	UGameplayStatics::PlaySound2D(GetWorld(),
 		SoundToFireWhenHitSuccess);
 
-	HUDRef->OnHitSuccess();
+	if (HUDRef)
+		HUDRef->OnHitSuccess();
 }
 
 void AGameplayCharacter::Client_OnHitWithoutRightWeapon_Implementation()
 {
-	HUDRef->OnMistakenWeapon();
+	if (HUDRef)
+		HUDRef->OnMistakenWeapon();
 }
 

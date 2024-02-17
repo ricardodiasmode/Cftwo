@@ -1,3 +1,4 @@
+- som de get hitted dos inimigos está dando pra escutar;
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
 - melhorar ia;
