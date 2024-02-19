@@ -1,5 +1,10 @@
-- som de get hitted dos inimigos está dando pra escutar;
+- roupas n funcionam no novo esqueleto;
+- testar arco;
+- trocar montanhas por mar;
+
+
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;
-- melhorar ia;
+- se personagem;
 - arrumar anim do lobo morrendo;
+- IA deve considerar o inimigo mais proximo, em vez do primeiro que viu;

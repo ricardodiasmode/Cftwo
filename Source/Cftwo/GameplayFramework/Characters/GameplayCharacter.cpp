@@ -422,15 +422,13 @@ void AGameplayCharacter::Server_OnHit_Implementation(const FRotator& RotationToS
 	GetMesh()->SetWorldRotation(RotationToSet);
 	
 	Hitting = true;
-	// Offset to make sure blend will behave properly
-	static constexpr auto BLEND_OFFSET = 0.1f;
 	// Needed in order to timer work
-	static constexpr auto LOOP_RATE_TIME = 0.01f;
 	if (GetWorldTimerManager().IsTimerActive(HitTimerHandle))
 		GetWorldTimerManager().ClearTimer(HitTimerHandle);
 	GetWorldTimerManager().SetTimer(HitTimerHandle, this,
-		&AGameplayCharacter::OnStopHitting, LOOP_RATE_TIME, false,
-		TIME_TO_STOP_HITTING - LOOP_RATE_TIME - BLEND_OFFSET);
+		&AGameplayCharacter::OnStopHitting,
+		TIME_TO_STOP_HITTING,
+		false);
 }
 
 void AGameplayCharacter::OnStopHitting()
@@ -494,11 +492,12 @@ void AGameplayCharacter::RemoveHealth(const int Amount)
 
 void AGameplayCharacter::Client_OnGetHitted_Implementation()
 {
+	if (!HUDRef)
+		return;
+	
 	Client_ShakeCamera();
 	Client_PlaySound(SoundToFireWhenHitted);
-
-	if (HUDRef)
-		HUDRef->OnGetHitted();
+	HUDRef->OnGetHitted();
 }
 
 
