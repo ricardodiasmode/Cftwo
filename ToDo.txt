@@ -1,4 +1,4 @@
-- roupas n funcionam no novo esqueleto;
+- arrumar UI no PC;
 - testar arco;
 - trocar montanhas por mar;
 
