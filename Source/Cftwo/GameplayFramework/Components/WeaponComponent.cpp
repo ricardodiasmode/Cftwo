@@ -318,6 +318,8 @@ void UWeaponComponent::TryLockAim()
 		{
 			ABaseNeutralCharacter* EnemyRef = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor());
 			EndLoc = EnemyRef->GetLockPoint();
+			if (!EnemyRef->AmIAlive())
+				return;
 		}
 
 		FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(CameraLoc, EndLoc);
