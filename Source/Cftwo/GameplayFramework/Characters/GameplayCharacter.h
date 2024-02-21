@@ -151,6 +151,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly)
 	UNiagaraSystem* BloodVFX = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	bool Dead = false;
 	
 private:
 	
@@ -350,4 +353,7 @@ public:
 
 	UFUNCTION(Client, reliable)
 	void Client_OnHitSuccess();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_OnDie();
 };

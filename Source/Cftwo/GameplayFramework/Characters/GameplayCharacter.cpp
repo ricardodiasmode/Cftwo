@@ -125,6 +125,7 @@ void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AGameplayCharacter, Hitting);
 	DOREPLIFETIME(AGameplayCharacter, CurrentHealth);
 	DOREPLIFETIME(AGameplayCharacter, CurrentHungry);
+	DOREPLIFETIME(AGameplayCharacter, Dead);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -545,7 +546,18 @@ void AGameplayCharacter::Die()
 	
 	InventoryComponent->DropAllItems();
 	Client_OnDie();
-	Destroy();
+	Dead = true;
+
+	FTimerHandle UnusedTimerHandle;
+	GetWorldTimerManager().SetTimer(
+		UnusedTimerHandle,
+		FTimerDelegate::CreateLambda(
+			[this]
+			{
+				Destroy();
+			}),
+			5.f,
+			false);
 }
 
 void AGameplayCharacter::Client_OnDie_Implementation()
@@ -555,6 +567,7 @@ void AGameplayCharacter::Client_OnDie_Implementation()
 		AGameplayHUD* CharacterHUD = Cast<AGameplayHUD>(ControllerRef->GetHUD());
 		CharacterHUD->OnDie();
 	}
+	BP_OnDie();
 }
 
 int AGameplayCharacter::GetEquippedWeaponId() const

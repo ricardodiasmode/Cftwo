@@ -314,13 +314,18 @@ void UWeaponComponent::TryLockAim()
 		if (Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 		{
 			AGameplayCharacter* EnemyRef = Cast<AGameplayCharacter>(CurrentHit.GetActor());
+			if (EnemyRef->Dead)
+				return;
+			
 			EndLoc = EnemyRef->GetLockPoint();
+				
 		} else if (Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 		{
 			ABaseNeutralCharacter* EnemyRef = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor());
-			EndLoc = EnemyRef->GetLockPoint();
 			if (!EnemyRef->AmIAlive())
 				return;
+			
+			EndLoc = EnemyRef->GetLockPoint();
 		}
 
 		// Checking if there is object between target and pawn
