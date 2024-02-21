@@ -281,6 +281,7 @@ void UWeaponComponent::TryLockAim()
 	if (!CharacterRef)
 		return;
 	
+	// Checking target
 	FActorSpawnParameters SpawnInfo;
 	FVector CameraLoc = CharacterRef->GetFollowCamera()->GetComponentLocation();
 	FVector CameraForward = CharacterRef->GetFollowCamera()->GetForwardVector();
@@ -322,6 +323,12 @@ void UWeaponComponent::TryLockAim()
 				return;
 		}
 
+		// Checking if there is object between target and pawn
+		FHitResult OutHit;
+		GetWorld()->LineTraceSingleByChannel(OutHit, CameraLoc, EndLoc, ECC_Visibility);
+		if (OutHit.GetActor() != CurrentHit.GetActor())
+			return;
+		
 		FRotator RotationToSet = UKismetMathLibrary::FindLookAtRotation(CameraLoc, EndLoc);
 		FRotator CurrentRotation = CharacterRef->GetController()->GetControlRotation();
 		FRotator InterpedRot = UKismetMathLibrary::RInterpTo(CurrentRotation, RotationToSet, 0.1f, 2.f);

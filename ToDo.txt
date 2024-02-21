@@ -1,5 +1,3 @@
-- hit lock está travando em bicho morto;
-- hit lock não deve locar se tiver objeto entre mira e alvo;
 - anim do personagem morrendo e seu corpo no chão;
 
 - ao craftar, aparecer na tela: "you crafted {x}"!;
