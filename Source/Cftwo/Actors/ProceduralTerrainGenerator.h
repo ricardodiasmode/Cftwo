@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "ProceduralMeshComponent.h"
+#include "Engine/DataTable.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralTerrainGenerator.generated.h"
 
+class UDataTable;
 class UProceduralMeshComponent;
 
 USTRUCT(BlueprintType)
@@ -22,6 +24,22 @@ struct FFoliageToSpawn
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 1))
 	float ScaleMultiplier = 1;
+
+};
+
+USTRUCT(BlueprintType)
+struct FProceduralBuilding : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int BuildingMinSizeX = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int BuildingMinSizeY = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AActor> BuildingClass;
 
 };
 
@@ -65,9 +83,22 @@ public:
 	float EdgeSize = 0.2f;
 	UPROPERTY(EditAnywhere)
 	float MinimumEdgeMultiplier = 1.5f;
+	
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
+	int NumberOfBuildings = 1;
+	
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
+	TArray<int> AllowedBuildings;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FFoliageToSpawn> Foliages;
+
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* BuildingsDT;
+	
+	TArray<FProceduralBuilding> Buildings;
+
+	TArray<TPair<FVector, int>> LocationsToSpawnBuildings;
 
 private:
 	void GenerateTerrain();
@@ -86,6 +117,7 @@ private:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	FProceduralBuilding GetBuildingInfoByIndex(int Index) const;
 
 	void OnConstruction(const FTransform& Transform);
 

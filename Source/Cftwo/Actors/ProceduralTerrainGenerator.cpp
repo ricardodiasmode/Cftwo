@@ -8,6 +8,7 @@
 #include "math.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "../Utils/GeneralFunctionLibrary.h"
+#include "Engine/DataTable.h"
 
 // Sets default values
 AProceduralTerrainGenerator::AProceduralTerrainGenerator()
@@ -42,16 +43,56 @@ void AProceduralTerrainGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GenerateTerrain();
+
 	SpawnFoliage();
+
+	for (auto [Location, Index] : LocationsToSpawnBuildings)
+	{
+		GetWorld()->SpawnActor<AActor>(GetBuildingInfoByIndex(Index).BuildingClass, Location, FRotator(0.f));
+	}
+}
+
+FProceduralBuilding AProceduralTerrainGenerator::GetBuildingInfoByIndex(const int Index) const
+{
+	return *(BuildingsDT->FindRow<FProceduralBuilding>(FName(*(FString::FromInt(Index))), ""));
 }
 
 void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 {
+	if (!BuildingsDT)
+		return;
+	
 	CenterVertices.Reset();
 	CenterUV.Reset();
 	CenterTriangles.Reset();
 
 	int CurrentVertex = 0;
+
+	const float LowerXBorder = static_cast<float>(XSize) * EdgeSize;
+	const float UpperXBorder = static_cast<float>(XSize) - LowerXBorder;
+	const float LowerYBorder = static_cast<float>(YSize) * EdgeSize;
+	const float UpperYBorder = static_cast<float>(YSize) - LowerYBorder;
+
+	TArray<TPair<FVector2D, int>> BuildingLocation;
+	if (AllowedBuildings.Num() > 0)
+	{
+		for (int CurrentBuildingIndex = 0; CurrentBuildingIndex < AllowedBuildings.Num(); CurrentBuildingIndex++)
+		{
+			int BuildingIndex = AllowedBuildings[CurrentBuildingIndex];
+			for (int i = 0; i < NumberOfBuildings; i++)
+			{
+				const int DesiredX = FMath::RandRange(FMath::Floor(LowerXBorder), FMath::Floor(UpperXBorder - GetBuildingInfoByIndex(BuildingIndex).BuildingMinSizeX));
+				const int DesiredY = FMath::RandRange(FMath::Floor(LowerYBorder), FMath::Floor(UpperYBorder - GetBuildingInfoByIndex(BuildingIndex).BuildingMinSizeY));
+
+				// todo: verificar se na location randomizada já tem uma building
+				
+				FVector2D Location = FVector2D(static_cast<float>(DesiredX), static_cast<float>(DesiredY));
+				BuildingLocation.Add({Location, BuildingIndex});
+				LocationsToSpawnBuildings.Add({FVector(DesiredX * Scale, DesiredY * Scale, 0), BuildingLocation[BuildingIndex].Value});
+			}
+		}
+	}
 
 	for (int i = 0; i <= XSize; i++)
 	{
@@ -63,10 +104,6 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 			float ZVertex = Perlin_Noise(XAsFloat, YAsFloat, ZSmoothness) * ZMultiplier;
 
 			// Make sure the border will be higher than the center
-			const float LowerXBorder = static_cast<float>(XSize) * EdgeSize;
-			const float UpperXBorder = static_cast<float>(XSize) - LowerXBorder;
-			const float LowerYBorder = static_cast<float>(YSize) * EdgeSize;
-			const float UpperYBorder = static_cast<float>(YSize) - LowerYBorder;
 			if (i < LowerXBorder || i > UpperXBorder ||
 				j < LowerYBorder || j > UpperYBorder)
 			{
@@ -74,6 +111,18 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 				const float DesiredValue = abs(ZVertex * EdgeMultiplier);
 				const float EdgeHeightMultiplier = FMath::RandRange(MinimumEdgeMultiplier, MinimumEdgeMultiplier*2.f);
 				ZVertex = FMath::Max(DesiredValue, MaxCenterHeight * EdgeHeightMultiplier); // Must greater than max center height
+			}
+
+			// Setting building height
+			for (int CurrentBuilding = 0; CurrentBuilding < BuildingLocation.Num(); CurrentBuilding++)
+			{
+				const FProceduralBuilding SpawningBuildingInfo = GetBuildingInfoByIndex(BuildingLocation[CurrentBuilding].Value);
+				const FVector2D CurrentBuildingLoc = BuildingLocation[CurrentBuilding].Key;
+				if (FMath::IsWithin(i, CurrentBuildingLoc.X, CurrentBuildingLoc.X + SpawningBuildingInfo.BuildingMinSizeX) &&
+					FMath::IsWithin(j, CurrentBuildingLoc.Y, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY))
+				{
+					ZVertex = 0;
+				}
 			}
 
 			CenterVertices.Add(FVector(i * Scale, j * Scale, ZVertex));

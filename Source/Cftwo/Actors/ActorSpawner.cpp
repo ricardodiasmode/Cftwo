@@ -32,10 +32,17 @@ AActorSpawner::AActorSpawner()
 void AActorSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	Server_StartSpawnTimer();
 
-	SpawnAllActors();
+	// Calling spawn with a delay to make sure terrain is generated
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle, FTimerDelegate::CreateLambda( [this]
+	{
+		Server_StartSpawnTimer();
+
+		SpawnAllActors();
+	}),
+	1.f,
+	false);
 }
 
 void AActorSpawner::Server_StartSpawnTimer_Implementation()
