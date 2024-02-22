@@ -85,7 +85,22 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 				const int DesiredX = FMath::RandRange(FMath::Floor(LowerXBorder), FMath::Floor(UpperXBorder - GetBuildingInfoByIndex(BuildingIndex).BuildingMinSizeX));
 				const int DesiredY = FMath::RandRange(FMath::Floor(LowerYBorder), FMath::Floor(UpperYBorder - GetBuildingInfoByIndex(BuildingIndex).BuildingMinSizeY));
 
-				// todo: verificar se na location randomizada já tem uma building
+				bool IsWithin = false;
+				for (auto [Location, Index] : BuildingLocation)
+				{
+					const FProceduralBuilding CurrentBuildingToCheck = GetBuildingInfoByIndex(Index);
+					if (FMath::IsWithin(DesiredX, Location.X, Location.X + CurrentBuildingToCheck.BuildingMinSizeX) &&
+						FMath::IsWithin(DesiredY, Location.Y, Location.Y + CurrentBuildingToCheck.BuildingMinSizeY))
+					{
+						IsWithin = true;
+						break;
+					}
+				}
+				if (IsWithin)
+				{ // try other random locations
+					i--;
+					continue;
+				}
 				
 				FVector2D Location = FVector2D(static_cast<float>(DesiredX), static_cast<float>(DesiredY));
 				BuildingLocation.Add({Location, BuildingIndex});
@@ -122,6 +137,11 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 					FMath::IsWithin(j, CurrentBuildingLoc.Y, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY))
 				{
 					ZVertex = 0;
+
+					if (DebugBuildings)
+					{
+						DrawDebugSphere(GetWorld(), FVector(i * Scale, j* Scale, 0.f), 32.f, 4, FColor::Black, false, 30.f, 0, 8.f);
+					}
 				}
 			}
 

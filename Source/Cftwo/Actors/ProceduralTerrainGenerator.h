@@ -95,6 +95,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* BuildingsDT;
+
+	UPROPERTY(EditAnywhere)
+	bool DebugBuildings = false;
 	
 	TArray<FProceduralBuilding> Buildings;
 
