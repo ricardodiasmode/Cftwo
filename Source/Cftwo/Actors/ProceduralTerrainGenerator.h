@@ -10,6 +10,7 @@
 #include "GameFramework/Actor.h"
 #include "ProceduralTerrainGenerator.generated.h"
 
+class AProceduralStreet;
 class UDataTable;
 class UProceduralMeshComponent;
 
@@ -85,6 +86,8 @@ public:
 	float EdgeSize = 0.2f;
 	UPROPERTY(EditAnywhere)
 	float MinimumEdgeMultiplier = 1.5f;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AProceduralStreet> StreetClass;
 	
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
 	TArray<int> AllowedBuildings;
@@ -111,12 +114,14 @@ public:
 
 	TArray<TPair<FVector, int>> LocationsToSpawnBuildings;
 
+	TArray<FVector2D> StreetLocations;
+
 private:
 	void GenerateTerrain();
 
 	void GenerateBuildings(const float LowerXBorder, const float UpperXBorder, const float LowerYBorder, const float UpperYBorder, TArray<TPair<FVector2D, int>>* BuildingLocation);
 
-	TArray<FVector2D> GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation);
+	void GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation);
 
 	void CreateVerticesAndTriangles();
 

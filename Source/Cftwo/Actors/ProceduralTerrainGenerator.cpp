@@ -10,6 +10,8 @@
 #include <chrono>
 #include <random>
 #include <cmath>
+#include "ProceduralStreet.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AProceduralTerrainGenerator::AProceduralTerrainGenerator()
@@ -61,6 +63,23 @@ void AProceduralTerrainGenerator::BeginPlay()
 	for (auto [Location, Index] : LocationsToSpawnBuildings)
 	{
 		GetWorld()->SpawnActor<AActor>(GetBuildingInfoByIndex(Index).BuildingClass, Location, FRotator(0.f));
+	}
+
+	if (StreetLocations.Num() > 1)
+	{
+		const FTransform SpawnTransform = FTransform(FRotator(), FVector(StreetLocations[0].X * Scale, StreetLocations[0].Y * Scale, 0.f), FVector(1.f));
+		AProceduralStreet* StreetRef = GetWorld()->SpawnActorDeferred<AProceduralStreet>(StreetClass, SpawnTransform);
+		if (!StreetRef)
+			return;
+		StreetRef->SplinePoints.Add(SpawnTransform.GetLocation());
+		
+		for (int i=1;i< StreetLocations.Num();i += 2)
+		{
+			FVector2D CurrentStreetLocation = StreetLocations[i] * Scale;
+			CurrentStreetLocation -= (StreetLocations[i] * Scale - StreetLocations[i-1] * Scale)/2;
+			StreetRef->SplinePoints.Add(FVector(CurrentStreetLocation.X, CurrentStreetLocation.Y, 2.f));
+		}
+		UGameplayStatics::FinishSpawningActor(StreetRef, SpawnTransform);
 	}
 }
 
@@ -135,10 +154,9 @@ void AProceduralTerrainGenerator::GenerateBuildings(const float LowerXBorder, co
 	}
 }
 
-TArray<FVector2D> AProceduralTerrainGenerator::GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation)
+void AProceduralTerrainGenerator::GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation)
 {
-	TArray<FVector2D> StreetLocations;
-
+	StreetLocations.Empty();
 	for (int i=1;i<BuildingLocation.Num();i++)
 	{
 		auto [FirstLocation, FirstUnused] = BuildingLocation[i-1];
@@ -165,22 +183,8 @@ TArray<FVector2D> AProceduralTerrainGenerator::GenerateStreets(TArray<TPair<FVec
 			Path += Direction;
 			StreetLocations.Add(Path);
 			StreetLocations.Add(Path + Direction.GetRotated(90));
-
-			if (StreetLocations.Num() > 1)
-			{
-				DrawDebugLine(GetWorld(),
-				FVector(StreetLocations[StreetLocations.Num() -2].X * Scale, StreetLocations[StreetLocations.Num() -2].Y * Scale, 0.f),
-				FVector(StreetLocations[StreetLocations.Num() -1].X * Scale, StreetLocations[StreetLocations.Num() -1].Y * Scale, 0.f),
-				FColor::Red,
-				false,
-				5.f,
-				0,
-				50.f);
-			}
 		}
 	}
-	
-	return StreetLocations;
 }
 
 void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
@@ -202,7 +206,7 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 	TArray<TPair<FVector2D, int>> BuildingLocation;
 	GenerateBuildings(LowerXBorder, UpperXBorder, LowerYBorder, UpperYBorder, &BuildingLocation);
 
-	TArray<FVector2D> StreetLocation = GenerateStreets(BuildingLocation);
+	GenerateStreets(BuildingLocation);
 	
 	for (int i = 0; i <= XSize; i++)
 	{
@@ -235,7 +239,7 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 				}
 			}
 
-			if (StreetLocation.Contains(FVector2D(i, j)))
+			if (StreetLocations.Contains(FVector2D(i, j)))
 				ZVertex = 0;
 
 			CenterVertices.Add(FVector(i * Scale, j * Scale, ZVertex));
