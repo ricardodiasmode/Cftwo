@@ -5,10 +5,11 @@
 #include "KismetProceduralMeshLibrary.h"
 #include "stdlib.h"
 #include "time.h"
-#include "math.h"
 #include "Components/InstancedStaticMeshComponent.h"
-#include "../Utils/GeneralFunctionLibrary.h"
 #include "Engine/DataTable.h"
+#include <chrono>
+#include <random>
+#include <cmath>
 
 // Sets default values
 AProceduralTerrainGenerator::AProceduralTerrainGenerator()
@@ -18,6 +19,20 @@ AProceduralTerrainGenerator::AProceduralTerrainGenerator()
 
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 
+}
+
+float AProceduralTerrainGenerator::GenerateRandomFloat(float min, float max) {
+	// Obtém o tempo atual em milissegundos desde o epoch (01/01/1970)
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+
+	// Cria um objeto de motor de números aleatórios usando o tempo como semente
+	std::mt19937 generator(seed);
+
+	// Cria uma distribuição de números aleatórios de ponto flutuante no intervalo [min, max]
+	std::uniform_real_distribution<float> distribution(min, max);
+
+	// Gera e retorna um número aleatório
+	return distribution(generator);
 }
 
 void AProceduralTerrainGenerator::GenerateTerrain()
@@ -58,6 +73,50 @@ FProceduralBuilding AProceduralTerrainGenerator::GetBuildingInfoByIndex(const in
 	return *(BuildingsDT->FindRow<FProceduralBuilding>(FName(*(FString::FromInt(Index))), ""));
 }
 
+FVector2D AProceduralTerrainGenerator::FindRandomLocationFarFromBuildings(const TArray<TPair<FVector2D, int>>& Points, const int BuildingIndex, const float LowerXBorder, const float LowerYBorder, const float UpperXBorder, const float UpperYBorder)
+{
+	int NumberOfTries = 0;
+	FVector2D FoundLocation(0.f);
+	bool LeaveLoop = false;
+	while (!LeaveLoop)
+	{
+		if (NumberOfTries > 100)
+		{
+			DrawDebugSphere(GetWorld(),
+				FVector(FoundLocation.X * Scale, FoundLocation.Y * Scale, 0.f),
+				3000.f,
+				16,
+				FColor::Black,
+				false,
+				5.f,
+				0,
+				50.f);
+			return FoundLocation;
+		}
+		
+		NumberOfTries++;
+		const float FirstDesiredX = FMath::Floor(GenerateRandomFloat(LowerXBorder, UpperXBorder - GetBuildingInfoByIndex(AllowedBuildings[BuildingIndex]).BuildingMinSizeX));
+		const float FirstDesiredY = FMath::Floor(GenerateRandomFloat(LowerYBorder, UpperYBorder - GetBuildingInfoByIndex(AllowedBuildings[BuildingIndex]).BuildingMinSizeY));
+		FVector2D Location = FVector2D(FirstDesiredX, FirstDesiredY);
+		
+		bool Found = true;
+		for (auto [Point, unused] : Points)
+		{
+			if (FVector2D::Distance(Location, Point) < static_cast<float>(MinBuildingVertexDistance))
+			{
+				Found = false;
+				break;
+			}
+		}
+		if (Found)
+		{
+			LeaveLoop = true;
+			FoundLocation = Location;
+		}
+	}
+	return FoundLocation;
+}
+
 void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 {
 	if (!BuildingsDT)
@@ -77,35 +136,20 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 	TArray<TPair<FVector2D, int>> BuildingLocation;
 	if (AllowedBuildings.Num() > 0)
 	{
-		for (int CurrentBuildingIndex = 0; CurrentBuildingIndex < AllowedBuildings.Num(); CurrentBuildingIndex++)
+		// Adding first
+		const float FirstDesiredX = FMath::Floor(GenerateRandomFloat(LowerXBorder, UpperXBorder - GetBuildingInfoByIndex(AllowedBuildings[0]).BuildingMinSizeX));
+		const float FirstDesiredY = FMath::Floor(GenerateRandomFloat(LowerYBorder, UpperYBorder - GetBuildingInfoByIndex(AllowedBuildings[0]).BuildingMinSizeY));
+		FVector2D Location = FVector2D(FirstDesiredX, FirstDesiredY);
+		BuildingLocation.Add({Location, AllowedBuildings[0]});
+		LocationsToSpawnBuildings.Add({FVector(FirstDesiredX * Scale, FirstDesiredY * Scale, 0), BuildingLocation[AllowedBuildings[0]].Value});
+		
+		// Adding others
+		for (int CurrentBuildingIndex = 1; CurrentBuildingIndex < AllowedBuildings.Num(); CurrentBuildingIndex++)
 		{
 			int BuildingIndex = AllowedBuildings[CurrentBuildingIndex];
-			for (int i = 0; i < NumberOfBuildings; i++)
-			{
-				const int DesiredX = FMath::RandRange(FMath::Floor(LowerXBorder), FMath::Floor(UpperXBorder - GetBuildingInfoByIndex(BuildingIndex).BuildingMinSizeX));
-				const int DesiredY = FMath::RandRange(FMath::Floor(LowerYBorder), FMath::Floor(UpperYBorder - GetBuildingInfoByIndex(BuildingIndex).BuildingMinSizeY));
-
-				bool IsWithin = false;
-				for (auto [Location, Index] : BuildingLocation)
-				{
-					const FProceduralBuilding CurrentBuildingToCheck = GetBuildingInfoByIndex(Index);
-					if (FMath::IsWithin(DesiredX, Location.X, Location.X + CurrentBuildingToCheck.BuildingMinSizeX) &&
-						FMath::IsWithin(DesiredY, Location.Y, Location.Y + CurrentBuildingToCheck.BuildingMinSizeY))
-					{
-						IsWithin = true;
-						break;
-					}
-				}
-				if (IsWithin)
-				{ // try other random locations
-					i--;
-					continue;
-				}
-				
-				FVector2D Location = FVector2D(static_cast<float>(DesiredX), static_cast<float>(DesiredY));
-				BuildingLocation.Add({Location, BuildingIndex});
-				LocationsToSpawnBuildings.Add({FVector(DesiredX * Scale, DesiredY * Scale, 0), BuildingLocation[BuildingIndex].Value});
-			}
+			Location = FindRandomLocationFarFromBuildings(BuildingLocation, BuildingIndex, LowerXBorder, LowerYBorder, UpperXBorder, UpperYBorder);
+			BuildingLocation.Add({Location, BuildingIndex});
+			LocationsToSpawnBuildings.Add({FVector(Location.X * Scale, Location.Y * Scale, 0), BuildingLocation[BuildingIndex].Value});
 		}
 	}
 
@@ -124,7 +168,7 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 			{
 				const float MaxCenterHeight = ZMultiplier / ZSmoothness;
 				const float DesiredValue = abs(ZVertex * EdgeMultiplier);
-				const float EdgeHeightMultiplier = FMath::RandRange(MinimumEdgeMultiplier, MinimumEdgeMultiplier*2.f);
+				const float EdgeHeightMultiplier = GenerateRandomFloat(MinimumEdgeMultiplier, MinimumEdgeMultiplier*2.f);
 				ZVertex = FMath::Max(DesiredValue, MaxCenterHeight * EdgeHeightMultiplier); // Must greater than max center height
 			}
 
@@ -137,11 +181,6 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 					FMath::IsWithin(j, CurrentBuildingLoc.Y, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY))
 				{
 					ZVertex = 0;
-
-					if (DebugBuildings)
-					{
-						DrawDebugSphere(GetWorld(), FVector(i * Scale, j* Scale, 0.f), 32.f, 4, FColor::Black, false, 30.f, 0, 8.f);
-					}
 				}
 			}
 
@@ -237,9 +276,9 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 			const auto Radius = FMath::Min(XSize/2 * Scale, YSize / 2 * Scale);
 			const float CollisionTraceRange = ZMultiplier * 4;
 
-			float X = FMath::FRandRange(-Radius, Radius);
-			float Y = FMath::FRandRange(-Radius, Radius);
-			float Z = FMath::FRandRange(-5.f, 0.f);
+			float X = GenerateRandomFloat(-Radius, Radius);
+			float Y = GenerateRandomFloat(-Radius, Radius);
+			float Z = GenerateRandomFloat(-5.f, 0.f);
 
 			FVector LocalSpawnPoint = FVector(X, Y, Z);
 
@@ -256,18 +295,18 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 				static constexpr auto ScaleMin = 0.8f;
 				static constexpr auto ScaleMax = 1.25f;
 
-				float RandFloat = FMath::FRandRange(VerticalOffset * -2, VerticalOffset);
+				float RandFloat = GenerateRandomFloat(VerticalOffset * -2, VerticalOffset);
 
 				FVector LocationToSpawn = OutHit.Location + OutHit.Normal * RandFloat;
 
-				const float RandPitch = FMath::FRandRange(0.f, 2.5f);
-				const float RandYaw = FMath::FRandRange(0.f, 359.f);
-				const float RandRoll = FMath::FRandRange(0.f, 2.5f);
+				const float RandPitch = GenerateRandomFloat(0.f, 2.5f);
+				const float RandYaw = GenerateRandomFloat(0.f, 359.f);
+				const float RandRoll = GenerateRandomFloat(0.f, 2.5f);
 				FRotator RotatorToSpawn = FRotator(RandPitch, RandYaw, RandRoll);
 
-				float XScale = FMath::FRandRange(ScaleMin, ScaleMax);
-				float YScale = FMath::FRandRange(ScaleMin, ScaleMax);
-				float ZScale = FMath::FRandRange(ScaleMin, ScaleMax);
+				float XScale = GenerateRandomFloat(ScaleMin, ScaleMax);
+				float YScale = GenerateRandomFloat(ScaleMin, ScaleMax);
+				float ZScale = GenerateRandomFloat(ScaleMin, ScaleMax);
 				FVector ScaleToSpawn = FVector(XScale, YScale, ZScale);
 				ScaleToSpawn *= CurrentFoliage.ScaleMultiplier;
 

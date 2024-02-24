@@ -1,5 +1,12 @@
-- cidades;
+- cidades:
+1. Colocar uma cidade em um ponto aleatório no mapa;
+2. Colocar todas as cidades em pontos distantes, limitando pra ficar um pouco longe da borda;
+3. Pegar o array de cidades e passar em uma por uma, criando uma linha reta entre elas;
+4. Pegar os vértices mais próximos dessa linha reta, randomicamente dar um offset nesses vértices(verificando borda) e criar as ruas passando por esse vértice;
+
 - loot drop;
+
+- árvores e pedras podem voltar a ser foliages. Fazer como unturned que tem o recurso mostrando pra fora e depois de bater o suficiente o recurso acaba, mudando o mesh da foliage;
 
 - ao craftar, aparecer na tela: "you crafted {x}"!;
 - testar multiplayer;

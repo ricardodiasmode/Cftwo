@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "CoreMinimal.h"
 #include "ProceduralMeshComponent.h"
 #include "Engine/DataTable.h"
@@ -85,9 +87,6 @@ public:
 	float MinimumEdgeMultiplier = 1.5f;
 	
 	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
-	int NumberOfBuildings = 1;
-	
-	UPROPERTY(EditAnywhere, Meta = (ClampMin = 0))
 	TArray<int> AllowedBuildings;
 
 	UPROPERTY(EditAnywhere)
@@ -98,6 +97,15 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool DebugBuildings = false;
+
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = 1.f))
+	float BuildingLocationOptimizationJump = 2.f;
+
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = 1.f))
+	int EdgeDistanceMultiplier = 4;
+
+	UPROPERTY(EditAnywhere, Meta = (ClampMin = 1.f))
+	int MinBuildingVertexDistance = 10;
 	
 	TArray<FProceduralBuilding> Buildings;
 
@@ -105,7 +113,7 @@ public:
 
 private:
 	void GenerateTerrain();
-
+	
 	void CreateVerticesAndTriangles();
 
 	float Perlin_Noise(float x, float y, float scale = 1.f, float amplitude = 1.f);
@@ -116,6 +124,8 @@ private:
 	FVector4 Random(int X, int Y, int Z, int W);
 
 	void SpawnFoliage();
+
+	FVector2D FindRandomLocationFarFromBuildings(const TArray<TPair<FVector2D, int>>& Points, const int BuildingIndex, const float LowerXBorder, const float LowerYBorder, const float UpperXBorder, const float UpperYBorder);
 	
 protected:
 	// Called when the game starts or when spawned
@@ -127,5 +137,6 @@ protected:
 public:
 	// Sets default values for this actor's properties
 	AProceduralTerrainGenerator();
-
+	
+	float GenerateRandomFloat(float min, float max);
 };
