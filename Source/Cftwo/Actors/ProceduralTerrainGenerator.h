@@ -113,7 +113,11 @@ public:
 
 private:
 	void GenerateTerrain();
-	
+
+	void GenerateBuildings(const float LowerXBorder, const float UpperXBorder, const float LowerYBorder, const float UpperYBorder, TArray<TPair<FVector2D, int>>* BuildingLocation);
+
+	TArray<FVector2D> GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation);
+
 	void CreateVerticesAndTriangles();
 
 	float Perlin_Noise(float x, float y, float scale = 1.f, float amplitude = 1.f);
@@ -137,6 +141,6 @@ protected:
 public:
 	// Sets default values for this actor's properties
 	AProceduralTerrainGenerator();
-	
-	float GenerateRandomFloat(float min, float max);
+
+	static float GenerateRandomFloat(float min, float max);
 };

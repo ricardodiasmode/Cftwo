@@ -22,16 +22,12 @@ AProceduralTerrainGenerator::AProceduralTerrainGenerator()
 }
 
 float AProceduralTerrainGenerator::GenerateRandomFloat(float min, float max) {
-	// Obtém o tempo atual em milissegundos desde o epoch (01/01/1970)
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	const unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
-	// Cria um objeto de motor de números aleatórios usando o tempo como semente
 	std::mt19937 generator(seed);
 
-	// Cria uma distribuição de números aleatórios de ponto flutuante no intervalo [min, max]
-	std::uniform_real_distribution<float> distribution(min, max);
+	const std::uniform_real_distribution<float> distribution(min, max);
 
-	// Gera e retorna um número aleatório
 	return distribution(generator);
 }
 
@@ -117,6 +113,76 @@ FVector2D AProceduralTerrainGenerator::FindRandomLocationFarFromBuildings(const 
 	return FoundLocation;
 }
 
+void AProceduralTerrainGenerator::GenerateBuildings(const float LowerXBorder, const float UpperXBorder, const float LowerYBorder, const float UpperYBorder, TArray<TPair<FVector2D, int>>* BuildingLocation)
+{
+	if (AllowedBuildings.Num() > 0)
+	{
+		// Adding first
+		const float FirstDesiredX = FMath::Floor(GenerateRandomFloat(LowerXBorder, UpperXBorder - GetBuildingInfoByIndex(AllowedBuildings[0]).BuildingMinSizeX));
+		const float FirstDesiredY = FMath::Floor(GenerateRandomFloat(LowerYBorder, UpperYBorder - GetBuildingInfoByIndex(AllowedBuildings[0]).BuildingMinSizeY));
+		FVector2D Location = FVector2D(FirstDesiredX, FirstDesiredY);
+		BuildingLocation->Add({Location, AllowedBuildings[0]});
+		LocationsToSpawnBuildings.Add({FVector(FirstDesiredX * Scale, FirstDesiredY * Scale, 0), (*BuildingLocation)[AllowedBuildings[0]].Value});
+		
+		// Adding others
+		for (int CurrentBuildingIndex = 1; CurrentBuildingIndex < AllowedBuildings.Num(); CurrentBuildingIndex++)
+		{
+			int BuildingIndex = AllowedBuildings[CurrentBuildingIndex];
+			Location = FindRandomLocationFarFromBuildings(*BuildingLocation, BuildingIndex, LowerXBorder, LowerYBorder, UpperXBorder, UpperYBorder);
+			BuildingLocation->Add({Location, BuildingIndex});
+			LocationsToSpawnBuildings.Add({FVector(Location.X * Scale, Location.Y * Scale, 0), (*BuildingLocation)[BuildingIndex].Value});
+		}
+	}
+}
+
+TArray<FVector2D> AProceduralTerrainGenerator::GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation)
+{
+	TArray<FVector2D> StreetLocations;
+
+	for (int i=1;i<BuildingLocation.Num();i++)
+	{
+		auto [FirstLocation, FirstUnused] = BuildingLocation[i-1];
+		auto [SecondLocation, SecondUnused] = BuildingLocation[i];
+		
+		FVector2D Path = FirstLocation;
+		while(Path != SecondLocation)
+		{
+			FVector2D Direction(0.f);
+			if (SecondLocation.X > Path.X)
+				Direction.X = 1;
+			else if (SecondLocation.X == Path.X)
+			{
+				if (SecondLocation.Y > Path.Y)
+					Direction.Y = 1;
+				else if (SecondLocation.Y == Path.Y)
+					Direction.Y = 0;
+				else
+					Direction.Y = -1;
+			}
+			else
+				Direction.X = -1;
+			
+			Path += Direction;
+			StreetLocations.Add(Path);
+			StreetLocations.Add(Path + Direction.GetRotated(90));
+
+			if (StreetLocations.Num() > 1)
+			{
+				DrawDebugLine(GetWorld(),
+				FVector(StreetLocations[StreetLocations.Num() -2].X * Scale, StreetLocations[StreetLocations.Num() -2].Y * Scale, 0.f),
+				FVector(StreetLocations[StreetLocations.Num() -1].X * Scale, StreetLocations[StreetLocations.Num() -1].Y * Scale, 0.f),
+				FColor::Red,
+				false,
+				5.f,
+				0,
+				50.f);
+			}
+		}
+	}
+	
+	return StreetLocations;
+}
+
 void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 {
 	if (!BuildingsDT)
@@ -134,25 +200,10 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 	const float UpperYBorder = static_cast<float>(YSize) - LowerYBorder;
 
 	TArray<TPair<FVector2D, int>> BuildingLocation;
-	if (AllowedBuildings.Num() > 0)
-	{
-		// Adding first
-		const float FirstDesiredX = FMath::Floor(GenerateRandomFloat(LowerXBorder, UpperXBorder - GetBuildingInfoByIndex(AllowedBuildings[0]).BuildingMinSizeX));
-		const float FirstDesiredY = FMath::Floor(GenerateRandomFloat(LowerYBorder, UpperYBorder - GetBuildingInfoByIndex(AllowedBuildings[0]).BuildingMinSizeY));
-		FVector2D Location = FVector2D(FirstDesiredX, FirstDesiredY);
-		BuildingLocation.Add({Location, AllowedBuildings[0]});
-		LocationsToSpawnBuildings.Add({FVector(FirstDesiredX * Scale, FirstDesiredY * Scale, 0), BuildingLocation[AllowedBuildings[0]].Value});
-		
-		// Adding others
-		for (int CurrentBuildingIndex = 1; CurrentBuildingIndex < AllowedBuildings.Num(); CurrentBuildingIndex++)
-		{
-			int BuildingIndex = AllowedBuildings[CurrentBuildingIndex];
-			Location = FindRandomLocationFarFromBuildings(BuildingLocation, BuildingIndex, LowerXBorder, LowerYBorder, UpperXBorder, UpperYBorder);
-			BuildingLocation.Add({Location, BuildingIndex});
-			LocationsToSpawnBuildings.Add({FVector(Location.X * Scale, Location.Y * Scale, 0), BuildingLocation[BuildingIndex].Value});
-		}
-	}
+	GenerateBuildings(LowerXBorder, UpperXBorder, LowerYBorder, UpperYBorder, &BuildingLocation);
 
+	TArray<FVector2D> StreetLocation = GenerateStreets(BuildingLocation);
+	
 	for (int i = 0; i <= XSize; i++)
 	{
 		for (int j = 0; j <= YSize; j++)
@@ -183,6 +234,9 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 					ZVertex = 0;
 				}
 			}
+
+			if (StreetLocation.Contains(FVector2D(i, j)))
+				ZVertex = 0;
 
 			CenterVertices.Add(FVector(i * Scale, j * Scale, ZVertex));
 			CenterUV.Add(FVector2D(i * UVScale, j * UVScale));
