@@ -19,6 +19,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "../../Actors/ActorSpawner.h"
 #include "Cftwo/Actors/Chest.h"
+#include "Cftwo/Actors/LootDrop.h"
 #include "Cftwo/Actors/Workbench.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -212,17 +213,6 @@ void AGameplayCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void AGameplayCharacter::OnOverlapPickable(APickable* OtherActor)
-{
-	if (ClosePickable != nullptr)
-		return;
-	
-	ClosePickable = OtherActor;
-
-	if (HUDRef)
-		HUDRef->OnPickableClose();
-}
-
 void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (Cast<AWorkbench>(OtherActor) && !CloseWorkbenches.Contains(Cast<AWorkbench>(OtherActor)))
@@ -237,14 +227,21 @@ void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 	}
 }
 
-void AGameplayCharacter::OnEndOverlapPickable(APickable* OtherActor)
+void AGameplayCharacter::OnOverlapInteractable(AActor* OtherActor)
 {
-	ClosePickable = nullptr;
+	CloseInteractable.Add(OtherActor);
+
+	if (HUDRef && CloseInteractable.Num() == 1)
+		HUDRef->OnPickableClose();
+}
+
+void AGameplayCharacter::OnEndOverlapInteractable(AActor* OtherActor)
+{
+	CloseInteractable.Remove(OtherActor);
 	
-	if (HUDRef)
+	if (HUDRef && CloseInteractable.Num() == 0)
 		HUDRef->OnPickableFar();
 
-	CheckOtherPickableClose(WorldCollision->GetScaledSphereRadius(), OtherActor);
 }
 
 void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -258,32 +255,6 @@ void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* Overla
 	} else if (AChest* ChestRef = Cast<AChest>(OtherActor))
 	{
 		Client_OnCharacterGetFarToChest(ChestRef);
-	}
-}
-
-void AGameplayCharacter::CheckOtherPickableClose(const float Radius, APickable* PickableToIgnore)
-{
-	FHitResult OutHit;
-	TArray<AActor*> ActorsToIgnore;
-	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQuery;
-	ObjectTypeQuery.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel1));
-	UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(),
-		GetActorLocation(),
-		GetActorLocation(),
-		Radius,
-		ObjectTypeQuery,
-		false,
-		ActorsToIgnore,
-		EDrawDebugTrace::None,
-		OutHit,
-		true);
-
-	if (Cast<APickable>(OutHit.GetActor()) && Cast<APickable>(OutHit.GetActor()) != PickableToIgnore)
-	{
-		ClosePickable = Cast<APickable>(OutHit.GetActor());
-
-		if (HUDRef)
-			HUDRef->OnPickableClose();
 	}
 }
 
@@ -671,6 +642,9 @@ void AGameplayCharacter::Server_TryPickItem_Implementation()
 		{
 			InventoryComponent->GiveItem(CurrentPickable->ItemId, CurrentPickable->Amount);
 			CurrentPickable->OnPick();
+		} else if (ALootDrop* CurrentLootDrop = Cast<ALootDrop>(CurrentHit.GetActor()))
+		{
+			CurrentLootDrop->OnInteract(this);
 		}
 	}
 }
@@ -808,14 +782,24 @@ void AGameplayCharacter::Client_OnCharacterGetFarToChest_Implementation(AChest* 
 
 void AGameplayCharacter::Pickup()
 {
-	if (!ClosePickable)
+	if (CloseInteractable.Num() == 0)
 		return;
-	const int InventoryIndex = InventoryComponent->GiveItem(ClosePickable->ItemId, ClosePickable->Amount);
-	if (InventoryIndex == -1)
-		return;
+
+	if (APickable* FoundPickable = Cast<APickable>(CloseInteractable[0]))
+	{
+		const int InventoryIndex = InventoryComponent->GiveItem(Cast<APickable>(CloseInteractable[0])->ItemId, Cast<APickable>(CloseInteractable[0])->Amount);
+		if (InventoryIndex == -1)
+			return;
 	
-	ClosePickable->OnPick();
-	CheckOtherPickableClose(WorldCollision->GetScaledSphereRadius(), nullptr);
+		FoundPickable->OnPick();
+		if (CloseInteractable.Contains(FoundPickable))
+			CloseInteractable.Remove(FoundPickable);
+	} else if (ALootDrop* FoundLootDrop = Cast<ALootDrop>(CloseInteractable[0]))
+	{
+		FoundLootDrop->OnInteract(this);
+		if (CloseInteractable.Contains(FoundLootDrop))
+			CloseInteractable.Remove(FoundLootDrop);
+	}
 }
 
 void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots, const TArray<FWeaponInventorySlot>& WeaponSlots)

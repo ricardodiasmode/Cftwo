@@ -25,9 +25,9 @@ public:
 
 	AActorSpawner* SpawnerRef = nullptr;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ExposeOnSpawn=true))
 	int ItemId = -1;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Meta = (ExposeOnSpawn=true))
 	int Amount = 0;
 
 protected:
