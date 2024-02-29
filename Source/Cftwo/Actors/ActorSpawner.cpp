@@ -71,7 +71,8 @@ void AActorSpawner::CheckShouldSpawn()
 		// Check if we have actors enough
 		if (ActorsSpawned.Num() > i)
 		{
-			if (ActorsSpawned[i].ActorArray.Num() >= ActorsToSpawn[i].MinimumSpawned)
+			if (ActorsSpawned[i].ActorArray.Num() >= ActorsToSpawn[i].MinimumSpawned ||
+				!ActorsToSpawn[i].CanRespawn)
 				continue;
 		}
 

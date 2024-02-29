@@ -1,3 +1,10 @@
+- Chefe;
+*drop;
+- Esfera do poder;
+*waves;
+*termino mostrando quantidade de waves;
+- Craft de construções;
+
 - criar mais construções;
 
 OTIMIZAÇÃO:

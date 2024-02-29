@@ -13,7 +13,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AActor> ActorClass;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		int MinimumSpawned = -1;
+	int MinimumSpawned = -1;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-		bool Foliage = false;
+	bool Foliage = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool CanRespawn = true;
 };
