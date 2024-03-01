@@ -25,6 +25,9 @@ protected:
 	FName AgressorBlackboardName;
 
 	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<AActor>> DeathActorsToSpawnOnDie;
+
+	UPROPERTY(EditDefaultsOnly)
 	float DamageToDeal = 40.f;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -39,16 +42,18 @@ protected:
 public:
 	class AActorSpawner* SpawnerRef = nullptr;
 
-	UFUNCTION(BlueprintCallable, Server, reliable)
-	void Server_TriggerHit();
+private:	
+	void Server_DropDeathActors();
 
 protected:
-	
 	virtual void Destroyed() override;
 
 public:
 	// Sets default values for this character's properties
 	ABaseNeutralCharacter();
+
+	UFUNCTION(BlueprintCallable, Server, reliable)
+	void Server_TriggerHit();
 
 	FVector GetLockPoint() const { return LockPoint->GetComponentLocation(); }
 
@@ -67,5 +72,8 @@ public:
 
 	UFUNCTION(Server, reliable)
 	void Server_OnDie();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDie();
 	
 };

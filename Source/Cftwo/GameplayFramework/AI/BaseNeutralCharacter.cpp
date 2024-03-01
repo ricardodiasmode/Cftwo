@@ -47,9 +47,16 @@ void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage
 	CurrentHealth -= Damage;
 
 	Cast<AAIController>(GetController())->GetBlackboardComponent()->SetValueAsObject(AgressorBlackboardName, Agressor);
+
 	
 	if (CurrentHealth <= 0)
+	{
+		Server_DropDeathActors();
+		
 		Die();
+
+		OnDie();
+	}
 }
 
 TArray<TPair<int, int>> ABaseNeutralCharacter::OnHarvest()
@@ -125,11 +132,21 @@ void ABaseNeutralCharacter::Server_TriggerHit_Implementation()
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
 				CurrentCharacter->Server_OnGetHitted(DamageToDeal);
-				// SpawnVFXOnAttack(CurrentHit, CurrentCharacter, CharacterRef->BloodVFX);
-				// SpawnSFXOnAttack(CurrentHit);
 				return;
 			}
 		}
+	}
+}
+
+void ABaseNeutralCharacter::Server_DropDeathActors()
+{
+	for (auto DeathActorToSpawnOnDie : DeathActorsToSpawnOnDie)
+	{
+		AActor* ActorSpawned = GetWorld()->SpawnActor<AActor>(DeathActorToSpawnOnDie,
+			GetActorLocation(),
+			GetActorRotation(),
+			FActorSpawnParameters());
+		ActorSpawned->SetReplicates(true);
 	}
 }
 

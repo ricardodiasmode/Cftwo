@@ -1,11 +1,10 @@
-- Chefe;
-*drop;
 - Esfera do poder;
-*waves;
+*waves procedurais;
 *termino mostrando quantidade de waves;
-- Craft de construções;
-
-- criar mais construções;
+- Moedas dropando nos monstros das waves;
+- NPC vendendo construções;
+- criar mais construções do mapa;
+- wave 10+ paga (google play);
 
 OTIMIZAÇÃO:
 - árvores e pedras podem voltar a ser foliages. Fazer como unturned que tem o recurso mostrando pra fora e depois de bater o suficiente o recurso acaba, mudando o mesh da foliage;
