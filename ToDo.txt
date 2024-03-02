@@ -1,5 +1,4 @@
 - Esfera do poder;
-*waves procedurais;
 *termino mostrando quantidade de waves;
 - Moedas dropando nos monstros das waves;
 - NPC vendendo construções;
