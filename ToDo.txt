@@ -1,5 +1,7 @@
-- Moedas dropando nos monstros das waves;
 - NPC vendendo construções;
+- barulho ao pegar coin;
+- barulho quando lobo toma dano;
+- barulho quando porco toma dano;
 - criar mais construções do mapa;
 - wave 10+ paga (google play);
 

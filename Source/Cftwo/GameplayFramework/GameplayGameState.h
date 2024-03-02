@@ -18,4 +18,7 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	int CurrentWave = 0;
 	
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	int Coins = 0;
+	
 };

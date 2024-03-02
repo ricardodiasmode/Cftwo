@@ -52,6 +52,12 @@ void AGameplayGameMode::SpawnPlayerCharacter(APlayerController* NewPlayer)
 		FVector RandomLoc = AllPlayerStartLocation[FMath::RandRange(0, AllPlayerStartLocation.Num() - 1)];
 		FActorSpawnParameters SpawnInfo;
 		AGameplayCharacter* CharacterRef = GetWorld()->SpawnActor<AGameplayCharacter>(GameplayCharacterClass, RandomLoc, FRotator(0), SpawnInfo);
+		int LocOffset = 1;
+		while (!CharacterRef)
+		{
+			CharacterRef = GetWorld()->SpawnActor<AGameplayCharacter>(GameplayCharacterClass, RandomLoc + FVector(0.f, 0.f, 200.f * LocOffset), FRotator(0), SpawnInfo);
+			LocOffset++;
+		}
 		NewPlayer->Possess(CharacterRef);
 		CharacterRef->Server_OnSetPlayerController();
 	}

@@ -159,6 +159,8 @@ void AGameplayCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 void AGameplayCharacter::BeginPlay()
 {
+	Super::BeginPlay();
+	
 	GameState = Cast<AGameplayGameState>(UGameplayStatics::GetGameState(GetWorld()));
 }
 
