@@ -1,5 +1,3 @@
-- Esfera do poder;
-*termino mostrando quantidade de waves;
 - Moedas dropando nos monstros das waves;
 - NPC vendendo construções;
 - criar mais construções do mapa;
