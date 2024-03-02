@@ -6,13 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "PowerSphere.generated.h"
 
+class AGameplayGameState;
+
 UCLASS()
 class CFTWO_API APowerSphere : public AActor
 {
 	GENERATED_BODY()
 
 private:
-	int CurrentWave = 1; 
+	TObjectPtr<AGameplayGameState> GameState = nullptr;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Meta = (ClampMin = 0.f))
@@ -32,6 +34,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION(Server, reliable)
+	void Server_StartSpawnWaves();
 
 public:	
 	

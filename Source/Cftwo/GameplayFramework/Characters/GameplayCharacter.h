@@ -10,6 +10,7 @@
 #include "GameFramework/Character.h"
 #include "GameplayCharacter.generated.h"
 
+class AGameplayGameState;
 class AWorkbench;
 struct FInputActionValue;
 class UCameraComponent;
@@ -155,6 +156,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool Dead = false;
 	
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AGameplayGameState> GameState = nullptr;
+	
 private:
 	
 	// Trigger player hitting status and set timer for stop hitting
@@ -218,6 +222,8 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void Destroyed() override;
+
+	virtual void BeginPlay() override;
 
 	UFUNCTION(Client, reliable)
 	void Client_OnCharacterGetCloseToChest(AChest* ChestRef);

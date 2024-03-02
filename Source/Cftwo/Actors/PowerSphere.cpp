@@ -3,11 +3,15 @@
 
 #include "PowerSphere.h"
 
+#include "Cftwo/GameplayFramework/GameplayGameState.h"
+#include "Cftwo/Utils/GeneralFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 APowerSphere::APowerSphere()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 }
 
@@ -15,6 +19,13 @@ APowerSphere::APowerSphere()
 void APowerSphere::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Server_StartSpawnWaves();
+}
+
+void APowerSphere::Server_StartSpawnWaves_Implementation()
+{
+	GameState = Cast<AGameplayGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	
 	SpawnWave();
 
@@ -27,12 +38,17 @@ void APowerSphere::BeginPlay()
 		IntervalBetweenWaves,
 		true
 		);
-	
 }
 
 void APowerSphere::SpawnWave()
 {
-	const int NumberOfMonstersToSpawn = CurrentWave;
+	if (!GameState)
+	{
+		GameState = Cast<AGameplayGameState>(UGameplayStatics::GetGameState(GetWorld()));
+		GPrintDebug("found no game state. Trying again.");
+		return;
+	}
+	const int NumberOfMonstersToSpawn = GameState->CurrentWave + 1;
 	
 	for (int i = 0; i < NumberOfMonstersToSpawn; i++)
 	{
@@ -52,13 +68,13 @@ void APowerSphere::SpawnWave()
 		{
 			int RandomIndex = FMath::RandRange(0, MonstersToSpawn.Num() - 1);
 			GetWorld()->SpawnActor<AActor>(MonstersToSpawn[RandomIndex],
-				SpawnLocation,
+				SpawnLocation + FVector(0.f, 0.f, 200.f),
 				FRotator(),
 				FActorSpawnParameters());
 		}
 	}
 	
-	CurrentWave++;
+	GameState->CurrentWave++;
 }
 
 

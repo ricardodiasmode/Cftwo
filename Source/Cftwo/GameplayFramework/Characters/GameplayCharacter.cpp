@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GameplayCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -21,7 +20,7 @@
 #include "Cftwo/Actors/Chest.h"
 #include "Cftwo/Actors/LootDrop.h"
 #include "Cftwo/Actors/Workbench.h"
-#include "Components/SphereComponent.h"
+#include "Cftwo/GameplayFramework/GameplayGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -156,6 +155,11 @@ void AGameplayCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 			this, &AGameplayCharacter::PickItem);
 	}
 
+}
+
+void AGameplayCharacter::BeginPlay()
+{
+	GameState = Cast<AGameplayGameState>(UGameplayStatics::GetGameState(GetWorld()));
 }
 
 void AGameplayCharacter::SetRotationAccordingToVelocity(const float DeltaTime)
