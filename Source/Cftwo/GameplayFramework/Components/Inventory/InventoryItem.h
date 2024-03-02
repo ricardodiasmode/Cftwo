@@ -28,6 +28,19 @@ enum class EEquipmentType : uint8 {
 };
 
 USTRUCT(BlueprintType)
+struct FBuildingToBuy : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int Index = -1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UStaticMesh* Mesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* Icon = nullptr;
+};
+
+USTRUCT(BlueprintType)
 struct FInventoryItem : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()

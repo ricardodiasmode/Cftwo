@@ -126,6 +126,7 @@ void AGameplayCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AGameplayCharacter, CurrentHealth);
 	DOREPLIFETIME(AGameplayCharacter, CurrentHungry);
 	DOREPLIFETIME(AGameplayCharacter, Dead);
+	DOREPLIFETIME(AGameplayCharacter, CurrentBuildings);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -602,6 +603,38 @@ void AGameplayCharacter::SpawnPlaceableAhead(TSubclassOf<AActor> Class) const
 		SoundToFireWhenPlaceItem);
 }
 
+void AGameplayCharacter::Client_OnBuyBuilding_Implementation(const int BuildingIndex)
+{
+	HUDRef->OnBuyBuilding(BuildingIndex);
+}
+
+void AGameplayCharacter::Server_OnTryBuyBuilding_Implementation(const int BuildingIndex)
+{
+	if (GameState->Coins <= 0)
+		return;
+
+	GameState->Coins--;
+	for (int i = 0; i < CurrentBuildings.Num(); i++)
+	{
+		if(CurrentBuildings[i].First != BuildingIndex)
+			continue;
+
+		// Adding amount if found and returning
+		CurrentBuildings[i].Second++;
+		Client_OnBuyBuilding(BuildingIndex);
+		return;
+	}
+
+	// If not found, add to array
+	CurrentBuildings.Add({BuildingIndex, 1});
+	Client_OnBuyBuilding(BuildingIndex);
+}
+
+void AGameplayCharacter::OnTryBuyBuilding(const int BuildingIndex)
+{
+	Server_OnTryBuyBuilding(BuildingIndex);
+}
+
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
 {	
 	const int WeaponIdOnWeaponsDT = GetEquippedWeaponId();
@@ -887,4 +920,3 @@ void AGameplayCharacter::Client_OnHitWithoutRightWeapon_Implementation()
 	if (HUDRef)
 		HUDRef->OnMistakenWeapon();
 }
-

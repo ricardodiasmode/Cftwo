@@ -87,4 +87,10 @@ public:
 	void Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex);
 	
 	void DropChestSlot(AChest* ChestRef, const int ChestIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void OnTryBuyBuilding(const int BuildingIndex);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBuyBuilding(const int BuildingIndex);
 };

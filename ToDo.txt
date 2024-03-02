@@ -1,4 +1,3 @@
-- NPC vendendo construções;
 - barulho ao pegar coin;
 - barulho quando lobo toma dano;
 - barulho quando porco toma dano;

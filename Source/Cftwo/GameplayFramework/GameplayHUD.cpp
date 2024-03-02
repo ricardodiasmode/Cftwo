@@ -135,3 +135,8 @@ void AGameplayHUD::DropChestSlot(AChest* ChestRef, const int ChestIndex)
 {
     CharacterRef->Server_DropChestSlot(ChestRef, ChestIndex);
 }
+
+void AGameplayHUD::OnTryBuyBuilding(const int BuildingIndex)
+{
+    CharacterRef->OnTryBuyBuilding(BuildingIndex);
+}

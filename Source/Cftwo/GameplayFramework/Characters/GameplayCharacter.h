@@ -10,6 +10,7 @@
 #include "GameFramework/Character.h"
 #include "GameplayCharacter.generated.h"
 
+struct FIntPair;
 class AGameplayGameState;
 class AWorkbench;
 struct FInputActionValue;
@@ -155,6 +156,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool Dead = false;
+
+	// <id, amount>
+	UPROPERTY(Replicated)
+	TArray<FIntPair> CurrentBuildings;
 	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AGameplayGameState> GameState = nullptr;
@@ -363,4 +368,12 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void BP_OnDie();
+	
+	void OnTryBuyBuilding(const int BuildingIndex);
+
+	UFUNCTION(Server, reliable)
+	void Server_OnTryBuyBuilding(const int BuildingIndex);
+	
+	UFUNCTION(Client, reliable)
+	void Client_OnBuyBuilding(const int BuildingIndex);
 };
