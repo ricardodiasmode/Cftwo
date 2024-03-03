@@ -33,6 +33,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USoundBase> SoundToPlayWhenHit;
 
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> SoundToPlayWhenTakeDamage;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> SoundToPlayWhenDie;
+
 	int HarvestLeft = 3;
 	
 	/** Where the lock aim will be */
@@ -62,6 +68,9 @@ public:
 
 	UFUNCTION(Server, reliable)
 	void Server_OnGetHitted(const float Damage, AActor* Agressor);
+
+	UFUNCTION(NetMulticast, reliable)
+	void Multicast_SpawnSoundAtLocation(USoundBase* SoundToPlay);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void Die();

@@ -313,7 +313,7 @@ public:
 	UFUNCTION(Client, reliable)
 	void Client_ShakeCamera();
 
-	UFUNCTION(Client, reliable)
+	UFUNCTION(Client, reliable, BlueprintCallable)
 	void Client_PlaySound(USoundBase* SoundToPlay);
 
 	UFUNCTION(Client, reliable)

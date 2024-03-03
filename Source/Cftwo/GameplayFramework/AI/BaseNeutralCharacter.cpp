@@ -35,6 +35,17 @@ void ABaseNeutralCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 }
 
+void ABaseNeutralCharacter::Multicast_SpawnSoundAtLocation_Implementation(USoundBase* SoundToPlay)
+{
+	if (!SoundToPlay)
+		return;
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(),
+		SoundToPlay,
+		GetActorLocation(),
+		GetActorRotation());
+}
+
+
 void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage, AActor* Agressor)
 {
 	if (!GetController())
@@ -51,11 +62,16 @@ void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage
 	
 	if (CurrentHealth <= 0)
 	{
+		Multicast_SpawnSoundAtLocation(SoundToPlayWhenDie);
+		
 		Server_DropDeathActors();
 		
 		Die();
 
 		OnDie();
+	} else
+	{
+		Multicast_SpawnSoundAtLocation(SoundToPlayWhenTakeDamage);
 	}
 }
 

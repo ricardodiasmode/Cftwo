@@ -1,6 +1,4 @@
-- barulho ao pegar coin;
-- barulho quando lobo toma dano;
-- barulho quando porco toma dano;
+- barulho do lobo correndo atras;
 - criar mais construções do mapa;
 - wave 10+ paga (google play);
 
