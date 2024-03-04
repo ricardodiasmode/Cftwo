@@ -127,6 +127,7 @@ void UWeaponComponent::SpawnSFXOnAttack(const FHitResult& HitResult)
 
 void UWeaponComponent::OnPunch()
 {
+	GPrintDebug("a");
 	FVector START_LOCATION = CharacterRef->GetActorLocation() +
 		CharacterRef->GetActorForwardVector() * 75.f;
 	FVector END_LOCATION = START_LOCATION;
@@ -153,6 +154,7 @@ void UWeaponComponent::OnPunch()
 	)) {
 		for (FHitResult CurrentHit : OutHits) {
 
+			GPrintDebug("b");
 			// If target is character
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
@@ -169,6 +171,7 @@ void UWeaponComponent::OnPunch()
 			// If target is IA
 			if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
+				GPrintDebug("c");
 				float DamageToDeal = PUNCH_DAMAGE;
 				int WeaponEquipped = CharacterRef->GetEquippedWeaponId();
 				if (WeaponEquipped != -1)

@@ -1,4 +1,3 @@
-- lobo nao tomando soco?;
 - criar mais construções do mapa;
 - wave 10+ paga (google play);
 
