@@ -114,7 +114,7 @@ public:
 
 	TArray<TPair<FVector, int>> LocationsToSpawnBuildings;
 
-	TArray<FVector2D> StreetLocations;
+	TArray<FVector> StreetLocations;
 
 private:
 	void GenerateTerrain();

@@ -1,4 +1,4 @@
-- criar mais construções do mapa;
+- fazer smooth no terreno onde tem road e construção;
 - wave 10+ paga (google play);
 
 OTIMIZAÇÃO:

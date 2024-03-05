@@ -11,6 +11,7 @@
 #include <random>
 #include <cmath>
 #include "ProceduralStreet.h"
+#include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -67,7 +68,7 @@ void AProceduralTerrainGenerator::BeginPlay()
 
 	if (StreetLocations.Num() > 1)
 	{
-		const FTransform SpawnTransform = FTransform(FRotator(), FVector(StreetLocations[0].X * Scale, StreetLocations[0].Y * Scale, 0.f), FVector(1.f));
+		const FTransform SpawnTransform = FTransform(FRotator(), StreetLocations[0] * Scale, FVector(1.f));
 		AProceduralStreet* StreetRef = GetWorld()->SpawnActorDeferred<AProceduralStreet>(StreetClass, SpawnTransform);
 		if (!StreetRef)
 			return;
@@ -75,9 +76,9 @@ void AProceduralTerrainGenerator::BeginPlay()
 		
 		for (int i=1;i< StreetLocations.Num();i += 2)
 		{
-			FVector2D CurrentStreetLocation = StreetLocations[i] * Scale;
+			FVector CurrentStreetLocation = StreetLocations[i] * Scale;
 			CurrentStreetLocation -= (StreetLocations[i] * Scale - StreetLocations[i-1] * Scale)/2;
-			StreetRef->SplinePoints.Add(FVector(CurrentStreetLocation.X, CurrentStreetLocation.Y, 2.f));
+			StreetRef->SplinePoints.Add(FVector(CurrentStreetLocation.X, CurrentStreetLocation.Y, StreetLocations[i].Z * Scale + 2.f));
 		}
 		UGameplayStatics::FinishSpawningActor(StreetRef, SpawnTransform);
 	}
@@ -181,14 +182,16 @@ void AProceduralTerrainGenerator::GenerateStreets(TArray<TPair<FVector2D, int>> 
 				Direction.X = -1;
 			
 			Path += Direction;
-			StreetLocations.Add(Path);
-			StreetLocations.Add(Path + Direction.GetRotated(90));
+			StreetLocations.Add(FVector(Path.X, Path.Y, 0.f));
+			// FVector2D PathRotated = Path + Direction.GetRotated(90);
+			// StreetLocations.Add(FVector(PathRotated.X, PathRotated.Y, 0.f));
 		}
 	}
 }
 
 void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 {
+	GMyLog("Start map generation...");
 	if (!BuildingsDT)
 		return;
 	
@@ -204,10 +207,13 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 	const float UpperYBorder = static_cast<float>(YSize) - LowerYBorder;
 
 	TArray<TPair<FVector2D, int>> BuildingLocation;
+	GMyLog("Generating buildings...");
 	GenerateBuildings(LowerXBorder, UpperXBorder, LowerYBorder, UpperYBorder, &BuildingLocation);
 
+	GMyLog("Generating streets...");
 	GenerateStreets(BuildingLocation);
 	
+	GMyLog("Generating terrain...");
 	for (int i = 0; i <= XSize; i++)
 	{
 		for (int j = 0; j <= YSize; j++)
@@ -235,12 +241,18 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 				if (FMath::IsWithin(i, CurrentBuildingLoc.X, CurrentBuildingLoc.X + SpawningBuildingInfo.BuildingMinSizeX) &&
 					FMath::IsWithin(j, CurrentBuildingLoc.Y, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY))
 				{
-					ZVertex = 0;
+					const float FirstZ = Perlin_Noise(CurrentBuildingLoc.X, CurrentBuildingLoc.Y, ZSmoothness) * ZMultiplier;
+					const float SecondZ = Perlin_Noise(CurrentBuildingLoc.X, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY, ZSmoothness) * ZMultiplier;
+					const float ThirdZ = Perlin_Noise(CurrentBuildingLoc.X + SpawningBuildingInfo.BuildingMinSizeX, CurrentBuildingLoc.Y, ZSmoothness) * ZMultiplier;
+					const float FourthZ = Perlin_Noise(CurrentBuildingLoc.X + SpawningBuildingInfo.BuildingMinSizeX, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY, ZSmoothness) * ZMultiplier;
+					const float AverageZ = (FirstZ + SecondZ + ThirdZ + FourthZ)/4.f;
+					ZVertex = AverageZ;
+					LocationsToSpawnBuildings[CurrentBuilding].Key.Z = ZVertex;
 				}
 			}
 
-			if (StreetLocations.Contains(FVector2D(i, j)))
-				ZVertex = 0;
+			// if (StreetLocations.Contains(FVector(i, j, 0.f)))
+			// 	StreetLocations[StreetLocations.Find(FVector(i, j, 0.f))].Z = ZVertex;
 
 			CenterVertices.Add(FVector(i * Scale, j * Scale, ZVertex));
 			CenterUV.Add(FVector2D(i * UVScale, j * UVScale));
@@ -260,6 +272,7 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 		if (i < XSize)
 			CurrentVertex++;
 	}
+	GMyLog("Map generation finished.");
 }
 
 float AProceduralTerrainGenerator::Perlin_Noise(float x, float y, float scale, float amplitude) 
