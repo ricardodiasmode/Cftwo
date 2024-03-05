@@ -152,9 +152,8 @@ void UWeaponComponent::OnPunch()
 		OutHits,
 		true
 	)) {
-		for (FHitResult CurrentHit : OutHits) {
-
-			GPrintDebug("b");
+		for (FHitResult CurrentHit : OutHits)
+		{
 			// If target is character
 			if (AGameplayCharacter* CurrentCharacter = Cast<AGameplayCharacter>(CurrentHit.GetActor()))
 			{
@@ -171,7 +170,6 @@ void UWeaponComponent::OnPunch()
 			// If target is IA
 			if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(CurrentHit.GetActor()))
 			{
-				GPrintDebug("c");
 				float DamageToDeal = PUNCH_DAMAGE;
 				int WeaponEquipped = CharacterRef->GetEquippedWeaponId();
 				if (WeaponEquipped != -1)
