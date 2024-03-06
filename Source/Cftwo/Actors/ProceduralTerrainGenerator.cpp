@@ -251,9 +251,6 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 				}
 			}
 
-			// if (StreetLocations.Contains(FVector(i, j, 0.f)))
-			// 	StreetLocations[StreetLocations.Find(FVector(i, j, 0.f))].Z = ZVertex;
-
 			CenterVertices.Add(FVector(i * Scale, j * Scale, ZVertex));
 			CenterUV.Add(FVector2D(i * UVScale, j * UVScale));
 
