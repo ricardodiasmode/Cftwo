@@ -66,22 +66,22 @@ void AProceduralTerrainGenerator::BeginPlay()
 		GetWorld()->SpawnActor<AActor>(GetBuildingInfoByIndex(Index).BuildingClass, Location, FRotator(0.f));
 	}
 
-	if (StreetLocations.Num() > 1)
-	{
-		const FTransform SpawnTransform = FTransform(FRotator(), StreetLocations[0] * Scale, FVector(1.f));
-		AProceduralStreet* StreetRef = GetWorld()->SpawnActorDeferred<AProceduralStreet>(StreetClass, SpawnTransform);
-		if (!StreetRef)
-			return;
-		StreetRef->SplinePoints.Add(SpawnTransform.GetLocation());
-		
-		for (int i=1;i< StreetLocations.Num();i += 2)
-		{
-			FVector CurrentStreetLocation = StreetLocations[i] * Scale;
-			CurrentStreetLocation -= (StreetLocations[i] * Scale - StreetLocations[i-1] * Scale)/2;
-			StreetRef->SplinePoints.Add(FVector(CurrentStreetLocation.X, CurrentStreetLocation.Y, StreetLocations[i].Z * Scale + 2.f));
-		}
-		UGameplayStatics::FinishSpawningActor(StreetRef, SpawnTransform);
-	}
+	// if (StreetLocations.Num() > 1)
+	// {
+	// 	const FTransform SpawnTransform = FTransform(FRotator(), StreetLocations[0] * Scale, FVector(1.f));
+	// 	AProceduralStreet* StreetRef = GetWorld()->SpawnActorDeferred<AProceduralStreet>(StreetClass, SpawnTransform);
+	// 	if (!StreetRef)
+	// 		return;
+	// 	StreetRef->SplinePoints.Add(SpawnTransform.GetLocation());
+	// 	
+	// 	for (int i=1;i< StreetLocations.Num();i += 2)
+	// 	{
+	// 		FVector CurrentStreetLocation = StreetLocations[i] * Scale;
+	// 		CurrentStreetLocation -= (StreetLocations[i] * Scale - StreetLocations[i-1] * Scale)/2;
+	// 		StreetRef->SplinePoints.Add(FVector(CurrentStreetLocation.X, CurrentStreetLocation.Y, StreetLocations[i].Z * Scale + 2.f));
+	// 	}
+	// 	UGameplayStatics::FinishSpawningActor(StreetRef, SpawnTransform);
+	// }
 }
 
 FProceduralBuilding AProceduralTerrainGenerator::GetBuildingInfoByIndex(const int Index) const
@@ -155,39 +155,39 @@ void AProceduralTerrainGenerator::GenerateBuildings(const float LowerXBorder, co
 	}
 }
 
-void AProceduralTerrainGenerator::GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation)
-{
-	StreetLocations.Empty();
-	for (int i=1;i<BuildingLocation.Num();i++)
-	{
-		auto [FirstLocation, FirstUnused] = BuildingLocation[i-1];
-		auto [SecondLocation, SecondUnused] = BuildingLocation[i];
-		
-		FVector2D Path = FirstLocation;
-		while(Path != SecondLocation)
-		{
-			FVector2D Direction(0.f);
-			if (SecondLocation.X > Path.X)
-				Direction.X = 1;
-			else if (SecondLocation.X == Path.X)
-			{
-				if (SecondLocation.Y > Path.Y)
-					Direction.Y = 1;
-				else if (SecondLocation.Y == Path.Y)
-					Direction.Y = 0;
-				else
-					Direction.Y = -1;
-			}
-			else
-				Direction.X = -1;
-			
-			Path += Direction;
-			StreetLocations.Add(FVector(Path.X, Path.Y, 0.f));
-			// FVector2D PathRotated = Path + Direction.GetRotated(90);
-			// StreetLocations.Add(FVector(PathRotated.X, PathRotated.Y, 0.f));
-		}
-	}
-}
+// void AProceduralTerrainGenerator::GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation)
+// {
+// 	StreetLocations.Empty();
+// 	for (int i=1;i<BuildingLocation.Num();i++)
+// 	{
+// 		auto [FirstLocation, FirstUnused] = BuildingLocation[i-1];
+// 		auto [SecondLocation, SecondUnused] = BuildingLocation[i];
+// 		
+// 		FVector2D Path = FirstLocation;
+// 		while(Path != SecondLocation)
+// 		{
+// 			FVector2D Direction(0.f);
+// 			if (SecondLocation.X > Path.X)
+// 				Direction.X = 1;
+// 			else if (SecondLocation.X == Path.X)
+// 			{
+// 				if (SecondLocation.Y > Path.Y)
+// 					Direction.Y = 1;
+// 				else if (SecondLocation.Y == Path.Y)
+// 					Direction.Y = 0;
+// 				else
+// 					Direction.Y = -1;
+// 			}
+// 			else
+// 				Direction.X = -1;
+// 			
+// 			Path += Direction;
+// 			StreetLocations.Add(FVector(Path.X, Path.Y, 0.f));
+// 			// FVector2D PathRotated = Path + Direction.GetRotated(90);
+// 			// StreetLocations.Add(FVector(PathRotated.X, PathRotated.Y, 0.f));
+// 		}
+// 	}
+// }
 
 void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 {
@@ -210,8 +210,8 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 	GMyLog("Generating buildings...");
 	GenerateBuildings(LowerXBorder, UpperXBorder, LowerYBorder, UpperYBorder, &BuildingLocation);
 
-	GMyLog("Generating streets...");
-	GenerateStreets(BuildingLocation);
+	//GMyLog("Generating streets...");
+	//GenerateStreets(BuildingLocation);
 	
 	GMyLog("Generating terrain...");
 	for (int i = 0; i <= XSize; i++)

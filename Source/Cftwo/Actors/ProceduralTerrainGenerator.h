@@ -114,14 +114,14 @@ public:
 
 	TArray<TPair<FVector, int>> LocationsToSpawnBuildings;
 
-	TArray<FVector> StreetLocations;
+	//TArray<FVector> StreetLocations;
 
 private:
 	void GenerateTerrain();
 
 	void GenerateBuildings(const float LowerXBorder, const float UpperXBorder, const float LowerYBorder, const float UpperYBorder, TArray<TPair<FVector2D, int>>* BuildingLocation);
 
-	void GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation);
+	//void GenerateStreets(TArray<TPair<FVector2D, int>> BuildingLocation);
 
 	void CreateVerticesAndTriangles();
 
