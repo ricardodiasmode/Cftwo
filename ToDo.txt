@@ -1,6 +1,8 @@
-- fazer smooth no terreno onde tem road e construção;
 - wave 10+ paga (google play);
-- anuncio para continuar;
+- anuncio para continuar sem pagar;
+- censurar penis;
+- escolhendo lugar pra colocar building e clicando no check pra colocar ou no X pra cancelar;
+- app integrity;
 
 OTIMIZAÇÃO:
 - árvores e pedras podem voltar a ser foliages. Fazer como unturned que tem o recurso mostrando pra fora e depois de bater o suficiente o recurso acaba, mudando o mesh da foliage;

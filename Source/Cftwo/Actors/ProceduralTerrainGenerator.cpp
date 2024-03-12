@@ -29,7 +29,7 @@ float AProceduralTerrainGenerator::GenerateRandomFloat(float min, float max) {
 
 	std::mt19937 generator(seed);
 
-	const std::uniform_real_distribution<float> distribution(min, max);
+	std::uniform_real_distribution<float> distribution(min, max);
 
 	return distribution(generator);
 }
