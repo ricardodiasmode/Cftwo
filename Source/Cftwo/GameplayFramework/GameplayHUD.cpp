@@ -140,3 +140,9 @@ void AGameplayHUD::OnTryBuyBuilding(const int BuildingIndex)
 {
     CharacterRef->OnTryBuyBuilding(BuildingIndex);
 }
+
+void AGameplayHUD::RemoveBuilding(const int BuildingIndex)
+{
+    GPrintDebug("remove building");
+    CharacterRef->RemoveBuilding(BuildingIndex);
+}

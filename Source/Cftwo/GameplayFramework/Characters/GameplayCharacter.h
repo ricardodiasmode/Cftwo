@@ -376,4 +376,12 @@ public:
 	
 	UFUNCTION(Client, reliable)
 	void Client_OnBuyBuilding(const int BuildingIndex);
+	
+	UFUNCTION(Client, reliable)
+	void Client_OnUseBuilding(const int BuildingIndex);
+	
+	void RemoveBuilding(const int BuildingIndex);
+
+	UFUNCTION(Server, reliable)
+	void Server_RemoveBuilding(const int BuildingIndex);
 };

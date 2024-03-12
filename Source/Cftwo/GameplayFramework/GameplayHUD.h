@@ -91,6 +91,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnTryBuyBuilding(const int BuildingIndex);
 
+	UFUNCTION(BlueprintCallable)
+	void RemoveBuilding(int BuildingIndex);
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBuyBuilding(const int BuildingIndex);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUseBuilding(const int BuildingIndex);
 };

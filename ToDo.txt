@@ -1,7 +1,6 @@
 - wave 10+ paga (google play);
 - anuncio para continuar sem pagar;
 - censurar penis;
-- escolhendo lugar pra colocar building e clicando no check pra colocar ou no X pra cancelar;
 - app integrity;
 
 OTIMIZAÇÃO:

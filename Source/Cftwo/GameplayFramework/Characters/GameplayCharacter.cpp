@@ -608,6 +608,11 @@ void AGameplayCharacter::Client_OnBuyBuilding_Implementation(const int BuildingI
 	HUDRef->OnBuyBuilding(BuildingIndex);
 }
 
+void AGameplayCharacter::Client_OnUseBuilding_Implementation(const int BuildingIndex)
+{
+	HUDRef->OnUseBuilding(BuildingIndex);
+}
+
 void AGameplayCharacter::Server_OnTryBuyBuilding_Implementation(const int BuildingIndex)
 {
 	if (GameState->Coins <= 0)
@@ -633,6 +638,35 @@ void AGameplayCharacter::Server_OnTryBuyBuilding_Implementation(const int Buildi
 void AGameplayCharacter::OnTryBuyBuilding(const int BuildingIndex)
 {
 	Server_OnTryBuyBuilding(BuildingIndex);
+}
+
+void AGameplayCharacter::Server_RemoveBuilding_Implementation(const int BuildingIndex)
+{
+	GPrintDebug("a");
+
+	int CurrentIndex = -1;
+	bool Remove = false;
+	for (auto [index, amount] : CurrentBuildings)
+	{
+		CurrentIndex++;
+		if (index != BuildingIndex)
+			continue;
+		GPrintDebug("b");
+
+		CurrentBuildings[CurrentIndex].Second--;
+		if (CurrentBuildings[CurrentIndex].Second == 0)
+			Remove = true;
+		break;
+	}
+	if (Remove)
+		CurrentBuildings.RemoveAt(CurrentIndex);
+	GPrintDebug("c");
+	Client_OnUseBuilding(BuildingIndex);
+}
+
+void AGameplayCharacter::RemoveBuilding(const int BuildingIndex)
+{
+	Server_RemoveBuilding(BuildingIndex);
 }
 
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
