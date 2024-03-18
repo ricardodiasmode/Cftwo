@@ -43,6 +43,14 @@ void AGameplayPlayerController::Client_SetPawnInHUD_Implementation()
 	Cast<AGameplayHUD>(GetHUD())->CharacterRef = Cast<AGameplayCharacter>(GetPawn());
 }
 
+void AGameplayPlayerController::Client_CreateWaveExtentionWidget_Implementation()
+{
+	if (!GetHUD())
+		return;
+
+	Cast<AGameplayHUD>(GetHUD())->CreateWaveExtentionWidget();
+}
+
 void AGameplayPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

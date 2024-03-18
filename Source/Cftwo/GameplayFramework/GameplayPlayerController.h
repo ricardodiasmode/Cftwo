@@ -35,5 +35,8 @@ public:
 	UFUNCTION(Client, reliable)
 	void Client_SetPawnInHUD();
 
+	UFUNCTION(Client, reliable)
+	void Client_CreateWaveExtentionWidget();
+	
 	virtual void OnPossess(APawn* InPawn) override;
 };

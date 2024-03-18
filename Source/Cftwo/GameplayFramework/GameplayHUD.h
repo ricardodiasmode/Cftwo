@@ -41,6 +41,9 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> MistakenWeaponWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> WaveExtentionWidgetClass;
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	UStatusWidget* StatusWidget = nullptr;
@@ -83,7 +86,7 @@ public:
 	void OnMistakenWeapon();
 
 	void FarCloseToWorkbench(const bool Far);
-	
+
 	void Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex);
 	
 	void DropChestSlot(AChest* ChestRef, const int ChestIndex);
@@ -99,4 +102,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUseBuilding(const int BuildingIndex);
+	
+	void OnBuyWaveExtention();
+	
+	void CreateWaveExtentionWidget();
 };

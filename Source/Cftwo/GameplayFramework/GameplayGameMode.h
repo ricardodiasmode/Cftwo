@@ -29,5 +29,8 @@ protected:
 
 public:
 	void SpawnPlayerCharacter(APlayerController* NewPlayer);
-	
+
+	void OnBuyWaveExtention();
+
+	void OnReachLimitWave();
 };

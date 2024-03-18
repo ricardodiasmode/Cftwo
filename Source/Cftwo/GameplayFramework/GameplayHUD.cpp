@@ -2,12 +2,15 @@
 
 
 #include "GameplayHUD.h"
+
+#include "GameplayGameMode.h"
 #include "../UI/RespawnWidget.h"
 #include "../UI/CraftWidget.h"
 #include "../UI/StatusWidget.h"
 #include "GameplayPlayerController.h"
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Characters/GameplayCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 void AGameplayHUD::BeginPlay()
 {
@@ -143,6 +146,17 @@ void AGameplayHUD::OnTryBuyBuilding(const int BuildingIndex)
 
 void AGameplayHUD::RemoveBuilding(const int BuildingIndex)
 {
-    GPrintDebug("remove building");
     CharacterRef->RemoveBuilding(BuildingIndex);
+}
+
+void AGameplayHUD::OnBuyWaveExtention()
+{
+    AGameplayGameMode* GameMode = Cast<AGameplayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    GameMode->OnBuyWaveExtention();
+}
+
+void AGameplayHUD::CreateWaveExtentionWidget()
+{
+    UUserWidget* MistakenWeapon = CreateWidget<UUserWidget>(GetWorld(), WaveExtentionWidgetClass);
+    MistakenWeapon->AddToViewport();
 }

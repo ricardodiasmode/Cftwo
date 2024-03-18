@@ -3,6 +3,7 @@
 
 #include "PowerSphere.h"
 
+#include "Cftwo/GameplayFramework/GameplayGameMode.h"
 #include "Cftwo/GameplayFramework/GameplayGameState.h"
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -75,6 +76,12 @@ void APowerSphere::SpawnWave()
 	}
 	
 	GameState->CurrentWave++;
+
+	if (GameState->CurrentWave == 11)
+	{
+		AGameplayGameMode* CurrentGameMode = Cast<AGameplayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+		CurrentGameMode->OnReachLimitWave();
+	}
 }
 
 

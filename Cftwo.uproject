@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.2",
+	"EngineAssociation": "{E68B8B27-4221-E5AA-D980-AC87C6CE1E56}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -135,9 +135,14 @@
 			"Name": "AsyncLoadingScreen",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/01f39767dc6b4290877f38365787cbf8"
+		},
+		{
+			"Name": "OnlineSubsystemGoogle",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
-		"Android"
+		"Android",
+		"HoloLens"
 	]
 }

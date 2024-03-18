@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GameplayGameMode.h"
+
+#include "DefaultGameInstance.h"
+#include "GameplayPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
 #include "Characters/GameplayCharacter.h"
@@ -61,4 +64,23 @@ void AGameplayGameMode::SpawnPlayerCharacter(APlayerController* NewPlayer)
 		NewPlayer->Possess(CharacterRef);
 		CharacterRef->Server_OnSetPlayerController();
 	}
+}
+
+void AGameplayGameMode::OnBuyWaveExtention()
+{
+	UDefaultGameInstance* GameInstance = Cast<UDefaultGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	GameInstance->ActivateWaveExtention();
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+}
+
+void AGameplayGameMode::OnReachLimitWave()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+
+	UDefaultGameInstance* GameInstance = Cast<UDefaultGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GameInstance->WaveExtentionActivated)
+		return;
+	
+	AGameplayPlayerController* ControllerRef = Cast<AGameplayPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	ControllerRef->Client_CreateWaveExtentionWidget();
 }
