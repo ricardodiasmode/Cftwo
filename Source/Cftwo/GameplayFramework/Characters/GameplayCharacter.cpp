@@ -893,20 +893,72 @@ void AGameplayCharacter::OnUpdateInventory(TArray<FInventorySlot> Slots, const T
 	RightHandItemComponent->SetRelativeTransform(Slots[1].ItemInfo.TransformOnHand);
 }
 
-void AGameplayCharacter::Server_SwapChestInventorySlots_Implementation(AChest* ChestRef, const int ChestIndex, const int InventoryIndex)
+void AGameplayCharacter::Server_SwapChestInventorySlots_Implementation(AChest* ChestRef, const int ChestIndex, const int InventoryIndex, const bool FromChest)
 {
-	const FInventorySlot InventorySlot = InventoryComponent->Slots[InventoryIndex];
-	InventoryComponent->Slots[InventoryIndex] = ChestRef->Slots[ChestIndex];
-	InventoryComponent->UpdateInventory();
-	ChestRef->Slots[ChestIndex] = InventorySlot;
+	// Checking if are the same ids
+	if (InventoryComponent->Slots[InventoryIndex].ItemInfo.Index ==
+		ChestRef->Slots[ChestIndex].ItemInfo.Index)
+	{
+		FInventorySlot* FromSlot;
+		FInventorySlot* ToSlot;
+		if (FromChest)
+		{
+			ToSlot = &(InventoryComponent->Slots[InventoryIndex]);
+			FromSlot = &(ChestRef->Slots[ChestIndex]);
+		} else
+		{		
+			ToSlot = &(ChestRef->Slots[ChestIndex]);
+			FromSlot = &(InventoryComponent->Slots[InventoryIndex]);	
+		}
+		
+		const int MaxStack = ToSlot->ItemInfo.MaxStack;
+		ToSlot->Amount += FromSlot->Amount;
+		if (ToSlot->Amount > MaxStack)
+		{
+			const int Remaining = ToSlot->Amount - MaxStack;
+			ToSlot->Amount = MaxStack;
+			FromSlot->Amount = Remaining;
+		} else
+		{
+			FromSlot->ItemInfo = FInventoryItem();
+			FromSlot->Amount = 0;
+		}
+	} else
+	{
+		const FInventorySlot InventorySlot = InventoryComponent->Slots[InventoryIndex];
+		InventoryComponent->Slots[InventoryIndex] = ChestRef->Slots[ChestIndex];
+		ChestRef->Slots[ChestIndex] = InventorySlot;
+	}
 	ChestRef->UpdateInventory();
+	InventoryComponent->UpdateInventory();
 }
 
 void AGameplayCharacter::Server_SwapChestSlots_Implementation(AChest* ChestRef, const int FirstChestIndex, const int SecondChestIndex)
 {
-	const FInventorySlot FirstSlot = ChestRef->Slots[FirstChestIndex];
-	ChestRef->Slots[FirstChestIndex] = ChestRef->Slots[SecondChestIndex];
-	ChestRef->Slots[SecondChestIndex] = FirstSlot;
+	// Checking if are the same ids
+	if (ChestRef->Slots[FirstChestIndex].ItemInfo.Index == ChestRef->Slots[SecondChestIndex].ItemInfo.Index)
+	{
+		FInventorySlot* ToSlot = &ChestRef->Slots[FirstChestIndex];
+		FInventorySlot* FromSlot = &ChestRef->Slots[SecondChestIndex];
+
+		const int MaxStack = ToSlot->ItemInfo.MaxStack;
+		ToSlot->Amount += FromSlot->Amount;
+		if (ToSlot->Amount > MaxStack)
+		{
+			const int Remaining = ToSlot->Amount - MaxStack;
+			ToSlot->Amount = MaxStack;
+			FromSlot->Amount = Remaining;
+		} else
+		{
+			FromSlot->ItemInfo = FInventoryItem();
+			FromSlot->Amount = 0;
+		}
+	} else
+	{
+		const FInventorySlot FirstSlot = ChestRef->Slots[FirstChestIndex];
+		ChestRef->Slots[FirstChestIndex] = ChestRef->Slots[SecondChestIndex];
+		ChestRef->Slots[SecondChestIndex] = FirstSlot;
+	}
 	ChestRef->UpdateInventory();
 }
 

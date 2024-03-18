@@ -87,7 +87,7 @@ public:
 
 	void FarCloseToWorkbench(const bool Far);
 
-	void Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex);
+	void Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex, const bool FromChest);
 	
 	void DropChestSlot(AChest* ChestRef, const int ChestIndex);
 

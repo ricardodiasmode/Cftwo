@@ -355,7 +355,7 @@ public:
 	void Server_SwapChestSlots(AChest* ChestRef, const int FirstChestIndex, const int SecondChestIndex);
 
 	UFUNCTION(Server, reliable, BlueprintCallable)
-	void Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex);
+	void Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex, const bool FromChest);
 	
 	UFUNCTION(Server, reliable, BlueprintCallable)
 	void Server_DropChestSlot(AChest* ChestRef, const int ChestIndex);

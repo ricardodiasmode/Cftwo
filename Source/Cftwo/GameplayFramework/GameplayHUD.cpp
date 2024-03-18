@@ -129,9 +129,9 @@ void AGameplayHUD::FarCloseToWorkbench(const bool Far)
     InventoryWidget->FarCloseToWorkbench(Far);
 }
 
-void AGameplayHUD::Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex)
+void AGameplayHUD::Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex, const bool FromChest)
 {
-    CharacterRef->Server_SwapChestInventorySlots(ChestRef, ChestIndex, InventoryIndex);
+    CharacterRef->Server_SwapChestInventorySlots(ChestRef, ChestIndex, InventoryIndex, FromChest);
 }
 
 void AGameplayHUD::DropChestSlot(AChest* ChestRef, const int ChestIndex)

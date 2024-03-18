@@ -1,16 +1,5 @@
-- anuncio para continuar sem pagar;
-- lobos da power sphere não estão dropando coins;
-- as primeiras waves podem vir mais rapidas (10s) e ir aumentando o tempo de 5 em 5 segundos;
-- lobos spawnados pela power sphere precisam ter o trace mais alto;
-- nao está stackando no bau;
-- lobo boss deve ser maior e não sumir;
-- actors devem spawnar e despawnar ao redor do personagem;
 - right stick for thumb2 então não está parando rotação ao parar o dedo;
-- ajustar location do stick do punch;
-- npcs estao todos parados;
-- mochila não está aparecendo;
-- ajustar items que dropam nas construções;
-- trace do tiro deve sair da camera e ir para o alvo;
+- anuncio para continuar sem pagar;
 - substituir workbench por martelo que fica na cintura do personagem;
 - colocar no help todas as receitas possiveis (fica escuro até fazer pela primeira vez);
 - árvores e pedras podem voltar a ser foliages. Fazer como unturned que tem o recurso mostrando pra fora e depois de bater o suficiente o recurso acaba, mudando o mesh da foliage;
@@ -20,6 +9,8 @@
 - olhar otimizações no bookbar;
 - arvore e pedra de longe deve ser billboard;
 - craftar sem slot o item some;
+- actors devem spawnar e despawnar ao redor do personagem;
 - app integrity;
+- mochila não está aparecendo nas costas;
 
 - voltar com multiplayer;

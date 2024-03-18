@@ -29,16 +29,6 @@ void APowerSphere::Server_StartSpawnWaves_Implementation()
 	GameState = Cast<AGameplayGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	
 	SpawnWave();
-
-	FTimerHandle UnusedHandle;
-	GetWorldTimerManager().SetTimer(UnusedHandle,
-		FTimerDelegate::CreateLambda([this]
-		{
-			SpawnWave();
-		}),
-		IntervalBetweenWaves,
-		true
-		);
 }
 
 void APowerSphere::SpawnWave()
@@ -49,6 +39,18 @@ void APowerSphere::SpawnWave()
 		GPrintDebug("found no game state. Trying again.");
 		return;
 	}
+	
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle,
+		FTimerDelegate::CreateLambda([this]
+		{
+			InitialIntervalBetweenWaves = FMath::Clamp(InitialIntervalBetweenWaves + IntervalAdditionBetweenWaves, 0.f, 60.f);
+			SpawnWave();
+		}),
+		InitialIntervalBetweenWaves,
+		false
+		);
+	
 	const int NumberOfMonstersToSpawn = GameState->CurrentWave + 1;
 	
 	for (int i = 0; i < NumberOfMonstersToSpawn; i++)
@@ -62,8 +64,8 @@ void APowerSphere::SpawnWave()
 		const FVector SpawnLocation = FVector(SpawnLocationX, SpawnLocationY, GetActorLocation().Z);
 		FHitResult OutHit;
 		GetWorld()->LineTraceSingleByChannel(OutHit,
-			SpawnLocation + FVector(0.f, 0.f, 5000),
-			SpawnLocation + FVector(0.f, 0.f, -5000),
+			SpawnLocation + FVector(0.f, 0.f, 15000),
+			SpawnLocation + FVector(0.f, 0.f, -15000),
 			ECC_Visibility);
 		if (OutHit.bBlockingHit)
 		{

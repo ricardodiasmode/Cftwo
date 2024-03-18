@@ -18,7 +18,9 @@ private:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Meta = (ClampMin = 0.f))
-	float IntervalBetweenWaves = 60.f;
+	float InitialIntervalBetweenWaves = 5.f;
+	UPROPERTY(EditDefaultsOnly, Meta = (ClampMin = 0.f))
+	float IntervalAdditionBetweenWaves = 5.f;
 	UPROPERTY(EditDefaultsOnly, Meta = (ClampMin = 0.f))
 	float SpawnAngle = 5.f;
 	UPROPERTY(EditDefaultsOnly, Meta = (ClampMin = 0.f))
