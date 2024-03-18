@@ -14,5 +14,12 @@ public class CftwoTarget : TargetRules
 
 		BuildEnvironment = TargetBuildEnvironment.Unique;
 		bUseLoggingInShipping = true;
+
+		if (Target.Platform == UnrealTargetPlatform.Android)
+		{
+			ExtraModuleNames.Add("OnlineSubsystemGooglePlay");
+			ExtraModuleNames.Add("OnlineSubsystem");
+			ExtraModuleNames.Add("AndroidAdvertising");
+		}
 	}
 }

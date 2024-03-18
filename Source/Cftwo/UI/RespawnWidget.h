@@ -17,4 +17,7 @@ class CFTWO_API URespawnWidget : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void OnRespawn();
+	
+	UFUNCTION(BlueprintCallable)
+	void OnContinue();
 };

@@ -12,3 +12,9 @@ void URespawnWidget::OnRespawn()
 		HUDRef->OnRespawn();
 	}
 }
+
+void URespawnWidget::OnContinue()
+{
+	// todo: continuar dps de ver add
+}
+
