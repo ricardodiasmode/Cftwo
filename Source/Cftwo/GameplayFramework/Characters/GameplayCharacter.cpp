@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GameplayCharacter.h"
+
+#include "AIController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
@@ -457,6 +459,9 @@ void AGameplayCharacter::UpdateHealthWidget()
 
 void AGameplayCharacter::RemoveHealth(const int Amount)
 {
+	if (Dead || Invulnerable)
+		return;
+	
 	const float DamageMultiplierReduction = (100.f - static_cast<float>(CurrentDefensePoints))/100.f;
 	CurrentHealth -= Amount * DamageMultiplierReduction;
 	if (CurrentHealth < 0.f)
@@ -517,12 +522,15 @@ void AGameplayCharacter::OnRep_CurrentHungry()
 
 void AGameplayCharacter::Die()
 {
-	if (!InventoryComponent)
-		return;
+	if (Cast<AAIController>(GetController()))
+	{
+		if (!InventoryComponent)
+			return;
+		InventoryComponent->DropAllItems();
+	}
 
 	GetWorldTimerManager().ClearTimer(HungryTimerHandle);
 	
-	InventoryComponent->DropAllItems();
 	Client_OnDie();
 	Dead = true;
 
@@ -532,9 +540,15 @@ void AGameplayCharacter::Die()
 		FTimerDelegate::CreateLambda(
 			[this]
 			{
-				Destroy();
+				if (Cast<AAIController>(GetController()))
+				{
+					Destroy();
+				} else
+				{
+					UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+				}
 			}),
-			5.f,
+			3.f,
 			false);
 }
 
@@ -667,6 +681,21 @@ void AGameplayCharacter::Server_RemoveBuilding_Implementation(const int Building
 void AGameplayCharacter::RemoveBuilding(const int BuildingIndex)
 {
 	Server_RemoveBuilding(BuildingIndex);
+}
+
+void AGameplayCharacter::OnContinue()
+{
+	Dead = false;
+	AddHealth(100.f);
+	Invulnerable = true;
+	FTimerHandle UnusedHandle;
+	GetWorldTimerManager().SetTimer(UnusedHandle,
+		FTimerDelegate::CreateLambda([this]
+		{
+			Invulnerable = false;
+		}),
+		5.f,
+		false);
 }
 
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const

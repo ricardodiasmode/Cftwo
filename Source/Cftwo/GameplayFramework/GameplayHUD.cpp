@@ -65,6 +65,17 @@ void AGameplayHUD::OnRespawn()
     PCRef->Server_AskToRespawn();
 }
 
+void AGameplayHUD::OnContinue()
+{
+    GetOwningPlayerController()->SetShowMouseCursor(false);
+    GetOwningPlayerController()->SetInputMode(FInputModeGameOnly());
+    StatusWidget->SetVisibility(ESlateVisibility::Visible);
+    InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+    
+    AGameplayPlayerController* PCRef = Cast<AGameplayPlayerController>(GetOwningPlayerController());
+    PCRef->Server_AskToContinue();
+}
+
 void AGameplayHUD::OnGetHitted()
 {
     if (StatusWidget == nullptr)
@@ -96,8 +107,8 @@ void AGameplayHUD::OnDie()
 {
     GetOwningPlayerController()->SetShowMouseCursor(true);
     GetOwningPlayerController()->SetInputMode(FInputModeUIOnly());
-    StatusWidget->RemoveFromParent();
-    InventoryWidget->RemoveFromParent();
+    StatusWidget->SetVisibility(ESlateVisibility::Hidden);
+    InventoryWidget->SetVisibility(ESlateVisibility::Hidden);
     
     URespawnWidget* RespawnWidget = CreateWidget<URespawnWidget>(GetWorld(), RespawnWidgetClass);
     RespawnWidget->AddToViewport();

@@ -15,6 +15,10 @@ void URespawnWidget::OnRespawn()
 
 void URespawnWidget::OnContinue()
 {
-	// todo: continuar dps de ver add
+	APlayerController* ControllerRef = Cast<APlayerController>(GetOwningPlayer());
+	if (ControllerRef) {
+		AGameplayHUD* HUDRef = Cast<AGameplayHUD>(ControllerRef->GetHUD());
+		HUDRef->OnContinue();
+	}
 }
 

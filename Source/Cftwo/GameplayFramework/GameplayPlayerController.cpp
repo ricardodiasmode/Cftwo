@@ -9,8 +9,19 @@
 
 void AGameplayPlayerController::Server_AskToRespawn_Implementation()
 {
-	AGameplayGameMode* GMRef = Cast<AGameplayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	GMRef->SpawnPlayerCharacter(this);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	UGameplayStatics::OpenLevel(GetWorld(), "ProceduralMap");
+	// AGameplayGameMode* GMRef = Cast<AGameplayGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	// GMRef->SpawnPlayerCharacter(this);
+}
+
+void AGameplayPlayerController::Server_AskToContinue_Implementation()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	if (!Cast<AGameplayCharacter>(GetPawn()))
+		return;
+	Cast<AGameplayCharacter>(GetPawn())->OnContinue();
+	
 }
 
 void AGameplayPlayerController::Client_AskToPunch_Implementation()

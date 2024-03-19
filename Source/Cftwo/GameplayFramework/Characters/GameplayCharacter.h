@@ -88,6 +88,8 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	AGameplayHUD* HUDRef = nullptr;
 
+	bool Invulnerable = false;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
@@ -384,4 +386,6 @@ public:
 
 	UFUNCTION(Server, reliable)
 	void Server_RemoveBuilding(const int BuildingIndex);
+
+	void OnContinue();
 };

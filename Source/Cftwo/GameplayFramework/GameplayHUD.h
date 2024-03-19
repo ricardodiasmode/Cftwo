@@ -106,4 +106,6 @@ public:
 	void OnBuyWaveExtention();
 	
 	void CreateWaveExtentionWidget();
+	
+	void OnContinue();
 };
