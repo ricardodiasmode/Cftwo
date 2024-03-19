@@ -688,6 +688,7 @@ void AGameplayCharacter::OnContinue()
 	Dead = false;
 	AddHealth(100.f);
 	Invulnerable = true;
+	IsAdAvailableToContinue = false;
 	FTimerHandle UnusedHandle;
 	GetWorldTimerManager().SetTimer(UnusedHandle,
 		FTimerDelegate::CreateLambda([this]

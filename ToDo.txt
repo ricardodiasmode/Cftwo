@@ -1,4 +1,3 @@
-- anuncio para continuar sem pagar;
 - right stick for thumb2 então não está parando rotação ao parar o dedo;
 - substituir workbench por martelo que fica na cintura do personagem;
 - colocar no help todas as receitas possiveis (fica escuro até fazer pela primeira vez);

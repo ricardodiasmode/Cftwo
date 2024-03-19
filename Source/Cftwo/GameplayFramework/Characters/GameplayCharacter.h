@@ -106,6 +106,9 @@ protected:
 
 public:
 
+	UPROPERTY(BlueprintReadOnly)
+	bool IsAdAvailableToContinue = true;
+
 	UPROPERTY(BlueprintReadWrite)
 	USphereComponent* WorldCollision = nullptr;
 
