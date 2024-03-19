@@ -1,4 +1,3 @@
-- colocar no help todas as receitas possiveis (fica escuro até fazer pela primeira vez);
 - árvores e pedras podem voltar a ser foliages. Fazer como unturned que tem o recurso mostrando pra fora e depois de bater o suficiente o recurso acaba, mudando o mesh da foliage;
 - colocar mato;
 - arrumar anim do lobo morrendo;
