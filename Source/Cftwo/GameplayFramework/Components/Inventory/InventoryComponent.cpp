@@ -279,7 +279,8 @@ bool UInventoryComponent::UseItem(const int InventoryIndex)
 {
 	const EItemType CurrentItemType = Slots[InventoryIndex].ItemInfo.ItemType;
 	if (CurrentItemType != EItemType::FOOD &&
-		CurrentItemType != EItemType::HEAL) return false;
+		CurrentItemType != EItemType::HEAL &&
+		CurrentItemType != EItemType::HAMMER) return false;
 	
 	AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
 
@@ -287,6 +288,11 @@ bool UInventoryComponent::UseItem(const int InventoryIndex)
 		CharacterRef->AddHungry(Slots[InventoryIndex].ItemInfo.BuffOnUse);
 	else if (CurrentItemType == EItemType::HEAL)
 		CharacterRef->AddHealth(Slots[InventoryIndex].ItemInfo.BuffOnUse);
+	else if (CurrentItemType == EItemType::HAMMER)
+	{
+		CharacterRef->HasHammer = true;
+		CharacterRef->OnGetHammer();		
+	}
 	
 	RemoveItem(InventoryIndex, 1);
 	return true;

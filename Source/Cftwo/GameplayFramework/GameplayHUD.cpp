@@ -35,11 +35,6 @@ void AGameplayHUD::UpdateInventory(TArray<FInventorySlot> SlotsRef, const TArray
     InventoryWidget->WeaponSlots.Empty();
     InventoryWidget->WeaponSlots.Append(WeaponSlotsRef);
     InventoryWidget->UpdateSlots();
-
-    if (CharacterRef->CloseWorkbenches.Num() > 0)
-        FarCloseToWorkbench(false);
-
-    // CraftWidget->OnUpdateAvailableItems(SlotsRef);
 }
 
 void AGameplayHUD::InitializeStatusWidget(AGameplayCharacter* OwningCharacter)
@@ -133,11 +128,6 @@ void AGameplayHUD::OnMistakenWeapon()
 {
     UUserWidget* MistakenWeapon = CreateWidget<UUserWidget>(GetWorld(), MistakenWeaponWidgetClass);
     MistakenWeapon->AddToViewport();
-}
-
-void AGameplayHUD::FarCloseToWorkbench(const bool Far)
-{
-    InventoryWidget->FarCloseToWorkbench(Far);
 }
 
 void AGameplayHUD::Server_SwapChestInventorySlots(AChest* ChestRef, const int ChestIndex, const int InventoryIndex, const bool FromChest)

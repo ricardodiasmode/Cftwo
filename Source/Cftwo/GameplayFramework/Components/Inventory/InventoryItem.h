@@ -17,6 +17,7 @@ enum class EItemType : uint8 {
 	EQUIP = 4     UMETA(DisplayName = "EQUIP"),
 	BACKPACK = 5     UMETA(DisplayName = "BACKPACK"),
 	PLACEABLE = 6     UMETA(DisplayName = "PLACEABLE"),
+	HAMMER = 7     UMETA(DisplayName = "HAMMER"),
 };
 
 UENUM(BlueprintType)

@@ -112,10 +112,11 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	USphereComponent* WorldCollision = nullptr;
 
-	TArray<AWorkbench*> CloseWorkbenches;
-
 	UPROPERTY(BlueprintReadOnly)
 	TArray<ABreakableObject*> BreakableRocks;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool HasHammer = false;
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<ABreakableObject*> BreakableTrees;
@@ -391,4 +392,7 @@ public:
 	void Server_RemoveBuilding(const int BuildingIndex);
 
 	void OnContinue();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGetHammer();
 };

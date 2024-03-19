@@ -224,13 +224,7 @@ void AGameplayCharacter::Look(const FInputActionValue& Value)
 
 void AGameplayCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<AWorkbench>(OtherActor) && !CloseWorkbenches.Contains(Cast<AWorkbench>(OtherActor)))
-	{
-		CloseWorkbenches.Add(Cast<AWorkbench>(OtherActor));
-		
-		if (HUDRef)
-			HUDRef->FarCloseToWorkbench(false);
-	} else if (AChest* ChestRef = Cast<AChest>(OtherActor))
+	if (AChest* ChestRef = Cast<AChest>(OtherActor))
 	{
 		Client_OnCharacterGetCloseToChest(ChestRef);
 	}
@@ -255,13 +249,7 @@ void AGameplayCharacter::OnEndOverlapInteractable(AActor* OtherActor)
 
 void AGameplayCharacter::OnComponentEndOverlap(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Cast<AWorkbench>(OtherActor) && CloseWorkbenches.Contains(OtherActor))
-	{
-		CloseWorkbenches.Remove(Cast<AWorkbench>(OtherActor));
-		
-		if (HUDRef && CloseWorkbenches.Num() == 0)
-			HUDRef->FarCloseToWorkbench(true);
-	} else if (AChest* ChestRef = Cast<AChest>(OtherActor))
+	if (AChest* ChestRef = Cast<AChest>(OtherActor))
 	{
 		Client_OnCharacterGetFarToChest(ChestRef);
 	}
@@ -656,8 +644,6 @@ void AGameplayCharacter::OnTryBuyBuilding(const int BuildingIndex)
 
 void AGameplayCharacter::Server_RemoveBuilding_Implementation(const int BuildingIndex)
 {
-	GPrintDebug("a");
-
 	int CurrentIndex = -1;
 	bool Remove = false;
 	for (auto [index, amount] : CurrentBuildings)
@@ -665,7 +651,6 @@ void AGameplayCharacter::Server_RemoveBuilding_Implementation(const int Building
 		CurrentIndex++;
 		if (index != BuildingIndex)
 			continue;
-		GPrintDebug("b");
 
 		CurrentBuildings[CurrentIndex].Second--;
 		if (CurrentBuildings[CurrentIndex].Second == 0)
@@ -674,7 +659,6 @@ void AGameplayCharacter::Server_RemoveBuilding_Implementation(const int Building
 	}
 	if (Remove)
 		CurrentBuildings.RemoveAt(CurrentIndex);
-	GPrintDebug("c");
 	Client_OnUseBuilding(BuildingIndex);
 }
 
