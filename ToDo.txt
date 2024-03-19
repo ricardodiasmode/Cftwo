@@ -1,11 +1,7 @@
-- árvores e pedras podem voltar a ser foliages. Fazer como unturned que tem o recurso mostrando pra fora e depois de bater o suficiente o recurso acaba, mudando o mesh da foliage;
-- colocar mato;
-- arrumar anim do lobo morrendo;
+- actors devem spawnar e despawnar ao redor do personagem;
 - IA deve considerar o inimigo mais proximo, em vez do primeiro que viu;
 - olhar otimizações no bookbar;
-- arvore e pedra de longe deve ser billboard;
 - craftar sem slot o item some;
-- actors devem spawnar e despawnar ao redor do personagem;
 - app integrity;
 - mochila não está aparecendo nas costas;
 
