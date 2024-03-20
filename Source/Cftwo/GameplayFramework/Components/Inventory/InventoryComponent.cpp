@@ -332,7 +332,7 @@ void UInventoryComponent::ConvertItem(const int SlotIndex, const int AmountToRem
 	if(FoundSlot == -1)
 	{ // If could not add to inventory, spawn it
 		FActorSpawnParameters SpawnInfo;
-		const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f;
+		const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f + FVector(0.f, 0.f, 50.f);
 		const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
 		APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		CurrentPickable->ItemId = ItemIndexToGive;

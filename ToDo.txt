@@ -1,8 +1,7 @@
 - actors devem spawnar e despawnar ao redor do personagem;
 - IA deve considerar o inimigo mais proximo, em vez do primeiro que viu;
 - olhar otimizações no bookbar;
-- craftar sem slot o item some;
-- app integrity;
 - mochila não está aparecendo nas costas;
+- app integrity;
 
 - voltar com multiplayer;
