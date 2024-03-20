@@ -3,6 +3,7 @@
 
 #include "PowerSphere.h"
 
+#include "BreakableObject.h"
 #include "Cftwo/GameplayFramework/GameplayGameMode.h"
 #include "Cftwo/GameplayFramework/GameplayGameState.h"
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
@@ -64,8 +65,8 @@ void APowerSphere::SpawnWave()
 		const FVector SpawnLocation = FVector(SpawnLocationX, SpawnLocationY, GetActorLocation().Z);
 		FHitResult OutHit;
 		GetWorld()->LineTraceSingleByChannel(OutHit,
-			SpawnLocation + FVector(0.f, 0.f, 15000),
-			SpawnLocation + FVector(0.f, 0.f, -15000),
+			SpawnLocation + FVector(0.f, 0.f, 20000),
+			SpawnLocation + FVector(0.f, 0.f, -20000),
 			ECC_Visibility);
 		if (OutHit.bBlockingHit)
 		{

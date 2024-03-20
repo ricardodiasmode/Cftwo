@@ -57,7 +57,7 @@ void AProceduralTerrainGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GenerateTerrain();
+	//GenerateTerrain();
 
 	SpawnFoliage();
 

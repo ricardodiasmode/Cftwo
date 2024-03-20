@@ -23,6 +23,8 @@
 #include "Cftwo/Actors/LootDrop.h"
 #include "Cftwo/Actors/Workbench.h"
 #include "Cftwo/GameplayFramework/GameplayGameState.h"
+#include "Cftwo/GameplayFramework/AI/BaseNeutralCharacter.h"
+#include "Cftwo/Utils/ActorToSpawn.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -165,6 +167,105 @@ void AGameplayCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	GameState = Cast<AGameplayGameState>(UGameplayStatics::GetGameState(GetWorld()));
+}
+
+void AGameplayCharacter::Server_StartSpawningActors_Implementation()
+{
+	if (GetController() == UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	{
+		SpawnAllActors();
+	
+		FTimerHandle UnusedHandle;
+		GetWorldTimerManager().SetTimer(UnusedHandle,
+			this,
+			&AGameplayCharacter::CheckShouldSpawnActors,
+			TimeBetweenSpawnActors,
+			true);
+	
+		FTimerHandle SecondUnusedHandle;
+		GetWorldTimerManager().SetTimer(SecondUnusedHandle,
+			this,
+			&AGameplayCharacter::CheckShouldDespawnActors,
+			TimeBetweenSpawnActors,
+			true);
+	}
+}
+
+void AGameplayCharacter::SpawnAllActors()
+{
+	for (int i = 0; i < ActorsToSpawn.Num(); i++)
+	{
+		ActorsSpawned.Add(FActorMatrix());
+
+		for (int j=0; j < ActorsToSpawn[i].MinimumSpawned; j++)
+		{
+			SpawnActor(i);
+		}
+	}
+}
+
+bool AGameplayCharacter::SpawnActor(const int Index)
+{
+	const int RandomAngleIndex = FMath::RandRange(0, 359);
+	const FVector SpawnDirection = GetActorForwardVector();
+	const float CurrentSpawnAngle = RandomAngleIndex*SpawnAngle;
+	const float XLocationNotRotated = SpawnDistance * SpawnDirection.X;
+	const float YLocationNotRotated = SpawnDistance * SpawnDirection.Y;
+	const float SpawnLocationX = GetActorLocation().X + XLocationNotRotated * cos(CurrentSpawnAngle) - YLocationNotRotated * sin(CurrentSpawnAngle);
+	const float SpawnLocationY = GetActorLocation().Y + XLocationNotRotated * sin(CurrentSpawnAngle) + YLocationNotRotated * cos(CurrentSpawnAngle);
+	const FVector SpawnLocation = FVector(SpawnLocationX, SpawnLocationY, GetActorLocation().Z);
+		
+	FVector StartLocation = SpawnLocation;
+	StartLocation.Z = SpawnLocation.Z + 20000.f;
+	FVector EndLocation = StartLocation + FVector(0.f, 0.f, -1000000.f); // this down because the hit can fail on spawn character
+
+	FHitResult OutHit;
+	if (GetWorld()->LineTraceSingleByChannel(OutHit,
+		StartLocation, EndLocation,
+		ECC_Visibility))
+	{
+		if (Cast<ABreakableObject>(OutHit.GetActor()))
+			return false;
+		
+		TSubclassOf<AActor> ClassToSpawn = ActorsToSpawn[Index].ActorClass;
+		FVector SpawnLoc = OutHit.ImpactPoint;
+		SpawnLoc += FVector(0.f, 0.f, 100.f);
+		FTransform SpawnTransform(FRotator(), SpawnLoc, FVector(1.f, 1.f, 1.f));
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		AActor* ActorRef = GetWorld()->SpawnActorDeferred<AActor>(ClassToSpawn, SpawnTransform);
+		if (Cast<AGameplayCharacter>(ActorRef))
+		{
+			Cast<AGameplayCharacter>(ActorRef)->CharacterSpawnerRef = this;
+			GPrintDebug("Spawning NPC.");
+		}
+		else if (Cast<ABaseNeutralCharacter>(ActorRef))
+		{
+			GPrintDebug("Spawning Animal.");
+			Cast<ABaseNeutralCharacter>(ActorRef)->CharacterSpawnerRef = this;
+		}
+		ActorsSpawned[Index].ActorArray.Add(ActorRef);
+		UGameplayStatics::FinishSpawningActor(ActorRef, SpawnTransform);
+		return true;
+	}
+	return false;
+}
+
+void AGameplayCharacter::CheckShouldSpawnActors()
+{
+	for (int i=0;i < ActorsToSpawn.Num();i++)
+	{
+		// Check if we have actors enough
+		if (ActorsSpawned.Num() > i)
+		{
+			if (ActorsSpawned[i].ActorArray.Num() >= ActorsToSpawn[i].MinimumSpawned ||
+				!ActorsToSpawn[i].CanRespawn)
+					continue;
+		}
+
+		while(!SpawnActor(i));
+	}
 }
 
 void AGameplayCharacter::SetRotationAccordingToVelocity(const float DeltaTime)
@@ -337,6 +438,8 @@ void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
 		}),
 		5.f,
 		true);
+
+	Server_StartSpawningActors();
 }
 
 void AGameplayCharacter::OnHit()
@@ -528,7 +631,7 @@ void AGameplayCharacter::Die()
 		FTimerDelegate::CreateLambda(
 			[this]
 			{
-				if (Cast<AAIController>(GetController()))
+				if (GetController() != UGameplayStatics::GetPlayerController(GetWorld(), 0))
 				{
 					Destroy();
 				} else
@@ -681,6 +784,26 @@ void AGameplayCharacter::OnContinue()
 		}),
 		5.f,
 		false);
+}
+
+void AGameplayCharacter::CheckShouldDespawnActors()
+{
+	for (FActorMatrix CurrentActorMatrix : ActorsSpawned)
+	{
+		int i = 0;
+		while (i < CurrentActorMatrix.ActorArray.Num())
+		{
+			AActor* CurrentActor = CurrentActorMatrix.ActorArray[i];
+			FVector2D CurrentActorLoc = FVector2D(CurrentActor->GetActorLocation().X, CurrentActor->GetActorLocation().Y);
+			FVector2D SelfLoc = FVector2D(GetActorLocation().X, GetActorLocation().Y);
+			if (FVector2D::Distance(CurrentActorLoc, SelfLoc) > DespawnDistance)
+			{
+				CurrentActor->Destroy();
+				return; // Destroying one per loop because array need to be updated
+			}
+			i++;
+		}
+	}
 }
 
 bool AGameplayCharacter::IsEquippedWeaponFireWeapon() const
@@ -843,10 +966,27 @@ void AGameplayCharacter::AddOrDropItem(TPair<int, int> ItemToAdd)
 	}
 }
 
+void AGameplayCharacter::OnLoseActor(AActor* ActorRef)
+{
+	for (int i = 0; i < ActorsSpawned.Num(); i++)
+	{
+		if (ActorsSpawned[i].ActorArray.Contains(ActorRef))
+		{
+			ActorsSpawned[i].ActorArray.Remove(ActorRef);
+			return;
+		}
+	}
+}
+
 void AGameplayCharacter::OnDie()
 {
 	if(!SpawnerRef)
+	{
+		if (!CharacterSpawnerRef)
+			return;
+		CharacterSpawnerRef->OnLoseActor(this);
 		return;
+	}
 	SpawnerRef->OnLoseActor(this);	
 }
 

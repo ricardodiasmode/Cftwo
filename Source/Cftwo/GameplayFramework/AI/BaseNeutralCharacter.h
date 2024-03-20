@@ -47,6 +47,7 @@ protected:
 
 public:
 	class AActorSpawner* SpawnerRef = nullptr;
+	class AGameplayCharacter* CharacterSpawnerRef = nullptr;
 
 private:	
 	void Server_DropDeathActors();

@@ -10,6 +10,7 @@
 #include "GameFramework/Character.h"
 #include "GameplayCharacter.generated.h"
 
+struct FActorMatrix;
 struct FIntPair;
 class AGameplayGameState;
 class AWorkbench;
@@ -90,6 +91,8 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	bool Invulnerable = false;
 
+	TArray<FActorMatrix> ActorsSpawned;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
@@ -103,6 +106,18 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCameraShakeBase> DefaultShakeClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	float SpawnAngle = 10.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float SpawnDistance = 10000.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float TimeBetweenSpawnActors = 3.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DespawnDistance = 20000.f;
 
 public:
 
@@ -151,6 +166,7 @@ public:
 	float MaxHungry = 100.f;
 	
 	class AActorSpawner* SpawnerRef = nullptr;
+	class AGameplayCharacter* CharacterSpawnerRef = nullptr;
 
 	TArray<AActor*> CloseInteractable;
 	
@@ -169,6 +185,9 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AGameplayGameState> GameState = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	TArray<struct FActorToSpawn> ActorsToSpawn;
 	
 private:
 	
@@ -216,6 +235,9 @@ private:
 	UFUNCTION(NetMulticast, reliable)
 	void Multicast_ChangeEquipment(USkeletalMeshComponent* SKMRef, USkeletalMesh* MeshToSet);
 
+	bool SpawnActor(int Index);
+	void CheckShouldSpawnActors();
+	
 protected:
 	UFUNCTION()
 	virtual void OnRep_CurrentHealth();
@@ -235,6 +257,8 @@ protected:
 	virtual void Destroyed() override;
 
 	virtual void BeginPlay() override;
+	
+	void SpawnAllActors();
 
 	UFUNCTION(Client, reliable)
 	void Client_OnCharacterGetCloseToChest(AChest* ChestRef);
@@ -251,6 +275,9 @@ protected:
 public:
 	// Sets default values for this character's properties
 	AGameplayCharacter();
+
+	UFUNCTION(Server, reliable)
+	void Server_StartSpawningActors();
 
 	UFUNCTION(BlueprintCallable)
 	void GiveItem(const int Index, const int Amount) { InventoryComponent->GiveItem(Index, Amount); }
@@ -327,6 +354,8 @@ public:
 
 	void AddOrDropItem(TPair<int, int> ItemToAdd);
 
+	void OnLoseActor(AActor* ActorRef);
+	
 	void OnDie();
 
 	FVector GetLockPoint() const { return LockPoint->GetComponentLocation(); }
@@ -395,4 +424,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnGetHammer();
+	
+	void CheckShouldDespawnActors();
 };

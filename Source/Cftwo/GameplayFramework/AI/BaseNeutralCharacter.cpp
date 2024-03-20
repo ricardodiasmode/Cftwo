@@ -107,7 +107,12 @@ void ABaseNeutralCharacter::Server_OnDie_Implementation()
 {
 	if(!SpawnerRef)
 	{
-		GPrintDebug("Something is wrong, spawner not setted on neutral character.");
+		if (!CharacterSpawnerRef)
+		{
+			GPrintDebug("Something is wrong, spawner not setted on neutral character.");
+			return;	
+		}
+		CharacterSpawnerRef->OnLoseActor(this);
 		return;
 	}
 	SpawnerRef->OnLoseActor(this);	

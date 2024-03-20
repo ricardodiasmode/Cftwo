@@ -1,5 +1,3 @@
-- actors devem spawnar e despawnar ao redor do personagem;
-- IA deve considerar o inimigo mais proximo, em vez do primeiro que viu;
 - olhar otimizações no bookbar;
 - mochila não está aparecendo nas costas;
 - app integrity;
