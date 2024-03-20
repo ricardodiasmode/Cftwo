@@ -114,7 +114,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform TransformOnEquip;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UStaticMesh* MeshRef = nullptr;
+	USkeletalMesh* MeshRef = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int Slots = -1;
 };

@@ -1,4 +1,3 @@
-- mochila não está aparecendo nas costas;
 - app integrity;
 
 - voltar com multiplayer;

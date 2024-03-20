@@ -21,7 +21,6 @@
 #include "../../Actors/ActorSpawner.h"
 #include "Cftwo/Actors/Chest.h"
 #include "Cftwo/Actors/LootDrop.h"
-#include "Cftwo/Actors/Workbench.h"
 #include "Cftwo/GameplayFramework/GameplayGameState.h"
 #include "Cftwo/GameplayFramework/AI/BaseNeutralCharacter.h"
 #include "Cftwo/Utils/ActorToSpawn.h"
@@ -84,11 +83,6 @@ AGameplayCharacter::AGameplayCharacter()
 	Chest->SetLeaderPoseComponent(GetMesh());
 	Chest->SetRenderCustomDepth(true);
 	Chest->PrimaryComponentTick.bStartWithTickEnabled = false; // does this make anim freeze?
-
-	Backpack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Backpack"));
-	Backpack->SetupAttachment(GetMesh(), "spine_fk_003");
-	Backpack->SetRenderCustomDepth(true);
-	Backpack->PrimaryComponentTick.bStartWithTickEnabled = false; // does this make anim freeze?
 
 	Pants = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Pants"));
 	Pants->SetupAttachment(GetMesh());
@@ -887,7 +881,7 @@ void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryInd
 		const FBackpackItem BackpackInfo = InventoryComponent->GetBackpackInfoFromSlotIndex(InventoryIndex);
 		InventoryComponent->IncreaseNumberOfSlots(BackpackInfo.Slots);
 		InventoryComponent->RemoveItem(InventoryIndex, 1);
-		Backpack->SetStaticMesh(BackpackInfo.MeshRef);
+		Backpack->SetSkeletalMesh(BackpackInfo.MeshRef);
 		Backpack->SetRelativeTransform(BackpackInfo.TransformOnEquip);
 		return;
 	}
