@@ -1,4 +1,6 @@
 - olhar otimizações no bookbar;
+- navigation bugada;
+- pickables invisiveis;
 - mochila não está aparecendo nas costas;
 - app integrity;
 
