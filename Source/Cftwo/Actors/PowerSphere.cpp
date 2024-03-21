@@ -8,6 +8,7 @@
 #include "Cftwo/GameplayFramework/GameplayGameState.h"
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 APowerSphere::APowerSphere()
@@ -34,13 +35,6 @@ void APowerSphere::Server_StartSpawnWaves_Implementation()
 
 void APowerSphere::SpawnWave()
 {
-	if (!GameState)
-	{
-		GameState = Cast<AGameplayGameState>(UGameplayStatics::GetGameState(GetWorld()));
-		GPrintDebug("found no game state. Trying again.");
-		return;
-	}
-	
 	FTimerHandle UnusedHandle;
 	GetWorldTimerManager().SetTimer(UnusedHandle,
 		FTimerDelegate::CreateLambda([this]
@@ -52,7 +46,21 @@ void APowerSphere::SpawnWave()
 		false
 		);
 	
+	if (!GameState)
+	{
+		GameState = Cast<AGameplayGameState>(UGameplayStatics::GetGameState(GetWorld()));
+		GPrintDebug("found no game state on power sphere. Trying again later.");
+		return;
+	}
+
+	if (!UGameplayStatics::GetPlayerPawn(GetWorld(), 0))
+	{
+		GPrintDebug("found no player pawn on power sphere. Trying again later.");
+		return;
+	}
+	
 	const int NumberOfMonstersToSpawn = GameState->CurrentWave + 1;
+	FVector PawnLocation = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetActorLocation();
 	
 	for (int i = 0; i < NumberOfMonstersToSpawn; i++)
 	{
@@ -63,6 +71,10 @@ void APowerSphere::SpawnWave()
 		const float SpawnLocationX = GetActorLocation().X + XLocationNotRotated * cos(CurrentSpawnAngle) - YLocationNotRotated * sin(CurrentSpawnAngle);
 		const float SpawnLocationY = GetActorLocation().Y + XLocationNotRotated * sin(CurrentSpawnAngle) + YLocationNotRotated * cos(CurrentSpawnAngle);
 		const FVector SpawnLocation = FVector(SpawnLocationX, SpawnLocationY, GetActorLocation().Z);
+		FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, PawnLocation);
+		SpawnRotation.Pitch = 0.f;
+		SpawnRotation.Roll = 0.f;
+		
 		FHitResult OutHit;
 		GetWorld()->LineTraceSingleByChannel(OutHit,
 			SpawnLocation + FVector(0.f, 0.f, 20000),
@@ -73,7 +85,7 @@ void APowerSphere::SpawnWave()
 			int RandomIndex = FMath::RandRange(0, MonstersToSpawn.Num() - 1);
 			GetWorld()->SpawnActor<AActor>(MonstersToSpawn[RandomIndex],
 				SpawnLocation + FVector(0.f, 0.f, 200.f),
-				FRotator(),
+				SpawnRotation,
 				FActorSpawnParameters());
 		}
 	}

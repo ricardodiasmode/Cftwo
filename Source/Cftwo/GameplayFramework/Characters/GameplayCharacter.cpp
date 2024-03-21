@@ -393,7 +393,7 @@ void AGameplayCharacter::UpdateHungryWidget()
 	}
 }
 
-void AGameplayCharacter::RemoveHungry()
+void AGameplayCharacter::HungryAndHealthTick()
 { // must be called only by server
 	CurrentHungry = FMath::Clamp(CurrentHungry - 1.f, 0.f, MaxHungry);
 
@@ -401,7 +401,13 @@ void AGameplayCharacter::RemoveHungry()
 		UpdateHungryWidget();
 
 	if (CurrentHungry == 0 && CurrentHealth > 0)
+	{
 		RemoveHealth(1.f);
+	}
+	else if (CurrentHungry > 0 && CurrentHealth > 0)
+	{
+		AddHealth(CurrentHungry*5.f/100.f);
+	}
 }
 
 void AGameplayCharacter::AddHungry(const int Amount)
@@ -428,7 +434,7 @@ void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
 
 	GetWorldTimerManager().SetTimer(HungryTimerHandle,
 		FTimerDelegate::CreateLambda([this] {
-			RemoveHungry();
+			HungryAndHealthTick();
 		}),
 		5.f,
 		true);

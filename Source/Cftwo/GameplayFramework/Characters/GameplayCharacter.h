@@ -317,7 +317,7 @@ public:
 	void InitializeStatusWidget();
 
 	void UpdateHungryWidget();
-	void RemoveHungry();
+	void HungryAndHealthTick();
 	void AddHungry(int Amount);
 
 	void OnPunch();
