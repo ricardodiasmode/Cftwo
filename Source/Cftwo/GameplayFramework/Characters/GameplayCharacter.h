@@ -117,7 +117,7 @@ protected:
 	float DespawnDistance = 20000.f;
 
 	UPROPERTY(BlueprintReadWrite)
-	class USkeletalMeshComponent* Backpack = nullptr;
+	class USkeletalMeshComponent* Beckpack = nullptr;
 	
 public:
 

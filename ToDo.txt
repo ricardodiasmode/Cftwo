@@ -1,3 +1,10 @@
-- app integrity;
+(?)- fumaça da arvore ta bugada;
+- vida regenera fome/100 por segundo;
+- botão de continue ta sempre off;
+- lobos na power sphere devem iniciar sempre olhando para personagem;
+- adicionar grama e flores (necessario, nem que seja pouco);
+- melhorar precisão da navmesh para não ter fissuras;
+- arrumar timing da power sphere;
+- trailer;
 
 - voltar com multiplayer;

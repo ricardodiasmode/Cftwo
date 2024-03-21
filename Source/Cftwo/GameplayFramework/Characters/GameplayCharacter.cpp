@@ -881,8 +881,8 @@ void AGameplayCharacter::Server_TryUseItem_Implementation(const int InventoryInd
 		const FBackpackItem BackpackInfo = InventoryComponent->GetBackpackInfoFromSlotIndex(InventoryIndex);
 		InventoryComponent->IncreaseNumberOfSlots(BackpackInfo.Slots);
 		InventoryComponent->RemoveItem(InventoryIndex, 1);
-		Backpack->SetSkeletalMesh(BackpackInfo.MeshRef);
-		Backpack->SetRelativeTransform(BackpackInfo.TransformOnEquip);
+		Beckpack->SetSkeletalMesh(BackpackInfo.MeshRef);
+		Beckpack->SetRelativeTransform(BackpackInfo.TransformOnEquip);
 		return;
 	}
 
