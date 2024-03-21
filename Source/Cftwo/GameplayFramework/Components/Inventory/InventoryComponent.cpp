@@ -285,7 +285,10 @@ bool UInventoryComponent::UseItem(const int InventoryIndex)
 	AGameplayCharacter* CharacterRef = Cast<AGameplayCharacter>(GetOwner());
 
 	if (CurrentItemType == EItemType::FOOD)
+	{
 		CharacterRef->AddHungry(Slots[InventoryIndex].ItemInfo.BuffOnUse);
+		CharacterRef->Client_PlaySound(EatSound);		
+	}
 	else if (CurrentItemType == EItemType::HEAL)
 		CharacterRef->AddHealth(Slots[InventoryIndex].ItemInfo.BuffOnUse);
 	else if (CurrentItemType == EItemType::HAMMER)

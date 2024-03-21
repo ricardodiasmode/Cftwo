@@ -28,6 +28,9 @@ public:
 	TObjectPtr<USoundBase> SoundToFireWhenDropCraftedItem;
 
 	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<USoundBase> EatSound;
+
+	UPROPERTY(EditDefaultsOnly)
 	UDataTable* ItemsDataTable = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
