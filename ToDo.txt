@@ -1,5 +1,9 @@
 (?)- fumaça da arvore ta bugada;
-- melhorar precisão da navmesh para não ter fissuras;
 - trailer;
+
+- som de comendo;
+- após morrer por arco, lobo nao ta tocando anim de morte;
+- npc ta muito doido;
+- aumentar vida do boss;
 
 - voltar com multiplayer;

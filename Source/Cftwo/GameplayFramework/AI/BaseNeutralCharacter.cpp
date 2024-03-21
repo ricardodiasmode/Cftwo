@@ -167,6 +167,8 @@ void ABaseNeutralCharacter::Server_DropDeathActors()
 			GetActorLocation(),
 			GetActorRotation(),
 			FActorSpawnParameters());
+		if (!ActorSpawned)
+			return;
 		ActorSpawned->SetReplicates(true);
 	}
 }
