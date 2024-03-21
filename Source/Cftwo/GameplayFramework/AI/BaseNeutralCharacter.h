@@ -47,7 +47,7 @@ public:
 	
 	class AGameplayCharacter* CharacterSpawnerRef = nullptr;
 
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Replicated)
 	float CurrentHealth = 100.f;
 
 private:	
