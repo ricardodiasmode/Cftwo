@@ -28,6 +28,9 @@ struct FFoliageToSpawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 1))
 	float ScaleMultiplier = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Meta = (ClampMin = 1))
+	float CullDistance = 10000.f;
+
 };
 
 USTRUCT(BlueprintType)

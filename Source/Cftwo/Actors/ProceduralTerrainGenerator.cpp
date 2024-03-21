@@ -12,6 +12,7 @@
 #include <cmath>
 #include "ProceduralStreet.h"
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
+#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -329,14 +330,15 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 	const FVector CenterLocation = GetActorLocation() + FVector(XSize * Scale/2, YSize * Scale/2, 0.f);
 	for (FFoliageToSpawn CurrentFoliage : Foliages)
 	{
-		UInstancedStaticMeshComponent* InstancedComponentRef = NewObject<UInstancedStaticMeshComponent>(this);
+		UHierarchicalInstancedStaticMeshComponent* InstancedComponentRef = NewObject<UHierarchicalInstancedStaticMeshComponent>(this);
 		InstancedComponentRef->RegisterComponent();
 		InstancedComponentRef->SetStaticMesh(CurrentFoliage.Mesh);
 		InstancedComponentRef->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		InstancedComponentRef->SetGenerateOverlapEvents(true);
 		InstancedComponentRef->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 		InstancedComponentRef->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
-		InstancedComponentRef->SetCullDistances(0, 10000);
+		InstancedComponentRef->SetCullDistances(0, CurrentFoliage.CullDistance);
+		InstancedComponentRef->CastShadow = 0u;
 		AddInstanceComponent(InstancedComponentRef);
 
 		for (int i = 0; i < CurrentFoliage.Amount; i++)
@@ -380,7 +382,7 @@ void AProceduralTerrainGenerator::SpawnFoliage()
 
 				FTransform TransformToSpawn(RotatorToSpawn, LocationToSpawn, ScaleToSpawn);
 
-				InstancedComponentRef->AddInstance(TransformToSpawn);
+				InstancedComponentRef->AddInstance(TransformToSpawn, true);
 			}
 		}
 	}

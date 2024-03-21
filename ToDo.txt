@@ -1,5 +1,4 @@
 (?)- fumaça da arvore ta bugada;
-- adicionar grama e flores (necessario, nem que seja pouco);
 - melhorar precisão da navmesh para não ter fissuras;
 - trailer;
 
