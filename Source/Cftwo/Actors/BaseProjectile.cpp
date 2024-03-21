@@ -62,6 +62,9 @@ void ABaseProjectile::Server_OnOverlapBegin_Implementation(AActor* OtherActor)
 	}
 	else if (ABaseNeutralCharacter* CurrentIA = Cast<ABaseNeutralCharacter>(OtherActor))
 	{
+		if (CurrentIA->CurrentHealth <= 0)
+			return;
+		
 		CurrentIA->Server_OnGetHitted(Damage, GetOwner());
 		Cast<AGameplayCharacter>(GetOwner())->Server_OnHitSuccess();
 	}

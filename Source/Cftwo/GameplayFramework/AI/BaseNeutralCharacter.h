@@ -18,9 +18,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<int, FIntPair> ItemsToDrop;
 
-	UPROPERTY(BlueprintReadOnly, Replicated)
-	float CurrentHealth = 100.f;
-
 	UPROPERTY(EditDefaultsOnly)
 	FName AgressorBlackboardName;
 
@@ -47,7 +44,11 @@ protected:
 
 public:
 	class AActorSpawner* SpawnerRef = nullptr;
+	
 	class AGameplayCharacter* CharacterSpawnerRef = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	float CurrentHealth = 100.f;
 
 private:	
 	void Server_DropDeathActors();
