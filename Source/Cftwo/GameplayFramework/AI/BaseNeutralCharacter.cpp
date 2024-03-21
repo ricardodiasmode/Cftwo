@@ -58,7 +58,6 @@ void ABaseNeutralCharacter::Server_OnGetHitted_Implementation(const float Damage
 	CurrentHealth -= Damage;
 
 	Cast<AAIController>(GetController())->GetBlackboardComponent()->SetValueAsObject(AgressorBlackboardName, Agressor);
-
 	
 	if (CurrentHealth <= 0)
 	{
