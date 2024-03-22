@@ -12,9 +12,6 @@ class CFTWO_API UBuildingMarkerComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
-public:
-	int BuildingIndex = 0;
-
 public:	
 	// Sets default values for this component's properties
 	UBuildingMarkerComponent();

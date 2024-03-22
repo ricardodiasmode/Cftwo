@@ -10,11 +10,9 @@
 #include <chrono>
 #include <random>
 #include <cmath>
-#include "Cftwo/GameplayFramework/DefaultGameInstance.h"
 #include "Cftwo/GameplayFramework/Components/BuildingMarkerComponent.h"
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AProceduralTerrainGenerator::AProceduralTerrainGenerator()
@@ -50,8 +48,9 @@ void AProceduralTerrainGenerator::GenerateTerrain()
 void AProceduralTerrainGenerator::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-
+	
 	GenerateTerrain();
+
 }
 
 // Called when the game starts or when spawned
@@ -59,41 +58,15 @@ void AProceduralTerrainGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//GenerateTerrain(); // not regenerating here because of navmesh
-
 	SpawnFoliage();
 
 	TArray<UActorComponent*> LocationComponents =
 		GetComponentsByTag(UBuildingMarkerComponent::StaticClass(), "BuildingLocation");
-	LocationsToSpawnBuildings.Empty();
 	for (UActorComponent* CurrentLocationComponent : LocationComponents)
 	{
 		const UBuildingMarkerComponent* CurrentLocationComponentAsScene = Cast<UBuildingMarkerComponent>(CurrentLocationComponent);
-		// since UBuildingMarkerComponent->BuildingIndex is getting null because variables not persist after construction, we are randomizing here.
-		LocationsToSpawnBuildings.Add({CurrentLocationComponentAsScene->GetComponentLocation(), FMath::RandRange(0, 1)});
+		GetWorld()->SpawnActor<AActor>(GetBuildingInfoByIndex(FMath::RandRange(0, 1)).BuildingClass, CurrentLocationComponentAsScene->GetComponentLocation(), FRotator(0.f));
 	}
-
-	for (auto [Location, Index] : LocationsToSpawnBuildings)
-	{
-		GetWorld()->SpawnActor<AActor>(GetBuildingInfoByIndex(Index).BuildingClass, Location, FRotator(0.f));
-	}
-
-	// if (StreetLocations.Num() > 1)
-	// {
-	// 	const FTransform SpawnTransform = FTransform(FRotator(), StreetLocations[0] * Scale, FVector(1.f));
-	// 	AProceduralStreet* StreetRef = GetWorld()->SpawnActorDeferred<AProceduralStreet>(StreetClass, SpawnTransform);
-	// 	if (!StreetRef)
-	// 		return;
-	// 	StreetRef->SplinePoints.Add(SpawnTransform.GetLocation());
-	// 	
-	// 	for (int i=1;i< StreetLocations.Num();i += 2)
-	// 	{
-	// 		FVector CurrentStreetLocation = StreetLocations[i] * Scale;
-	// 		CurrentStreetLocation -= (StreetLocations[i] * Scale - StreetLocations[i-1] * Scale)/2;
-	// 		StreetRef->SplinePoints.Add(FVector(CurrentStreetLocation.X, CurrentStreetLocation.Y, StreetLocations[i].Z * Scale + 2.f));
-	// 	}
-	// 	UGameplayStatics::FinishSpawningActor(StreetRef, SpawnTransform);
-	// }
 }
 
 FProceduralBuilding AProceduralTerrainGenerator::GetBuildingInfoByIndex(const int Index) const
@@ -147,6 +120,15 @@ FVector2D AProceduralTerrainGenerator::FindRandomLocationFarFromBuildings(const 
 
 void AProceduralTerrainGenerator::GenerateBuildings(const float LowerXBorder, const float UpperXBorder, const float LowerYBorder, const float UpperYBorder, TArray<TPair<FVector2D, int>>* BuildingLocation)
 {
+	TArray<UActorComponent*> LocationComponents =
+		GetComponentsByTag(UBuildingMarkerComponent::StaticClass(), "BuildingLocation");
+	for (UActorComponent* CurrentLocationComponent : LocationComponents)
+	{
+		CurrentLocationComponent->DestroyComponent();
+		LocationComponentMap.Empty();
+		LocationsToSpawnBuildings.Empty();
+	}
+	
 	if (AllowedBuildings.Num() > 0)
 	{
 		// Adding first
@@ -154,14 +136,13 @@ void AProceduralTerrainGenerator::GenerateBuildings(const float LowerXBorder, co
 		const float FirstDesiredY = FMath::Floor(GenerateRandomFloat(LowerYBorder, UpperYBorder - GetBuildingInfoByIndex(AllowedBuildings[0]).BuildingMinSizeY));
 		FVector2D Location = FVector2D(FirstDesiredX, FirstDesiredY);
 		BuildingLocation->Add({Location, AllowedBuildings[0]});
-		LocationsToSpawnBuildings.Add({FVector(FirstDesiredX * Scale, FirstDesiredY * Scale, 0), (*BuildingLocation)[AllowedBuildings[0]].Value});
+		LocationsToSpawnBuildings.Add(FVector(FirstDesiredX * Scale, FirstDesiredY * Scale, 0));
 
 		UBuildingMarkerComponent* AddedLocationComponent = NewObject<UBuildingMarkerComponent>(this, UBuildingMarkerComponent::StaticClass());
 		AddedLocationComponent->ComponentTags.Add({"BuildingLocation"});
-		AddedLocationComponent->SetWorldLocation(LocationsToSpawnBuildings.Last().Key);
-		AddedLocationComponent->BuildingIndex = AllowedBuildings[0];
+		AddedLocationComponent->SetWorldLocation(LocationsToSpawnBuildings.Last());
 		AddInstanceComponent(AddedLocationComponent);
-		LocationComponentMap.Add(LocationsToSpawnBuildings.Last().Key, AddedLocationComponent);
+		LocationComponentMap.Add(LocationsToSpawnBuildings.Last(), AddedLocationComponent);
 		
 		// Adding others
 		for (int CurrentBuildingIndex = 1; CurrentBuildingIndex < AllowedBuildings.Num(); CurrentBuildingIndex++)
@@ -169,14 +150,13 @@ void AProceduralTerrainGenerator::GenerateBuildings(const float LowerXBorder, co
 			int BuildingIndex = AllowedBuildings[CurrentBuildingIndex];
 			Location = FindRandomLocationFarFromBuildings(*BuildingLocation, BuildingIndex, LowerXBorder, LowerYBorder, UpperXBorder, UpperYBorder);
 			BuildingLocation->Add({Location, BuildingIndex});
-			LocationsToSpawnBuildings.Add({FVector(Location.X * Scale, Location.Y * Scale, 0), (*BuildingLocation)[BuildingIndex].Value});
+			LocationsToSpawnBuildings.Add(FVector(Location.X * Scale, Location.Y * Scale, 0));
 			
 			AddedLocationComponent = NewObject<UBuildingMarkerComponent>(this, UBuildingMarkerComponent::StaticClass());
 			AddedLocationComponent->ComponentTags.Add({"BuildingLocation"});
-			AddedLocationComponent->SetWorldLocation(LocationsToSpawnBuildings.Last().Key);
-			AddedLocationComponent->BuildingIndex = BuildingIndex;
+			AddedLocationComponent->SetWorldLocation(LocationsToSpawnBuildings.Last());
 			AddInstanceComponent(AddedLocationComponent);
-			LocationComponentMap.Add(LocationsToSpawnBuildings.Last().Key, AddedLocationComponent);
+			LocationComponentMap.Add(LocationsToSpawnBuildings.Last(), AddedLocationComponent);
 		}
 	}
 }
@@ -256,7 +236,7 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 				const float MaxCenterHeight = ZMultiplier / ZSmoothness;
 				const float DesiredValue = abs(ZVertex * EdgeMultiplier);
 				const float EdgeHeightMultiplier = GenerateRandomFloat(MinimumEdgeMultiplier, MinimumEdgeMultiplier*2.f);
-				ZVertex = FMath::Max(DesiredValue, MaxCenterHeight * EdgeHeightMultiplier); // Must greater than max center height
+				ZVertex = FMath::Max(DesiredValue, MaxCenterHeight * EdgeHeightMultiplier) + EdgeConstantAddition; // Must greater than max center height
 			}
 
 			// Setting building height
@@ -264,8 +244,10 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 			{
 				const FProceduralBuilding SpawningBuildingInfo = GetBuildingInfoByIndex(BuildingLocation[CurrentBuilding].Value);
 				const FVector2D CurrentBuildingLoc = BuildingLocation[CurrentBuilding].Key;
-				if (FMath::IsWithin(i, CurrentBuildingLoc.X, CurrentBuildingLoc.X + SpawningBuildingInfo.BuildingMinSizeX) &&
-					FMath::IsWithin(j, CurrentBuildingLoc.Y, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY))
+				constexpr int MaxBuildingXSize = 2;
+				constexpr int MaxBuildingYSize = 3;
+				if (FMath::IsWithin(i, CurrentBuildingLoc.X, CurrentBuildingLoc.X + MaxBuildingXSize) &&
+					FMath::IsWithin(j, CurrentBuildingLoc.Y, CurrentBuildingLoc.Y + MaxBuildingYSize))
 				{
 					const float FirstZ = Perlin_Noise(CurrentBuildingLoc.X, CurrentBuildingLoc.Y, ZSmoothness) * ZMultiplier;
 					const float SecondZ = Perlin_Noise(CurrentBuildingLoc.X, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY, ZSmoothness) * ZMultiplier;
@@ -273,13 +255,13 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 					const float FourthZ = Perlin_Noise(CurrentBuildingLoc.X + SpawningBuildingInfo.BuildingMinSizeX, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY, ZSmoothness) * ZMultiplier;
 					const float AverageZ = (FirstZ + SecondZ + ThirdZ + FourthZ)/4.f;
 					ZVertex = AverageZ;
-					USceneComponent* SceneComponentToUpdate = LocationComponentMap[LocationsToSpawnBuildings[CurrentBuilding].Key];
+					USceneComponent* SceneComponentToUpdate = LocationComponentMap[LocationsToSpawnBuildings[CurrentBuilding]];
 					FVector LocationToSet = SceneComponentToUpdate->GetComponentLocation();
 					LocationToSet.Z = ZVertex;
 					SceneComponentToUpdate->SetWorldLocation(LocationToSet);
-					LocationComponentMap.Remove(LocationsToSpawnBuildings[CurrentBuilding].Key);
+					LocationComponentMap.Remove(LocationsToSpawnBuildings[CurrentBuilding]);
 					LocationComponentMap.Add(LocationToSet, SceneComponentToUpdate);
-					LocationsToSpawnBuildings[CurrentBuilding].Key.Z = ZVertex;
+					LocationsToSpawnBuildings[CurrentBuilding].Z = ZVertex;
 				}
 			}
 

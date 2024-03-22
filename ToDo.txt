@@ -1,5 +1,5 @@
+- algumas construções estão flutuando;
 - NPCs estao parados;
-- Melhorar visual da montanha;
 - Melhorar tela de carregamento;
 - Lobo está latindo morto;
 - Bater na arvore com inventario full n dropa tronco;
