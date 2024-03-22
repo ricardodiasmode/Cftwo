@@ -36,4 +36,3 @@ void UDefaultGameInstance::ActivateWaveExtention()
 		UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, SaveSlotName, 0, SavedDelegate);
 	}
 }
-

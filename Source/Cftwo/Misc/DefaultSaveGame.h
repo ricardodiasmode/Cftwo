@@ -16,4 +16,5 @@ class CFTWO_API UDefaultSaveGame : public USaveGame
 
 public:
 	bool WaveExtentionActivated = false;
+
 };

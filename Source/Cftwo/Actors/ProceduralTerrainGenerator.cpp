@@ -10,7 +10,8 @@
 #include <chrono>
 #include <random>
 #include <cmath>
-#include "ProceduralStreet.h"
+#include "Cftwo/GameplayFramework/DefaultGameInstance.h"
+#include "Cftwo/GameplayFramework/Components/BuildingMarkerComponent.h"
 #include "Cftwo/Utils/GeneralFunctionLibrary.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -58,9 +59,19 @@ void AProceduralTerrainGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//GenerateTerrain();
+	//GenerateTerrain(); // not regenerating here because of navmesh
 
 	SpawnFoliage();
+
+	TArray<UActorComponent*> LocationComponents =
+		GetComponentsByTag(UBuildingMarkerComponent::StaticClass(), "BuildingLocation");
+	LocationsToSpawnBuildings.Empty();
+	for (UActorComponent* CurrentLocationComponent : LocationComponents)
+	{
+		const UBuildingMarkerComponent* CurrentLocationComponentAsScene = Cast<UBuildingMarkerComponent>(CurrentLocationComponent);
+		// since UBuildingMarkerComponent->BuildingIndex is getting null because variables not persist after construction, we are randomizing here.
+		LocationsToSpawnBuildings.Add({CurrentLocationComponentAsScene->GetComponentLocation(), FMath::RandRange(0, 1)});
+	}
 
 	for (auto [Location, Index] : LocationsToSpawnBuildings)
 	{
@@ -144,6 +155,13 @@ void AProceduralTerrainGenerator::GenerateBuildings(const float LowerXBorder, co
 		FVector2D Location = FVector2D(FirstDesiredX, FirstDesiredY);
 		BuildingLocation->Add({Location, AllowedBuildings[0]});
 		LocationsToSpawnBuildings.Add({FVector(FirstDesiredX * Scale, FirstDesiredY * Scale, 0), (*BuildingLocation)[AllowedBuildings[0]].Value});
+
+		UBuildingMarkerComponent* AddedLocationComponent = NewObject<UBuildingMarkerComponent>(this, UBuildingMarkerComponent::StaticClass());
+		AddedLocationComponent->ComponentTags.Add({"BuildingLocation"});
+		AddedLocationComponent->SetWorldLocation(LocationsToSpawnBuildings.Last().Key);
+		AddedLocationComponent->BuildingIndex = AllowedBuildings[0];
+		AddInstanceComponent(AddedLocationComponent);
+		LocationComponentMap.Add(LocationsToSpawnBuildings.Last().Key, AddedLocationComponent);
 		
 		// Adding others
 		for (int CurrentBuildingIndex = 1; CurrentBuildingIndex < AllowedBuildings.Num(); CurrentBuildingIndex++)
@@ -152,6 +170,13 @@ void AProceduralTerrainGenerator::GenerateBuildings(const float LowerXBorder, co
 			Location = FindRandomLocationFarFromBuildings(*BuildingLocation, BuildingIndex, LowerXBorder, LowerYBorder, UpperXBorder, UpperYBorder);
 			BuildingLocation->Add({Location, BuildingIndex});
 			LocationsToSpawnBuildings.Add({FVector(Location.X * Scale, Location.Y * Scale, 0), (*BuildingLocation)[BuildingIndex].Value});
+			
+			AddedLocationComponent = NewObject<UBuildingMarkerComponent>(this, UBuildingMarkerComponent::StaticClass());
+			AddedLocationComponent->ComponentTags.Add({"BuildingLocation"});
+			AddedLocationComponent->SetWorldLocation(LocationsToSpawnBuildings.Last().Key);
+			AddedLocationComponent->BuildingIndex = BuildingIndex;
+			AddInstanceComponent(AddedLocationComponent);
+			LocationComponentMap.Add(LocationsToSpawnBuildings.Last().Key, AddedLocationComponent);
 		}
 	}
 }
@@ -248,6 +273,12 @@ void AProceduralTerrainGenerator::CreateVerticesAndTriangles()
 					const float FourthZ = Perlin_Noise(CurrentBuildingLoc.X + SpawningBuildingInfo.BuildingMinSizeX, CurrentBuildingLoc.Y + SpawningBuildingInfo.BuildingMinSizeY, ZSmoothness) * ZMultiplier;
 					const float AverageZ = (FirstZ + SecondZ + ThirdZ + FourthZ)/4.f;
 					ZVertex = AverageZ;
+					USceneComponent* SceneComponentToUpdate = LocationComponentMap[LocationsToSpawnBuildings[CurrentBuilding].Key];
+					FVector LocationToSet = SceneComponentToUpdate->GetComponentLocation();
+					LocationToSet.Z = ZVertex;
+					SceneComponentToUpdate->SetWorldLocation(LocationToSet);
+					LocationComponentMap.Remove(LocationsToSpawnBuildings[CurrentBuilding].Key);
+					LocationComponentMap.Add(LocationToSet, SceneComponentToUpdate);
 					LocationsToSpawnBuildings[CurrentBuilding].Key.Z = ZVertex;
 				}
 			}

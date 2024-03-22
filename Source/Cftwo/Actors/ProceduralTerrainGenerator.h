@@ -116,6 +116,7 @@ public:
 	TArray<FProceduralBuilding> Buildings;
 
 	TArray<TPair<FVector, int>> LocationsToSpawnBuildings;
+	TMap<FVector, USceneComponent*> LocationComponentMap;
 
 	//TArray<FVector> StreetLocations;
 

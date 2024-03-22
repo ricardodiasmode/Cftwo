@@ -1,4 +1,3 @@
-- Aumentar numero de construções (estao spawnando?);
 - NPCs estao paradaos;
 - Melhorar visual da montanha;
 - Melhorar leta de carregamento;
