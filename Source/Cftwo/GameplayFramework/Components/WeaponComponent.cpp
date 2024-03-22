@@ -12,6 +12,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Cftwo/Actors/Pickable.h"
 
 // Sets default values for this component's properties
 UWeaponComponent::UWeaponComponent()
@@ -127,7 +128,6 @@ void UWeaponComponent::SpawnSFXOnAttack(const FHitResult& HitResult)
 
 void UWeaponComponent::OnPunch()
 {
-	GPrintDebug("a");
 	FVector START_LOCATION = CharacterRef->GetActorLocation() +
 		CharacterRef->GetActorForwardVector() * 75.f;
 	FVector END_LOCATION = START_LOCATION;
@@ -197,7 +197,18 @@ void UWeaponComponent::OnPunch()
 				if (!NeedTool || HasNecessaryTool)
 				{
 					BreakableObject->RemoveHP();
-					CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
+					const int FoundSlot = CharacterRef->InventoryComponent->GiveItem(BreakableObject->ItemToGive, 1);
+					if(FoundSlot == -1)
+					{ // If could not add to inventory, spawn it
+						FActorSpawnParameters SpawnInfo;
+						const FVector LocationToSpawn = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * 50.f + FVector(0.f, 0.f, 50.f);
+						const FTransform TransformToSpawn(FTransform(FRotator(0), LocationToSpawn, FVector(1)));
+						APickable* CurrentPickable = GetWorld()->SpawnActorDeferred<APickable>(PickableClass, TransformToSpawn, GetOwner(), Cast<APawn>(GetOwner()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+						CurrentPickable->ItemId = BreakableObject->ItemToGive;
+						CurrentPickable->Amount = 1;
+						UGameplayStatics::FinishSpawningActor(CurrentPickable, TransformToSpawn);
+					} 
+
 					SpawnVFXOnAttack(CurrentHit, BreakableObject, CharacterRef->DustVFX);
 					SpawnSFXOnAttack(CurrentHit, BreakableObject);
 				} else if (NeedTool && !HasNecessaryTool)

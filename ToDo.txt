@@ -1,6 +1,4 @@
 - Melhorar tela de carregamento;
-- Lobo está latindo morto;
-- Bater na arvore com inventario full n dropa tronco;
 - Deixar mecanicas basicas mais intuitivas;
 - trailer;
 (?)- NPCs estao parados;

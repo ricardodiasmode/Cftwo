@@ -50,6 +50,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USoundBase> PunchSound;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class APickable> PickableClass;
+
 public:
 	AGameplayCharacter* CharacterRef = nullptr;
 
