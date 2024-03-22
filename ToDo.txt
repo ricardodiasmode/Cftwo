@@ -1,6 +1,6 @@
-- NPCs estao paradaos;
+- NPCs estao parados;
 - Melhorar visual da montanha;
-- Melhorar leta de carregamento;
+- Melhorar tela de carregamento;
 - Lobo está latindo morto;
 - Bater na arvore com inventario full n dropa tronco;
 - Deixar mecanicas basicas mais intuitivas;
