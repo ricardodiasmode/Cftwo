@@ -1,6 +1,6 @@
-- Melhorar tela de carregamento;
-- Deixar mecanicas basicas mais intuitivas;
+- aumentar range de ataque do boss;
 - trailer;
-(?)- NPCs estao parados;
+
+- Melhorar tela de carregamento;
 
 - voltar com multiplayer;
