@@ -639,7 +639,7 @@ void AGameplayCharacter::Die()
 					UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
 				}
 			}),
-			3.f,
+			1.5f,
 			false);
 }
 

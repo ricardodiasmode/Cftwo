@@ -1,5 +1,3 @@
-- trailer;
-- nao ta respawnando?
 - lobo muitas vezes batendo parado;
 - boss explodindo ao morrer;
 
