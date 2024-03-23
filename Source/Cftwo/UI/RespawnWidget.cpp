@@ -3,12 +3,14 @@
 
 #include "RespawnWidget.h"
 #include "../GameplayFramework/GameplayHUD.h"
+#include "Cftwo/GameplayFramework/Characters/GameplayCharacter.h"
 
 void URespawnWidget::OnRespawn()
 {
 	APlayerController* ControllerRef = Cast<APlayerController>(GetOwningPlayer());
 	if (ControllerRef) {
 		AGameplayHUD* HUDRef = Cast<AGameplayHUD>(ControllerRef->GetHUD());
+		GetOwningPlayerPawn()->GetWorldTimerManager().ClearAllTimersForObject(GetOwningPlayerPawn());
 		HUDRef->OnRespawn();
 	}
 }
