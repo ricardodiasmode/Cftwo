@@ -1,4 +1,3 @@
-- aumentar range de ataque do boss;
 - trailer;
 
 - Melhorar tela de carregamento;

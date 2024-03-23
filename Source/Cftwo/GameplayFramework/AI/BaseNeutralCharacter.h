@@ -36,6 +36,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USoundBase> SoundToPlayWhenDie;
 
+	UPROPERTY(EditDefaultsOnly)
+	float HitDistance = 125.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float HitRadius = 60.f;
+
 	int HarvestLeft = 3;
 	
 	/** Where the lock aim will be */

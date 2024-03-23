@@ -124,10 +124,10 @@ void ABaseNeutralCharacter::Server_TriggerHit_Implementation()
 		GetActorLocation());
 	
 	FVector START_LOCATION = GetActorLocation() +
-		GetActorForwardVector() * 125.f + GetActorUpVector() * 30.f;
-	FVector END_LOCATION = START_LOCATION;
-	float RADIUS = 60.f;
-	float HALF_HEIGHT = 60.f;
+		GetActorForwardVector() * HitDistance + GetActorUpVector() * 30.f;
+	FVector END_LOCATION = START_LOCATION + 0.1f;
+	float RADIUS = HitRadius;
+	float HALF_HEIGHT = HitRadius;
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjTypes;
 	ObjTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	TArray<AActor*> ActorsToIgnore;
