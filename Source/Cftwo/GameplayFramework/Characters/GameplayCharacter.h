@@ -65,7 +65,7 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 	
 	// Controlls the time that player will stop hit after the hit starts.
 	// Note that this time may follow anim hit time
-	static constexpr auto TIME_TO_STOP_HITTING = .6f;
+	static constexpr auto TIME_TO_STOP_HITTING = .25f;
 
 	// Handle OnStopHitting function
 	FTimerHandle HitTimerHandle;

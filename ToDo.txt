@@ -1,5 +1,3 @@
-- boss explodindo ao morrer;
-
 - Melhorar tela de carregamento;
 
 - voltar com multiplayer;
