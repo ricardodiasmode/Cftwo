@@ -278,7 +278,7 @@ void AGameplayCharacter::SetRotationAccordingToVelocity(const float DeltaTime)
 void AGameplayCharacter::Move(const FInputActionValue& Value)
 {
 	// Do not move while hitting
-	if (Hitting)
+	if (Hitting || !IsWalkAllowed)
 		return;
 	
 	SetRotationAccordingToVelocity(GetWorld()->GetDeltaSeconds());
@@ -494,6 +494,7 @@ void AGameplayCharacter::Server_OnHit_Implementation(const FRotator& RotationToS
 	GetMesh()->SetWorldRotation(RotationToSet);
 	
 	Hitting = true;
+	IsWalkAllowed = false;
 	// Needed in order to timer work
 	if (GetWorldTimerManager().IsTimerActive(HitTimerHandle))
 		GetWorldTimerManager().ClearTimer(HitTimerHandle);
@@ -1160,3 +1161,11 @@ void AGameplayCharacter::Client_OnHitWithoutRightWeapon_Implementation()
 	if (HUDRef)
 		HUDRef->OnMistakenWeapon();
 }
+
+void AGameplayCharacter::Server_AllowWalk_Implementation()
+{
+	if (Hitting)
+		return;
+	IsWalkAllowed = true;
+}
+

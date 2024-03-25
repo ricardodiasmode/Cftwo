@@ -90,6 +90,8 @@ class CFTWO_API AGameplayCharacter : public ACharacter, public SpawnableActor
 
 	TArray<FActorMatrix> ActorsSpawned;
 
+	bool IsWalkAllowed = true;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly)
@@ -426,4 +428,7 @@ public:
 	void OnGetHammer();
 	
 	void CheckShouldDespawnActors();
+
+	UFUNCTION(Server, reliable, BlueprintCallable)
+	void Server_AllowWalk();
 };
