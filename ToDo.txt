@@ -1,3 +1,0 @@
-- Melhorar tela de carregamento;
-
-- voltar com multiplayer;
