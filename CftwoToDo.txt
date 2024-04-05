@@ -1,6 +1,3 @@
-- se o lobo estiver no seu pé, então o tiro não sai;
-- se cancelar construção, então fica vermewlha na tela pra sempre;
-
 - Melhorar tela de carregamento;
 
 - voltar com multiplayer;

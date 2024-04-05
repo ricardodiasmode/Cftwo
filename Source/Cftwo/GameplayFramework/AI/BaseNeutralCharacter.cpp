@@ -141,7 +141,7 @@ void ABaseNeutralCharacter::Server_TriggerHit_Implementation()
 		ObjTypes,
 		false,
 		ActorsToIgnore,
-		EDrawDebugTrace::None,
+		EDrawDebugTrace::Persistent,
 		OutHits,
 		true
 	))
