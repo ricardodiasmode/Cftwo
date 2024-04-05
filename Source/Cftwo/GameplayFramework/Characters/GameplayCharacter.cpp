@@ -22,6 +22,7 @@
 #include "Cftwo/Actors/Chest.h"
 #include "Cftwo/Actors/LootDrop.h"
 #include "Cftwo/GameplayFramework/GameplayGameState.h"
+#include "Cftwo/GameplayFramework/GameplayPlayerController.h"
 #include "Cftwo/GameplayFramework/AI/BaseNeutralCharacter.h"
 #include "Cftwo/Utils/ActorToSpawn.h"
 #include "Kismet/GameplayStatics.h"
@@ -379,8 +380,15 @@ void AGameplayCharacter::Client_OnSetPlayerController_Implementation()
 	}
 }
 
-void AGameplayCharacter::UpdateHungryWidget()
+void AGameplayCharacter::Client_UpdateHungryWidget_Implementation()
 {
+	if (!GetController())
+		return;
+	if (!Cast<AGameplayPlayerController>(GetController()))
+		return;
+	if (!Cast<AGameplayPlayerController>(GetController())->GetHUD())
+		return;
+		
 	if (HUDRef)
 	{
 		HUDRef->OnUpdateHungry(CurrentHungry);
@@ -397,9 +405,6 @@ void AGameplayCharacter::HungryAndHealthTick()
 { // must be called only by server
 	CurrentHungry = FMath::Clamp(CurrentHungry - 1.f, 0.f, MaxHungry);
 
-	if (HasAuthority())
-		UpdateHungryWidget();
-
 	if (CurrentHungry == 0 && CurrentHealth > 0)
 	{
 		RemoveHealth(1.f);
@@ -408,6 +413,8 @@ void AGameplayCharacter::HungryAndHealthTick()
 	{
 		AddHealth(CurrentHungry*5.f/100.f);
 	}
+	
+	Client_UpdateHungryWidget();
 }
 
 void AGameplayCharacter::AddHungry(const int Amount)
@@ -415,8 +422,7 @@ void AGameplayCharacter::AddHungry(const int Amount)
 	CurrentHungry = FMath::Clamp(CurrentHungry + Amount,
 			0.f, MaxHungry);
 	
-	if (HasAuthority())
-		UpdateHungryWidget();
+	Client_UpdateHungryWidget();
 }
 
 void AGameplayCharacter::AddHealth(const int Amount)
@@ -424,8 +430,7 @@ void AGameplayCharacter::AddHealth(const int Amount)
 	CurrentHealth = FMath::Clamp(CurrentHealth + Amount,
 			0.f, MaxHealth);
 	
-	if (HasAuthority())
-		UpdateHealthWidget();
+	Client_UpdateHealthWidget();
 }
 
 void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
@@ -433,9 +438,8 @@ void AGameplayCharacter::Server_OnSetPlayerController_Implementation()
 	Client_OnSetPlayerController();
 
 	GetWorldTimerManager().SetTimer(HungryTimerHandle,
-		FTimerDelegate::CreateLambda([this] {
-			HungryAndHealthTick();
-		}),
+		this,
+		&AGameplayCharacter::HungryAndHealthTick,
 		5.f,
 		true);
 
@@ -535,8 +539,17 @@ int AGameplayCharacter::GetWeaponIdOnSlot(const int Id)
 	return ItemInfo.OtherDataTableId;
 }
 
-void AGameplayCharacter::UpdateHealthWidget()
+void AGameplayCharacter::Client_UpdateHealthWidget_Implementation()
 {
+	if (!GetWorld())
+		return;
+	if (!GetController())
+		return;
+	if (!Cast<AGameplayPlayerController>(GetController()))
+		return;
+	if (!Cast<AGameplayPlayerController>(GetController())->GetHUD())
+		return;
+	
 	if (HUDRef)
 	{
 		HUDRef->OnUpdateHealth(CurrentHealth);
@@ -551,6 +564,9 @@ void AGameplayCharacter::UpdateHealthWidget()
 
 void AGameplayCharacter::RemoveHealth(const int Amount)
 {
+	if (!GetWorld())
+		return;
+	
 	if (Dead || Invulnerable)
 		return;
 	
@@ -559,8 +575,7 @@ void AGameplayCharacter::RemoveHealth(const int Amount)
 	if (CurrentHealth < 0.f)
 		CurrentHealth = 0.f;
 	
-	if (HasAuthority())
-		UpdateHealthWidget();
+	Client_UpdateHealthWidget();
 
 	if (CurrentHealth <= 0.f)
 		Die();
@@ -568,6 +583,9 @@ void AGameplayCharacter::RemoveHealth(const int Amount)
 
 void AGameplayCharacter::Client_OnGetHitted_Implementation()
 {
+	if (!GetWorld())
+		return;
+	
 	if (!HUDRef)
 		return;
 	
@@ -579,6 +597,9 @@ void AGameplayCharacter::Client_OnGetHitted_Implementation()
 
 void AGameplayCharacter::Server_OnGetHitted_Implementation(const float Damage)
 {
+	if (!GetWorld())
+		return;
+	
 	RemoveHealth(Damage);
 
 	Client_OnGetHitted();
@@ -597,23 +618,35 @@ void AGameplayCharacter::Client_ShakeCamera_Implementation()
 
 void AGameplayCharacter::Client_PlaySound_Implementation(USoundBase* SoundToPlay)
 {
+	if (!GetWorld())
+		return;
+	
 	UGameplayStatics::PlaySound2D(GetWorld(), SoundToPlay);
 }
 
 void AGameplayCharacter::OnRep_CurrentHealth()
 {
+	if (!GetWorld())
+		return;
+	
 	if (HUDRef)
 		HUDRef->OnUpdateHealth(CurrentHealth);
 }
 
 void AGameplayCharacter::OnRep_CurrentHungry()
 {
+	if (!GetWorld())
+		return;
+	
 	if (HUDRef)
 		HUDRef->OnUpdateHungry(CurrentHungry);
 }
 
 void AGameplayCharacter::Die()
 {
+	if (!GetWorld())
+		return;
+	
 	if (Cast<AAIController>(GetController()))
 	{
 		if (!InventoryComponent)
@@ -981,6 +1014,8 @@ void AGameplayCharacter::OnLoseActor(AActor* ActorRef)
 
 void AGameplayCharacter::OnDie()
 {
+	GetWorldTimerManager().ClearAllTimersForObject(this);
+	
 	if(!SpawnerRef)
 	{
 		if (!CharacterSpawnerRef)
@@ -993,7 +1028,8 @@ void AGameplayCharacter::OnDie()
 
 void AGameplayCharacter::Destroyed()
 {
-	OnDie();
+	if (GetWorld())	
+		OnDie();
 	
 	Super::Destroyed();
 }

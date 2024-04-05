@@ -162,7 +162,7 @@ public:
 
 	float MaxHealth = 100.f;
 
-	UPROPERTY(ReplicatedUsing=OnRep_CurrentHungry)
+	UPROPERTY(Replicated)
 	float CurrentHungry = 100.f;
 
 	float MaxHungry = 100.f;
@@ -318,7 +318,9 @@ public:
 
 	void InitializeStatusWidget();
 
-	void UpdateHungryWidget();
+	UFUNCTION(Client, reliable)
+	void Client_UpdateHungryWidget();
+	
 	void HungryAndHealthTick();
 	void AddHungry(int Amount);
 
@@ -338,7 +340,9 @@ public:
 	FWeaponItem GetWeaponInfo(const int WeaponId) const { return InventoryComponent->GetWeaponInfo(WeaponId); }
 
 	int GetWeaponIdOnSlot(const int Id);
-	void UpdateHealthWidget();
+
+	UFUNCTION(Client, reliable)
+	void Client_UpdateHealthWidget();
 	void RemoveHealth(int Amount);
 	void AddHealth(const int Amount);
 

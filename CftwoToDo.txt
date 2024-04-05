@@ -1,4 +1,4 @@
-- nao esta sendo possivel colocar construção em lugar nenhum no mapa princiapal;
+
 - se o lobo estiver no seu pé, então o tiro não sai;
 - se cancelar construção, então fica vermewlha na tela pra sempre;
 - crash ao respawnar;
