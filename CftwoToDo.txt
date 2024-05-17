@@ -1,3 +1,7 @@
+- todas as telas de widget estão com blur bugado;
+- respawn nao ta funcionando;
+- deve ser possivel andar(x/2 speed) enquanto atira;
+- fov deve ficar perto de forma que veja só ombro do personagem quando atira;
 - Melhorar tela de carregamento;
 
 - voltar com multiplayer;
